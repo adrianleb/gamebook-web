@@ -1,0 +1,436 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "ACT2_START",
+      "title": "New Horizons",
+      "body": "The sun rises over the fractured lands as you emerge from the underground passages. Your faction's colors now mark you as one of their own, and the path ahead branches according to the allegiance you've sworn.\n\nWord has reached the faction leaders of your arrival. An audience has been requested—your reputation precedes you, and important decisions await.",
+      "choices": [
+        {
+          "id": "seek_audience",
+          "text": "Travel to the faction stronghold for your audience",
+          "targetId": "ACT2_LEADER_AUDIENCE"
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "act_start", "data": { "act": 2 } }
+      ],
+      "tags": ["start", "act2"]
+    },
+    {
+      "id": "ACT2_LEADER_AUDIENCE",
+      "title": "Audience with the Leader",
+      "body": "You stand before the faction leader, a figure of immense power and cunning. Their eyes assess you, weighing your worth against the challenges ahead.\n\n'We have watched your progress,' the leader says. 'You show promise. But promise alone does not win wars. We have a quest—one that could turn the tide of this conflict. Will you hear what we offer?'",
+      "speaker": "Faction Leader",
+      "choices": [
+        {
+          "id": "hear_quest",
+          "text": "I am honored. Tell me of this quest.",
+          "targetId": "ACT2_QUEST_DECISION",
+          "conditions": [
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "faction", "faction": "factionA", "operator": ">=", "value": 50 },
+                { "type": "faction", "faction": "factionB", "operator": ">=", "value": 50 },
+                { "type": "faction", "faction": "factionC", "operator": ">=", "value": 50 }
+              ]
+            }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_LEADER_MET" }
+          ]
+        },
+        {
+          "id": "rejected",
+          "text": "(Your faction standing is too low for an audience)",
+          "targetId": "ACT2_REJECTED",
+          "conditions": [
+            {
+              "type": "and",
+              "conditions": [
+                { "type": "faction", "faction": "factionA", "operator": "<", "value": 50 },
+                { "type": "faction", "faction": "factionB", "operator": "<", "value": 50 },
+                { "type": "faction", "faction": "factionC", "operator": "<", "value": 50 }
+              ]
+            }
+          ]
+        }
+      ],
+      "tags": ["major", "act2"]
+    },
+    {
+      "id": "ACT2_REJECTED",
+      "title": "Turned Away",
+      "body": "The guards bar your path. 'The leader has no time for those who haven't proven their loyalty,' one says coldly. 'Return when you've demonstrated your worth to the faction.'\n\nYou are dismissed, but perhaps there are other paths to power...",
+      "choices": [
+        {
+          "id": "seek_alternatives",
+          "text": "Seek alternative routes to influence",
+          "targetId": "ACT2_TEMPTATION"
+        }
+      ],
+      "tags": ["act2"]
+    },
+    {
+      "id": "ACT2_QUEST_DECISION",
+      "title": "The Great Quest",
+      "body": "The leader unfolds a ancient map, pointing to a distant fortress. 'The enemy holds an artifact of immense power—one that could secure our victory or ensure our doom. We need someone to retrieve it.'\n\nThey look at you directly. 'This quest will be dangerous. Many have tried and failed. But success would elevate you to the highest ranks of our order. What say you?'",
+      "speaker": "Faction Leader",
+      "choices": [
+        {
+          "id": "accept_quest",
+          "text": "I accept this quest. The artifact will be ours.",
+          "targetId": "ACT2_ARTIFACT",
+          "effects": [
+            { "type": "setFlag", "flag": "FINAL_QUEST_ACCEPTED" },
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": 5 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": 5 }
+          ],
+          "tooltip": "Accept the main quest for your faction"
+        },
+        {
+          "id": "refuse_quest",
+          "text": "I am not ready for such a burden. I must decline.",
+          "targetId": "ACT2_TEMPTATION",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": -15 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": -15 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -15 }
+          ],
+          "tooltip": "Refusing may damage your standing"
+        }
+      ],
+      "tags": ["major_decision", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT",
+      "title": "Claiming the Artifact",
+      "body": "After weeks of travel and countless dangers, you stand before the fortress vault. The artifact gleams before you—a symbol of your faction's power made manifest.\n\nAs you reach for it, you feel its energy coursing through you. This is what you were meant to carry. This is your destiny.",
+      "choices": [
+        {
+          "id": "claim_artifact_a",
+          "text": "Claim the Crown of the North",
+          "targetId": "ACT2_PROPHECY",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_A_JOINED", "value": true }
+          ],
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_FACTION_A_ARTIFACT" },
+            { "type": "modifyFaction", "faction": "factionA", "delta": 15 },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_FACTION_A_ARTIFACT" } }
+          ]
+        },
+        {
+          "id": "claim_artifact_b",
+          "text": "Claim the Blade of Shadows",
+          "targetId": "ACT2_PROPHECY",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_B_JOINED", "value": true }
+          ],
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_FACTION_B_ARTIFACT" },
+            { "type": "modifyFaction", "faction": "factionB", "delta": 15 },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_FACTION_B_ARTIFACT" } }
+          ]
+        },
+        {
+          "id": "claim_artifact_c",
+          "text": "Claim the Staff of Ages",
+          "targetId": "ACT2_PROPHECY",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_C_JOINED", "value": true }
+          ],
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_FACTION_C_ARTIFACT" },
+            { "type": "modifyFaction", "faction": "factionC", "delta": 15 },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_FACTION_C_ARTIFACT" } }
+          ]
+        }
+      ],
+      "tags": ["faction_specific", "item", "act2"]
+    },
+    {
+      "id": "ACT2_TEMPTATION",
+      "title": "Dark Whispers",
+      "body": "A shadowy figure emerges from the darkness, their form shifting and unclear. 'I have watched you,' they whisper. 'Struggling to prove yourself, to earn the approval of those who see you as nothing more than a tool.'\n\nThe figure extends a hand wreathed in shadow. 'I offer you true power—power that needs no faction's blessing. All I ask is... flexibility in your loyalties.'",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "resist",
+          "text": "I refuse your offer. My allies need me.",
+          "targetId": "ACT2_ALLY_ELENA",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 10 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": 10 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": 10 }
+          ]
+        },
+        {
+          "id": "embrace",
+          "text": "Tell me more about this... power.",
+          "targetId": "ACT2_SECRET_DEAL",
+          "conditions": [
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "faction", "faction": "factionA", "operator": "<", "value": 50 },
+                { "type": "faction", "faction": "factionB", "operator": "<", "value": 50 },
+                { "type": "faction", "faction": "factionC", "operator": "<", "value": 50 }
+              ]
+            }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "BETRAYER_PATH" },
+            { "type": "modifyFaction", "faction": "factionA", "delta": -20 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": -20 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -20 }
+          ],
+          "tooltip": "This path leads to darkness..."
+        }
+      ],
+      "tags": ["moral_choice", "act2"]
+    },
+    {
+      "id": "ACT2_SECRET_DEAL",
+      "title": "The Shadow Broker",
+      "body": "The Shadow Broker leads you to a hidden chamber beneath the city. Maps and documents cover the walls—intelligence on every faction, every leader, every secret.\n\n'Power requires knowledge,' they say, producing a scroll inscribed with dark symbols. 'Sign this pact, and all of this becomes yours. The factions will never know you serve a higher purpose... until it's too late.'",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "sign_pact",
+          "text": "Sign the Dark Pact",
+          "targetId": "ACT2_ALLY_THORNE",
+          "effects": [
+            { "type": "setFlag", "flag": "SECRET_DEAL_MADE" },
+            { "type": "addItem", "itemId": "ITEM_DARK_PACT_SCROLL" },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_DARK_PACT_SCROLL" } }
+          ],
+          "tooltip": "This seals your path toward betrayal"
+        },
+        {
+          "id": "refuse_pact",
+          "text": "No. This is not the power I seek.",
+          "targetId": "ACT2_ALLY_ELENA",
+          "effects": [
+            { "type": "clearFlag", "flag": "BETRAYER_PATH" }
+          ]
+        }
+      ],
+      "tags": ["hidden", "betrayal_path", "act2"]
+    },
+    {
+      "id": "ACT2_PROPHECY",
+      "title": "The Seer's Vision",
+      "body": "An ancient seer awaits you in a candlelit chamber, their blind eyes somehow seeing more than any mortal gaze. 'I have seen your thread in the tapestry of fate,' they whisper.\n\n'There is a path before you—a path of sacrifice. Should danger threaten those you love, you may choose to give everything to save them. The amulet you carry, or may yet find, holds the key.'\n\nThe seer's words chill you. 'Remember: sacrifice is the greatest power of all.'",
+      "speaker": "The Seer",
+      "choices": [
+        {
+          "id": "heed_warning",
+          "text": "I will remember your words, Seer.",
+          "targetId": "ACT2_ALLY_ELENA",
+          "effects": [
+            { "type": "setFlag", "flag": "SACRIFICE_PATH_UNLOCKED" }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "setFlag", "flag": "PROPHECY_HEARD" }
+      ],
+      "tags": ["story", "sacrifice_path", "act2"]
+    },
+    {
+      "id": "ACT2_ALLY_ELENA",
+      "title": "Elena's Plea",
+      "body": "You encounter Elena, a skilled scout whose network of informants spans the realm. Her eyes are filled with worry as she approaches.\n\n'I need your help,' she says urgently. 'My brother has been captured by raiders. They'll kill him if someone doesn't act. I can't do this alone—but together, we might save him.'\n\nHer skill and connections could prove invaluable, but the rescue mission will be dangerous.",
+      "speaker": "Elena",
+      "choices": [
+        {
+          "id": "save_brother",
+          "text": "We'll save your brother together. Lead the way.",
+          "targetId": "ACT2_ALLY_THORNE",
+          "effects": [
+            { "type": "setFlag", "flag": "ELENA_RECRUITED" },
+            { "type": "modifyStat", "stat": "health", "delta": -15, "clampMin": 1 }
+          ],
+          "tooltip": "Elena will join your party (dangerous mission)"
+        },
+        {
+          "id": "refuse_elena",
+          "text": "I'm sorry, but I cannot risk this mission.",
+          "targetId": "ACT2_ALLY_THORNE",
+          "effects": [
+            { "type": "clearFlag", "flag": "ALLY_ELENA_ALIVE" }
+          ],
+          "tooltip": "Elena will leave permanently"
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_ALLY_THORNE",
+      "title": "Thorne's Offer",
+      "body": "A mysterious warrior named Thorne crosses your path—battle-scarred and cynical, but undeniably skilled. He watches you with calculating eyes.\n\n'I've heard of your exploits,' Thorne says. 'You're either very brave or very foolish. Either way, interesting. I find myself... between employers at the moment. Perhaps we could benefit each other.'\n\nHis skills are legendary, but his loyalties are rumored to shift like sand.",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "recruit_thorne",
+          "text": "Welcome aboard, Thorne. Your skills are needed.",
+          "targetId": "ACT2_HEIST",
+          "effects": [
+            { "type": "setFlag", "flag": "ALLY_THORNE_ALIVE" },
+            { "type": "setFlag", "flag": "THORNE_RECRUITED" }
+          ],
+          "tooltip": "Thorne will join your party"
+        },
+        {
+          "id": "refuse_thorne",
+          "text": "I prefer allies I can trust. Farewell.",
+          "targetId": "ACT2_HEIST"
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST",
+      "title": "The Vault Job",
+      "body": "Rumors speak of a hidden vault beneath the old fortress—filled with treasures and secrets that could change the balance of power. The entrance is heavily guarded, but a clever approach might succeed where force would fail.\n\nDo you risk the heist, or move on to more pressing matters?",
+      "choices": [
+        {
+          "id": "attempt_heist",
+          "text": "Plan and execute the vault heist",
+          "targetId": "ACT2_VAULT",
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_KEY_VAULT" },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_KEY_VAULT" } }
+          ],
+          "tooltip": "Attempt the dangerous heist"
+        },
+        {
+          "id": "skip_heist",
+          "text": "The risk is too great. Press on toward Act 3.",
+          "targetId": "ACT2_EXPLORE_2"
+        }
+      ],
+      "tags": ["optional", "act2"]
+    },
+    {
+      "id": "ACT2_VAULT",
+      "title": "The Treasure Room",
+      "body": "Against all odds, you breach the vault. Ancient treasures glitter in the torchlight—gold, jewels, and artifacts of forgotten ages. But more valuable than any treasure is the information you find: documents revealing the enemy's plans.\n\nThis intelligence could prove decisive in the battles ahead.",
+      "choices": [
+        {
+          "id": "take_intel",
+          "text": "Secure the intelligence and leave",
+          "targetId": "ACT2_EXPLORE_2",
+          "effects": [
+            { "type": "setFlag", "flag": "VAULT_INTEL_SECURED" },
+            { "type": "modifyFaction", "faction": "factionA", "delta": 10 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": 10 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": 10 }
+          ]
+        }
+      ],
+      "tags": ["optional", "act2"]
+    },
+    {
+      "id": "ACT2_EXPLORE_2",
+      "title": "Southern Exploration",
+      "body": "Your travels take you through the southern territories. In a ruined watchtower, you discover another fragment of the ancient map—this one detailing secret passages into the enemy's stronghold.\n\nCombined with what you found in Act 1, this could provide a decisive advantage.",
+      "choices": [
+        {
+          "id": "take_fragment",
+          "text": "Take the second map fragment",
+          "targetId": "ACT2_ACT_END",
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_MAP_FRAGMENT_2" },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_MAP_FRAGMENT_2" } }
+          ]
+        },
+        {
+          "id": "leave_fragment",
+          "text": "Leave it—you've found enough",
+          "targetId": "ACT2_ACT_END"
+        }
+      ],
+      "tags": ["optional", "item", "act2"]
+    },
+    {
+      "id": "ACT2_ACT_END",
+      "title": "Storm Clouds",
+      "body": "As Act 2 draws to a close, dark clouds gather on the horizon—both literally and figuratively. The faction conflicts are reaching their peak, and the final confrontation approaches.\n\nYour alliances are set. Your path—whether toward victory, sacrifice, betrayal, or neutrality—grows clearer with each step. The items you've gathered and the choices you've made will determine your fate.\n\nAct 3 awaits, and with it, the ending of your story.",
+      "choices": [
+        {
+          "id": "continue_to_act3",
+          "text": "Face your destiny in Act 3",
+          "targetId": "ACT3_START",
+          "effects": [
+            { "type": "setFlag", "flag": "ACT2_COMPLETE" },
+            { "type": "triggerEvent", "event": "act_transition", "data": { "from": 2, "to": 3 } }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "setFlag", "flag": "ALLIANCE_LOCKED" }
+      ],
+      "tags": ["transition", "act2"]
+    }
+  ],
+  "items": [
+    {
+      "id": "ITEM_FACTION_A_ARTIFACT",
+      "name": "Crown of the North",
+      "description": "An ancient crown worn by the first kings of the Northern Alliance. It radiates an aura of command and legitimacy, marking its bearer as a true leader.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "key", "faction_a", "victory_path"]
+    },
+    {
+      "id": "ITEM_FACTION_B_ARTIFACT",
+      "name": "Blade of Shadows",
+      "description": "A legendary blade forged in darkness by the founders of the Shadow Conclave. It whispers secrets to its wielder and strikes unseen.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "key", "faction_b", "victory_path"]
+    },
+    {
+      "id": "ITEM_FACTION_C_ARTIFACT",
+      "name": "Staff of Ages",
+      "description": "A staff of immense magical power, passed down through generations of the Golden Circle. It represents wealth, wisdom, and the patience of ages.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "key", "faction_c", "victory_path"]
+    },
+    {
+      "id": "ITEM_DARK_PACT_SCROLL",
+      "name": "Dark Pact Scroll",
+      "description": "A scroll inscribed with binding magic and signed in blood. It represents a pact with the Shadow Broker and marks the path toward betrayal.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "key", "betrayal_path"]
+    },
+    {
+      "id": "ITEM_MAP_FRAGMENT_2",
+      "name": "Map Fragment (South)",
+      "description": "The second fragment of an ancient map, detailing secret passages into the enemy stronghold. Combined with the northern fragment, it reveals hidden routes.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["key", "exploration"]
+    },
+    {
+      "id": "ITEM_KEY_VAULT",
+      "name": "Vault Key",
+      "description": "A master key obtained during the vault heist. It may unlock other secrets in the realm.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["key"]
+    }
+  ]
+}
