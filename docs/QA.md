@@ -122,7 +122,7 @@ Complete gameplay sessions verifying end-to-end functionality.
 - **Edge Path**: Unusual but valid paths - testing boundary conditions and rare branches
 - **Exhaustive Path**: Systematic coverage of all nodes and choices
 
-**Status:** *Playthrough scripts pending STORY.md node index completion*
+**Status:** ✅ Playthrough scripts complete - see [Playthrough Scripts](#playthrough-scripts) section
 
 ---
 
@@ -171,51 +171,333 @@ Verify content integrity and completeness.
 
 ## Playthrough Scripts
 
-> **Note:** Detailed playthrough scripts will be added once STORY.md is complete with node index and branching logic documentation. See [Issue #6](https://github.com/adrianleb/gamebook-web/issues/6) for STORY.md progress.
+> **Reference:** Node IDs and requirements from [STORY.md](./STORY.md)
 
-### Golden Path Template
+### Golden Path 1: Victory (Faction-Aligned)
 
-For each of the 5 endings, document:
+**Ending Node:** `ACT3_END_VICTORY`
 
-```markdown
-## Ending [N]: [Ending Name]
+#### Prerequisites
+| Type | Requirement |
+|------|-------------|
+| Faction | Alignment ≥ 75 with chosen faction |
+| Flags | `FACTION_LEADER_MET`, `FINAL_QUEST_ACCEPTED` |
+| Items | Faction artifact (`ITEM_FACTION_A_ARTIFACT`, `ITEM_FACTION_B_ARTIFACT`, or `ITEM_FACTION_C_ARTIFACT`) |
+| Allies | At least 2 faction-aligned allies alive |
 
-### Prerequisites
-- Required items: [list]
-- Required flags: [list]
-- Faction requirements: [if applicable]
+#### Critical Path (Faction A Example)
+| Step | Action | Node | Flags/Items Set |
+|------|--------|------|-----------------|
+| 1 | Start new game | `ACT1_START` | - |
+| 2 | Proceed through introduction | `ACT1_FIRST_CHOICE` | - |
+| 3 | **Choose Faction A** | `ACT1_FACTION_CHOICE` → `ACT1_FACTION_A_INTRO` | `FACTION_A_JOINED` |
+| 4 | Recruit Marcus | `ACT1_ALLY_MARCUS` → `ACT1_MARCUS_JOIN` | `ALLY_MARCUS_ALIVE` |
+| 5 | Complete Act 1 | `ACT1_ACT_END` | Faction locked |
+| 6 | Meet faction leader | `ACT2_LEADER_AUDIENCE` | `FACTION_LEADER_MET` |
+| 7 | Accept the quest | `ACT2_QUEST_DECISION` → `ACT2_ACCEPT_QUEST` | `FINAL_QUEST_ACCEPTED` |
+| 8 | Claim Faction A artifact | `ACT2_ARTIFACT_A` | `ITEM_FACTION_A_ARTIFACT` |
+| 9 | Save Elena | `ACT2_ALLY_ELENA` → `ACT2_ELENA_SAVED` | `ALLY_ELENA_ALIVE` |
+| 10 | Complete Act 2 | `ACT2_ACT_END` | Alignment ≥75 |
+| 11 | Reach final confrontation | `ACT3_FINAL_CONFRONTATION` | - |
+| 12 | Victory ending | `ACT3_END_VICTORY` | **ENDING REACHED** |
 
-### Critical Path (Shortest Route)
-1. Start -> Node [X]
-2. Choose: "[choice text]" -> Node [Y]
-3. ...
-4. Ending reached
-
-### Verification Checklist
-- [ ] Path is completable from fresh start
-- [ ] All prerequisite items obtainable
-- [ ] No blocking conditions encountered
-- [ ] Ending text displays correctly
+#### Verification Checklist
+- [ ] Faction alignment shows ≥75 before Act 3
+- [ ] Both Marcus and Elena shown as alive in party
+- [ ] Faction artifact visible in inventory
+- [ ] Victory ending text displays correctly
 - [ ] Credits roll after ending
-```
 
-### Edge Path Template
+---
 
-```markdown
-## Edge Case: [Description]
+### Golden Path 2: Sacrifice
 
-### Scenario
-[What unusual path or condition is being tested]
+**Ending Node:** `ACT3_END_SACRIFICE`
 
-### Steps
-1. [Steps to reach the edge case]
+#### Prerequisites
+| Type | Requirement |
+|------|-------------|
+| Flags | `SACRIFICE_PATH_UNLOCKED`, `LOVED_ONE_IN_DANGER` |
+| Items | `ITEM_SACRED_AMULET` |
+| Allies | At least 1 ally alive to save |
+| Choice | Select sacrifice option at final confrontation |
 
-### Expected Result
-[What should happen]
+#### Critical Path
+| Step | Action | Node | Flags/Items Set |
+|------|--------|------|-----------------|
+| 1 | Start new game | `ACT1_START` | - |
+| 2 | **Visit shrine (critical!)** | `ACT1_SHRINE` | `ITEM_SACRED_AMULET` |
+| 3 | Choose any faction | `ACT1_FACTION_CHOICE` | `FACTION_X_JOINED` |
+| 4 | Recruit at least one ally | `ACT1_ALLY_MARCUS` | `ALLY_MARCUS_ALIVE` |
+| 5 | Complete Act 1 | `ACT1_ACT_END` | - |
+| 6 | **Receive prophecy** | `ACT2_PROPHECY` | `SACRIFICE_PATH_UNLOCKED` |
+| 7 | Complete Act 2 normally | `ACT2_ACT_END` | - |
+| 8 | **Ally gets kidnapped** | `ACT3_KIDNAPPING` | `LOVED_ONE_IN_DANGER` |
+| 9 | Reach final confrontation | `ACT3_FINAL_CONFRONTATION` | - |
+| 10 | **Choose sacrifice option** | → `ACT3_END_SACRIFICE` | **ENDING REACHED** |
 
-### Why This Matters
-[What bug this would catch]
-```
+#### Verification Checklist
+- [ ] Sacred Amulet obtained in Act 1
+- [ ] `SACRIFICE_PATH_UNLOCKED` flag set after prophecy
+- [ ] Kidnapping event triggers in Act 3
+- [ ] Sacrifice option appears at final confrontation
+- [ ] Sacrifice ending text displays correctly
+
+---
+
+### Golden Path 3: Betrayal
+
+**Ending Node:** `ACT3_END_BETRAYAL`
+
+#### Prerequisites
+| Type | Requirement |
+|------|-------------|
+| Faction | Alignment < 25 with all factions OR `BETRAYER_PATH` flag |
+| Flags | `SECRET_DEAL_MADE`, `ANTAGONIST_OFFER_ACCEPTED` |
+| Items | `ITEM_DARK_PACT_SCROLL` |
+| Allies | All allies either dead or betrayed |
+
+#### Critical Path
+| Step | Action | Node | Flags/Items Set |
+|------|--------|------|-----------------|
+| 1 | Start new game | `ACT1_START` | - |
+| 2 | Choose any faction (will betray) | `ACT1_FACTION_CHOICE` | `FACTION_X_JOINED` |
+| 3 | **Reject Marcus** (ally must die/leave) | `ACT1_ALLY_MARCUS` → `ACT1_MARCUS_LEAVE` | `ALLY_MARCUS_ALIVE` = false |
+| 4 | Complete Act 1 | `ACT1_ACT_END` | - |
+| 5 | **Embrace dark whispers** | `ACT2_TEMPTATION` → `ACT2_EMBRACE` | `BETRAYER_PATH` |
+| 6 | **Make secret deal** | `ACT2_SECRET_DEAL` → `ACT2_DEAL_MADE` | `SECRET_DEAL_MADE`, `ITEM_DARK_PACT_SCROLL` |
+| 7 | **Let Elena die** | `ACT2_ALLY_ELENA` → `ACT2_ELENA_LOST` | `ALLY_ELENA_ALIVE` = false |
+| 8 | Complete Act 2 | `ACT2_ACT_END` | - |
+| 9 | **Accept antagonist's offer** | `ACT3_FINAL_OFFER` → `ACT3_ACCEPT_OFFER` | `ANTAGONIST_OFFER_ACCEPTED` |
+| 10 | Betrayal ending | `ACT3_END_BETRAYAL` | **ENDING REACHED** |
+
+#### Verification Checklist
+- [ ] Dark Pact Scroll in inventory
+- [ ] No allies shown in party
+- [ ] `BETRAYER_PATH` flag active
+- [ ] `SECRET_DEAL_MADE` flag active
+- [ ] Betrayal ending text displays correctly
+
+---
+
+### Golden Path 4: Neutral
+
+**Ending Node:** `ACT3_END_NEUTRAL`
+
+#### Prerequisites
+| Type | Requirement |
+|------|-------------|
+| Faction | Alignment 25-50 with all factions |
+| Flags | `NEUTRAL_PATH_AVAILABLE` (auto-set if no faction ≥50) |
+| Items | None required |
+| Allies | None required |
+
+#### Critical Path
+| Step | Action | Node | Flags/Items Set |
+|------|--------|------|-----------------|
+| 1 | Start new game | `ACT1_START` | - |
+| 2 | Choose any faction | `ACT1_FACTION_CHOICE` | `FACTION_X_JOINED` |
+| 3 | Complete Act 1 | `ACT1_ACT_END` | - |
+| 4 | **Avoid major faction commitments** | Various | Keep all factions 25-50 |
+| 5 | Refuse quest or complete minimally | `ACT2_QUEST_DECISION` → `ACT2_REFUSE_QUEST` | - |
+| 6 | Complete Act 2 | `ACT2_ACT_END` | `NEUTRAL_PATH_AVAILABLE` auto-set |
+| 7 | Reach final confrontation | `ACT3_FINAL_CONFRONTATION` | - |
+| 8 | **Choose to walk away** | → `ACT3_END_NEUTRAL` | **ENDING REACHED** |
+
+#### Verification Checklist
+- [ ] All faction alignments between 25-50
+- [ ] `NEUTRAL_PATH_AVAILABLE` flag is set
+- [ ] Walk away option appears at final confrontation
+- [ ] Neutral ending text displays correctly
+
+---
+
+### Golden Path 5: Death
+
+**Ending Node:** `ACT3_END_DEATH`
+
+#### Prerequisites
+| Type | Requirement |
+|------|-------------|
+| Stats | Health reaches 0 during final battle |
+| OR Flags | `DOOM_SEALED` (from critical failure) |
+| Items | Missing required survival items |
+| Allies | No allies available to rescue |
+
+#### Critical Path (via DOOM_SEALED)
+| Step | Action | Node | Flags/Items Set |
+|------|--------|------|-----------------|
+| 1 | Start new game | `ACT1_START` | - |
+| 2 | **Skip survival kit** | Skip `ACT1_SUPPLIES` | No `ITEM_SURVIVAL_KIT` |
+| 3 | Choose any faction | `ACT1_FACTION_CHOICE` | `FACTION_X_JOINED` |
+| 4 | **Reject all allies** | Skip ally recruitment | No allies |
+| 5 | Complete Act 1 | `ACT1_ACT_END` | - |
+| 6 | Make poor choices in Act 2 | Various | Low faction standing |
+| 7 | Complete Act 2 | `ACT2_ACT_END` | - |
+| 8 | **Trigger critical failure** | `ACT3_CRITICAL_FAILURE` | `DOOM_SEALED` |
+| 9 | Death ending | `ACT3_END_DEATH` | **ENDING REACHED** |
+
+#### Verification Checklist
+- [ ] No survival items in inventory
+- [ ] No allies in party
+- [ ] `DOOM_SEALED` flag triggers correctly OR health reaches 0
+- [ ] Death/Game Over screen displays correctly
+
+---
+
+## Edge Path Test Cases
+
+### Edge Case 1: Faction Switching Mid-Game
+
+**Scenario:** Player attempts to change faction allegiance after initial choice.
+
+**Steps:**
+1. Choose Faction A in Act 1
+2. In Act 2, take actions that lower Faction A standing below 25
+3. Attempt to gain favor with Faction B (≥50)
+
+**Expected Result:**
+- `FACTION_A_JOINED` flag remains set
+- New faction quests may unlock but Victory ending requires original faction
+- A-aligned allies may leave (standing <25)
+
+**Why This Matters:** Catches bugs in faction-locked content accessibility
+
+---
+
+### Edge Case 2: All Items Collected
+
+**Scenario:** Player attempts to collect every available item.
+
+**Steps:**
+1. Visit `ACT1_SHRINE` → `ITEM_SACRED_AMULET`
+2. Visit `ACT1_SUPPLIES` → `ITEM_SURVIVAL_KIT`
+3. Visit `ACT1_EXPLORE_1` → `ITEM_MAP_FRAGMENT_1`
+4. Complete `ACT2_ARTIFACT_A` → `ITEM_FACTION_A_ARTIFACT`
+5. Complete `ACT2_SECRET_DEAL` → `ITEM_DARK_PACT_SCROLL`
+6. Complete `ACT2_EXPLORE_2` → `ITEM_MAP_FRAGMENT_2`
+7. Complete `ACT2_HEIST` → `ITEM_KEY_VAULT`
+
+**Expected Result:**
+- All 9 items visible in inventory
+- No inventory overflow or corruption
+- Conflicting items (faction artifacts + dark pact) coexist
+
+**Why This Matters:** Catches inventory limit bugs and item conflict issues
+
+---
+
+### Edge Case 3: All Allies Recruited Then Lost
+
+**Scenario:** Player recruits all allies then loses them.
+
+**Steps:**
+1. Recruit Marcus in Act 1
+2. Save Elena in Act 2
+3. Recruit Thorne in Act 2
+4. Take actions causing all allies to die/leave
+
+**Expected Result:**
+- Ally flags correctly transition from true to false
+- Endings requiring allies become unavailable
+- Betrayal and Death endings remain available
+
+**Why This Matters:** Catches ally state tracking bugs
+
+---
+
+### Edge Case 4: Rapid Save/Load During Critical Choice
+
+**Scenario:** Player saves and loads repeatedly at `ACT3_FINAL_CONFRONTATION`.
+
+**Steps:**
+1. Reach `ACT3_FINAL_CONFRONTATION` with multiple ending paths available
+2. Save game
+3. Choose Ending 1, observe
+4. Load, choose Ending 2, observe
+5. Repeat for all available endings
+
+**Expected Result:**
+- Save state correctly restored each time
+- All available endings reachable from same save
+- No flag corruption between loads
+
+**Why This Matters:** Catches save/load state corruption bugs
+
+---
+
+### Edge Case 5: Boundary Faction Values
+
+**Scenario:** Test faction threshold boundaries (24, 25, 50, 74, 75).
+
+**Steps:**
+1. Manipulate faction values to exactly 24, then 25
+2. Check if threshold-dependent content unlocks/locks correctly
+3. Repeat for 50 and 75 boundaries
+
+**Expected Result:**
+- At 24: <25 effects apply (allies leave risk)
+- At 25: 25-50 effects apply (neutral zone)
+- At 74: Leader audience available, Victory not yet
+- At 75: Victory ending unlocks
+
+**Why This Matters:** Catches off-by-one errors in condition checks
+
+---
+
+### Edge Case 6: Map Fragment Unlocks
+
+**Scenario:** Test that both map fragments unlock their respective hidden areas.
+
+**Steps:**
+1. Collect `ITEM_MAP_FRAGMENT_1` in Act 1
+2. Verify `ACT2_HIDDEN_PATH` becomes accessible
+3. Collect `ITEM_MAP_FRAGMENT_2` in Act 2
+4. Verify `ACT3_SECRET_ENTRANCE` becomes accessible
+
+**Expected Result:**
+- Hidden paths only accessible with correct fragment
+- UI indicates locked state without fragment
+- No softlock if player skips fragments
+
+**Why This Matters:** Catches item-gated content accessibility bugs
+
+---
+
+### Edge Case 7: Doom Sealed Override
+
+**Scenario:** Test that `DOOM_SEALED` flag forces Death ending regardless of other conditions.
+
+**Steps:**
+1. Build toward Victory ending (high faction, all flags)
+2. Trigger `ACT3_CRITICAL_FAILURE` to set `DOOM_SEALED`
+3. Proceed to final confrontation
+
+**Expected Result:**
+- Victory path unavailable despite meeting requirements
+- Death ending is forced
+- Flag override is clearly communicated to player
+
+**Why This Matters:** Catches flag priority/override bugs
+
+---
+
+### Edge Case 8: Skip All Optional Content
+
+**Scenario:** Speed-run path avoiding all optional nodes.
+
+**Steps:**
+1. Skip shrine, supplies, exploration in Act 1
+2. Skip optional ally recruitment
+3. Skip hidden paths and vault in Act 2
+4. Proceed directly to endings
+
+**Expected Result:**
+- Game completable without optional content
+- Neutral or Death endings available (lacking items for others)
+- No dead ends from missing optional content
+
+**Why This Matters:** Catches required vs optional content misclassification
 
 ---
 
@@ -232,20 +514,21 @@ For each of the 5 endings, document:
 
 ### Ending Coverage
 
-| Ending | Tested | Last Verified |
-|--------|--------|---------------|
-| Ending 1 | [ ] | - |
-| Ending 2 | [ ] | - |
-| Ending 3 | [ ] | - |
-| Ending 4 | [ ] | - |
-| Ending 5 | [ ] | - |
+| Ending | Script Ready | Tested | Last Verified |
+|--------|--------------|--------|---------------|
+| Ending 1: Victory | ✅ | [ ] | - |
+| Ending 2: Sacrifice | ✅ | [ ] | - |
+| Ending 3: Betrayal | ✅ | [ ] | - |
+| Ending 4: Neutral | ✅ | [ ] | - |
+| Ending 5: Death | ✅ | [ ] | - |
 
 ### Path Coverage
 
 | Metric | Target | Current |
 |--------|--------|---------|
+| Golden paths documented | 5/5 | ✅ 5/5 |
 | Golden paths verified | 5/5 | 0/5 |
-| Edge cases documented | 10+ | TBD |
+| Edge cases documented | 10+ | ✅ 8 |
 | Regression suite size | 20+ cases | TBD |
 
 ---
