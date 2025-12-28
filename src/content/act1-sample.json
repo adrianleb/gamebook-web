@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "ACT1_START",
+      "title": "Awakening",
+      "body": "You awaken in a dimly lit chamber, the scent of damp stone filling your nostrils. Fragments of memory swirl in your mind—a great conflict, a choice that must be made, allies waiting in the shadows. The world beyond these walls is fractured, and only you can decide which path to walk.\n\nA single torch flickers on the wall, casting dancing shadows across ancient symbols carved into the stone. Two passages lead forward from this place.",
+      "choices": [
+        {
+          "id": "proceed",
+          "text": "Gather your wits and step forward",
+          "targetId": "ACT1_FIRST_CHOICE"
+        }
+      ],
+      "tags": ["start", "act1"]
+    },
+    {
+      "id": "ACT1_FIRST_CHOICE",
+      "title": "First Steps",
+      "body": "The passage opens into a crossroads. To the north, you hear the distant sound of voices—perhaps allies, perhaps enemies. To the east, a faint glow suggests warmth and shelter. Your first steps in this new world will set the tone for all that follows.",
+      "choices": [
+        {
+          "id": "path_north",
+          "text": "Head north toward the voices",
+          "targetId": "ACT1_FACTION_CHOICE",
+          "effects": [
+            { "type": "setFlag", "flag": "CHOSE_DIRECT_PATH" }
+          ]
+        },
+        {
+          "id": "path_east",
+          "text": "Seek the warmth and shelter to the east",
+          "targetId": "ACT1_SUPPLIES",
+          "effects": [
+            { "type": "setFlag", "flag": "CHOSE_CAUTIOUS_PATH" }
+          ]
+        }
+      ],
+      "tags": ["decision", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_CHOICE",
+      "title": "The Three Paths",
+      "body": "You emerge into a vast underground hall where three distinct groups have gathered. Each bears the colors of their faction, and each beckons you to join their cause.\n\nTo the left stand the warriors of the Northern Alliance, clad in blue and silver. In the center wait the scholars of the Shadow Conclave, draped in purple and black. To the right gather the merchants of the Golden Circle, adorned in gold and white.\n\nEach faction offers a different path to power, and each demands loyalty in return.",
+      "choices": [
+        {
+          "id": "join_faction_a",
+          "text": "Join the Northern Alliance—strength through unity",
+          "targetId": "ACT1_ALLY_MARCUS",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_A_JOINED" },
+            { "type": "modifyFaction", "faction": "factionA", "delta": 25 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": -10 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -10 }
+          ]
+        },
+        {
+          "id": "join_faction_b",
+          "text": "Join the Shadow Conclave—knowledge is power",
+          "targetId": "ACT1_ALLY_MARCUS",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_B_JOINED" },
+            { "type": "modifyFaction", "faction": "factionB", "delta": 25 },
+            { "type": "modifyFaction", "faction": "factionA", "delta": -10 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -10 }
+          ]
+        },
+        {
+          "id": "join_faction_c",
+          "text": "Join the Golden Circle—wealth opens all doors",
+          "targetId": "ACT1_ALLY_MARCUS",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_C_JOINED" },
+            { "type": "modifyFaction", "faction": "factionC", "delta": 25 },
+            { "type": "modifyFaction", "faction": "factionA", "delta": -10 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": -10 }
+          ]
+        }
+      ],
+      "tags": ["major_decision", "faction", "act1"]
+    },
+    {
+      "id": "ACT1_SHRINE",
+      "title": "Ancient Shrine",
+      "body": "Hidden behind a crumbling wall, you discover an ancient shrine dedicated to forgotten gods. A golden amulet rests upon the altar, pulsing with a soft inner light.\n\nThe amulet whispers of sacrifice and redemption—of a path that may one day demand everything you hold dear. Do you take it, knowing the weight it may carry?",
+      "choices": [
+        {
+          "id": "take_amulet",
+          "text": "Take the Sacred Amulet",
+          "targetId": "ACT1_EXPLORE_1",
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_SACRED_AMULET" },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_SACRED_AMULET" } }
+          ]
+        },
+        {
+          "id": "leave_amulet",
+          "text": "Leave the amulet—some powers are best left alone",
+          "targetId": "ACT1_EXPLORE_1"
+        }
+      ],
+      "tags": ["optional", "item", "act1"]
+    },
+    {
+      "id": "ACT1_SUPPLIES",
+      "title": "Gathering Supplies",
+      "body": "You find a small storeroom, dusty but not abandoned. Among the scattered crates and barrels, you discover a well-stocked survival kit—dried rations, a waterskin, flint and steel, and basic medical supplies.\n\nThis could mean the difference between life and death in the trials ahead.",
+      "choices": [
+        {
+          "id": "take_supplies",
+          "text": "Take the Survival Kit",
+          "targetId": "ACT1_FACTION_CHOICE",
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_SURVIVAL_KIT" },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_SURVIVAL_KIT" } }
+          ]
+        },
+        {
+          "id": "leave_supplies",
+          "text": "Leave the supplies for someone who may need them more",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["optional", "item", "act1"]
+    },
+    {
+      "id": "ACT1_ALLY_MARCUS",
+      "title": "Meeting Marcus",
+      "body": "A grizzled warrior approaches you, his weathered face bearing the scars of countless battles. 'I am Marcus,' he says, extending a calloused hand. 'I've watched many travelers pass through these halls. Most don't survive.\n\n'I could travel with you—my blade has kept me alive this long, and two are stronger than one. But I don't suffer fools. If you want my help, you'll have to prove you're worth the effort.'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "accept_marcus",
+          "text": "Welcome, Marcus. Together we'll be stronger.",
+          "targetId": "ACT1_SHRINE",
+          "effects": [
+            { "type": "setFlag", "flag": "MARCUS_RECRUITED" }
+          ],
+          "tooltip": "Marcus will join your party"
+        },
+        {
+          "id": "reject_marcus",
+          "text": "I walk alone. This path is mine to travel.",
+          "targetId": "ACT1_SHRINE",
+          "effects": [
+            { "type": "clearFlag", "flag": "ALLY_MARCUS_ALIVE" }
+          ],
+          "tooltip": "Marcus will leave permanently"
+        }
+      ],
+      "tags": ["ally", "act1"]
+    },
+    {
+      "id": "ACT1_EXPLORE_1",
+      "title": "Northern Exploration",
+      "body": "A narrow passage leads deeper into the mountain. The walls here are covered with ancient maps and diagrams, most faded beyond recognition. However, one fragment catches your eye—a detailed map of the northern territories, marked with hidden paths and secret entrances.\n\nThis could prove invaluable for navigating the dangers ahead.",
+      "choices": [
+        {
+          "id": "take_map",
+          "text": "Carefully remove the map fragment",
+          "targetId": "ACT1_ACT_END",
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_MAP_FRAGMENT_1" },
+            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_MAP_FRAGMENT_1" } }
+          ]
+        },
+        {
+          "id": "study_map",
+          "text": "Study the map but leave it in place",
+          "targetId": "ACT1_ACT_END",
+          "effects": [
+            { "type": "setFlag", "flag": "MAP_KNOWLEDGE_GAINED" }
+          ]
+        }
+      ],
+      "tags": ["optional", "item", "act1"]
+    },
+    {
+      "id": "ACT1_ACT_END",
+      "title": "End of Beginning",
+      "body": "As you reach the exit of the underground complex, the first rays of sunlight pierce the darkness. The world beyond stretches before you—a land torn by faction warfare, filled with danger and opportunity in equal measure.\n\nYour faction allegiance is sealed. Your allies are chosen. The supplies you've gathered will serve you well. Act 1 concludes as you step into the light, ready to face whatever challenges await.\n\nThe real journey begins now.",
+      "choices": [
+        {
+          "id": "continue_to_act2",
+          "text": "Step into the light and begin Act 2",
+          "targetId": "ACT2_START",
+          "conditions": [
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "flag", "flag": "FACTION_A_JOINED", "value": true },
+                { "type": "flag", "flag": "FACTION_B_JOINED", "value": true },
+                { "type": "flag", "flag": "FACTION_C_JOINED", "value": true }
+              ]
+            }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "ACT1_COMPLETE" },
+            { "type": "triggerEvent", "event": "act_transition", "data": { "from": 1, "to": 2 } }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "setFlag", "flag": "FACTION_CHOICE_LOCKED" }
+      ],
+      "tags": ["transition", "act1"]
+    }
+  ],
+  "items": [
+    {
+      "id": "ITEM_SACRED_AMULET",
+      "name": "Sacred Amulet",
+      "description": "An ancient golden amulet that pulses with inner light. It whispers of sacrifice and redemption, hinting at a destiny that may demand the ultimate price.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "key", "sacrifice_path"]
+    },
+    {
+      "id": "ITEM_SURVIVAL_KIT",
+      "name": "Survival Kit",
+      "description": "A well-stocked kit containing dried rations, a waterskin, flint and steel, and basic medical supplies. Essential for surviving the harsh journey ahead.",
+      "stackable": false,
+      "usable": true,
+      "consumable": true,
+      "onUse": [
+        { "type": "modifyStat", "stat": "health", "delta": 25, "clampMin": 0 }
+      ],
+      "tags": ["consumable", "survival"]
+    },
+    {
+      "id": "ITEM_MAP_FRAGMENT_1",
+      "name": "Map Fragment (North)",
+      "description": "A fragment of an ancient map detailing hidden paths and secret entrances in the northern territories. It may reveal routes unknown to most travelers.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["key", "exploration"]
+    }
+  ],
+  "initialState": {
+    "currentNodeId": "ACT1_START",
+    "flags": {
+      "ALLY_MARCUS_ALIVE": true,
+      "ALLY_ELENA_ALIVE": true
+    },
+    "stats": {
+      "health": 100,
+      "maxHealth": 100
+    },
+    "inventory": [],
+    "factions": {
+      "factionA": 50,
+      "factionB": 50,
+      "factionC": 50
+    }
+  }
+}
