@@ -10,7 +10,9 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:content": "node src/tools/validate-content.js",
+    "validate:assets": "node src/tools/validate-assets.js"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
