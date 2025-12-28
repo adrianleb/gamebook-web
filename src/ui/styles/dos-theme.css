@@ -1,0 +1,173 @@
+/**
+ * DOS-style Theme CSS Variables
+ * Based on UI.md specification - 16-color DOS palette
+ */
+
+:root {
+  /* === DOS 16-Color Palette === */
+  --dos-black: #000000;
+  --dos-dark-blue: #0000AA;
+  --dos-dark-green: #00AA00;
+  --dos-dark-cyan: #00AAAA;
+  --dos-dark-red: #AA0000;
+  --dos-dark-magenta: #AA00AA;
+  --dos-brown: #AA5500;
+  --dos-light-gray: #AAAAAA;
+  --dos-dark-gray: #555555;
+  --dos-light-blue: #5555FF;
+  --dos-light-green: #55FF55;
+  --dos-light-cyan: #55FFFF;
+  --dos-light-red: #FF5555;
+  --dos-light-magenta: #FF55FF;
+  --dos-yellow: #FFFF55;
+  --dos-white: #FFFFFF;
+
+  /* === Semantic Color Mappings === */
+  --color-bg-primary: var(--dos-black);
+  --color-bg-secondary: var(--dos-dark-blue);
+  --color-text-primary: var(--dos-white);
+  --color-text-secondary: var(--dos-light-gray);
+  --color-text-disabled: var(--dos-dark-gray);
+  --color-border: var(--dos-brown);
+  --color-border-focus: var(--dos-light-cyan);
+  --color-selection-bg: var(--dos-light-green);
+  --color-selection-fg: var(--dos-black);
+  --color-link: var(--dos-dark-cyan);
+  --color-success: var(--dos-light-green);
+  --color-error: var(--dos-light-red);
+  --color-warning: var(--dos-yellow);
+  --color-header: var(--dos-yellow);
+  --color-input-prompt: var(--dos-light-cyan);
+  --color-special-item: var(--dos-dark-magenta);
+  --color-rare-item: var(--dos-light-magenta);
+
+  /* === Typography === */
+  --font-mono: "Consolas", "Monaco", "Courier New", monospace;
+  --font-size-base: 16px;
+  --line-height: 1.0;
+  --letter-spacing: 0;
+
+  /* === Terminal Constraints === */
+  --terminal-cols: 80;
+  --terminal-rows: 24;
+  --char-width: 1ch;
+  --char-height: 1.2em;
+
+  /* === Layout Dimensions === */
+  --header-height: 2;
+  --status-bar-height: 1;
+  --input-area-height: 3;
+  --main-content-height: 18;
+
+  /* === Spacing === */
+  --spacing-none: 0;
+  --spacing-xs: 1ch;
+  --spacing-sm: 2ch;
+  --spacing-md: 4ch;
+  --spacing-lg: 8ch;
+
+  /* === Box Drawing Characters (for reference in JS) === */
+  /* Single: ─ │ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ┼ */
+  /* Double: ═ ║ ╔ ╗ ╚ ╝ ╠ ╣ ╦ ╩ ╬ */
+}
+
+/* === Base Styles === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size-base);
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#app {
+  width: 100%;
+  max-width: calc(var(--terminal-cols) * var(--char-width));
+  height: calc(var(--terminal-rows) * var(--char-height));
+  position: relative;
+}
+
+/* === Selection Indicator === */
+.selection-marker::before {
+  content: "\25BA "; /* ► */
+  color: var(--color-selection-bg);
+}
+
+/* === Text Styles === */
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-disabled {
+  color: var(--color-text-disabled);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-header {
+  color: var(--color-header);
+}
+
+/* === State Prefixes (Accessibility) === */
+.state-error::before {
+  content: "[!] ";
+  color: var(--color-error);
+}
+
+.state-success::before {
+  content: "[✓] ";
+  color: var(--color-success);
+}
+
+.state-disabled::before {
+  content: "[-] ";
+  color: var(--color-text-disabled);
+}
+
+/* === Focus States === */
+.focus-visible {
+  outline: none;
+  border-color: var(--color-border-focus);
+}
+
+/* === Screen Reader Only === */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
