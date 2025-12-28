@@ -22,9 +22,5 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-  },
+  // Test config is in vitest.config.ts
 });
