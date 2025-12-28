@@ -19,6 +19,12 @@ export {
   type ScreenSection,
 } from './components/Screen';
 
+export {
+  createConfirmDialog,
+  type ConfirmDialog,
+  type ConfirmDialogOptions,
+} from './components/ConfirmDialog';
+
 // Screens
 export {
   createTitleScreen,
@@ -33,6 +39,27 @@ export {
   type GameScreenCallbacks,
   type Choice,
 } from './screens/GameScreen';
+
+export {
+  createPauseScreen,
+  type PauseScreen,
+  type PauseScreenCallbacks,
+  type PauseAction,
+} from './screens/PauseScreen';
+
+export {
+  createSaveScreen,
+  type SaveScreen,
+  type SaveSlotData,
+  type SaveScreenCallbacks,
+} from './screens/SaveScreen';
+
+export {
+  createLoadScreen,
+  type LoadScreen,
+  type LoadSlotData,
+  type LoadScreenCallbacks,
+} from './screens/LoadScreen';
 
 // Input
 export {
