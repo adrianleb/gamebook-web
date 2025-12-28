@@ -218,6 +218,41 @@ Modern browsers block autoplay. Implementation must:
 3. Resume AudioContext on first user click
 4. Music should start only after user initiates New Game or Load
 
+### Error Handling
+
+When an audio asset fails to load or play:
+
+| Scenario | Behavior | User Feedback |
+|----------|----------|---------------|
+| SFX file missing | Log warning, continue silently | None (graceful degradation) |
+| Music file missing | Log error, continue without music | None |
+| Decode error | Log error, skip asset | None |
+| AudioContext blocked | Queue sounds, play on resume | "Click to enable audio" prompt |
+| Memory limit exceeded | Unload oldest unused assets | None |
+
+**Implementation Notes:**
+
+1. **Graceful degradation**: Game must remain fully playable without audio
+2. **Console warnings**: Log missing assets in development for debugging
+3. **No runtime crashes**: Audio failures never throw uncaught exceptions
+4. **Fallback chain**: Try .ogg → .mp3 → silent fallback
+
+```typescript
+// Example error handling pattern
+function playSFX(id: string): void {
+  const sound = loadedSFX.get(id);
+  if (!sound) {
+    console.warn(`[Audio] SFX not loaded: ${id}`);
+    return; // Silent fallback
+  }
+  try {
+    sound.play();
+  } catch (e) {
+    console.error(`[Audio] Playback failed: ${id}`, e);
+  }
+}
+```
+
 ## Licensing Requirements
 
 All audio assets must be:
@@ -243,6 +278,80 @@ All audio assets must be:
 ### Music
 - exploration.ogg - "Dungeon Theme" by Author Name (CC-BY 4.0) - [source URL]
 ```
+
+## QA Testing Methodology
+
+### Asset Validation Tests
+
+Automated tests to verify audio asset compliance:
+
+```bash
+# Asset existence check
+for sfx in menu_move menu_select menu_back menu_error choice_hover \
+           choice_select page_turn inventory_open inventory_close \
+           item_pickup item_use save load stat_up stat_down game_over victory; do
+  [ -f "src/assets/audio/sfx/${sfx}.ogg" ] || echo "Missing: ${sfx}.ogg"
+done
+
+# File size validation
+find src/assets/audio/sfx -name "*.ogg" -size +100k -exec echo "SFX too large: {}" \;
+find src/assets/audio/music -name "*.ogg" -size +2M -exec echo "Music too large: {}" \;
+```
+
+### Volume Persistence Tests
+
+| Test Case | Steps | Expected |
+|-----------|-------|----------|
+| Initial defaults | Launch fresh, check settings | Master=80, SFX=100, Music=50, Muted=false |
+| Save volume change | Adjust master to 50%, reload | Master=50% persists |
+| Mute persistence | Enable mute, reload | Mute state persists |
+| Cross-session | Change settings, close browser, reopen | All settings preserved |
+| Cross-slot | Adjust audio, load different save | Audio settings unchanged |
+
+### Music Loop Testing
+
+To verify seamless music loops:
+
+1. **Manual listening test**: Play each music track for 3+ complete loops, listening for:
+   - Audible pop/click at loop point
+   - Volume discontinuity
+   - Rhythmic irregularity at transition
+
+2. **Visual waveform inspection**:
+   - Open track in Audacity or similar
+   - Compare waveform at loop start vs. end
+   - End sample should approach start sample smoothly
+
+3. **Automated loop validation** (build-time):
+   ```javascript
+   // Check loop metadata exists
+   function validateLoopPoints(audioFile) {
+     const metadata = readOggMetadata(audioFile);
+     if (!metadata.LOOPSTART || !metadata.LOOPLENGTH) {
+       console.warn(`Missing loop metadata: ${audioFile}`);
+     }
+   }
+   ```
+
+4. **Crossfade fallback**: If perfect loops aren't achievable, ensure crossfade (500-1000ms) masks transition
+
+### Performance Tests
+
+| Test Case | Method | Pass Criteria |
+|-----------|--------|---------------|
+| Concurrent SFX limit | Trigger 6+ rapid SFX | Only 4 play; no errors |
+| Memory budget | Load all audio, measure | <10MB total |
+| SFX latency | Timestamp input vs. output | <50ms delay |
+| Browser autoplay | Load page, check audio state | AudioContext suspended until interaction |
+
+### Browser Autoplay Tests
+
+| Browser | Test Steps | Expected |
+|---------|------------|----------|
+| Chrome | Load page, check DevTools | AudioContext: "suspended" |
+| Firefox | Load page, check console | No autoplay warnings |
+| Safari | Load page, tap screen | Audio context resumes on interaction |
+| Mobile Chrome | Load, tap, verify | Audio plays after first touch |
 
 ---
 
