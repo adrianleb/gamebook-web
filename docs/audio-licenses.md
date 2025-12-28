@@ -20,6 +20,43 @@ All audio assets in this project are licensed under **CC0 (Creative Commons Zero
 | `menu_error.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | Lose 1 |
 | `page_turn.ogg` | [80 CC0 RPG SFX](https://opengameart.org/content/80-cc0-rpg-sfx) | rubberduck | CC0 | book_01 |
 
+### Choice/Selection Sounds
+
+| File | Source | Author | License | Original Name |
+|------|--------|--------|---------|---------------|
+| `choice_hover.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | Blip 2 |
+| `choice_select.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | Blip 5 |
+
+### Inventory Sounds
+
+| File | Source | Author | License | Original Name |
+|------|--------|--------|---------|---------------|
+| `inventory_open.ogg` | [80 CC0 RPG SFX](https://opengameart.org/content/80-cc0-rpg-sfx) | rubberduck | CC0 | chain_01 |
+| `inventory_close.ogg` | [80 CC0 RPG SFX](https://opengameart.org/content/80-cc0-rpg-sfx) | rubberduck | CC0 | chain_02 |
+| `item_pickup.ogg` | [80 CC0 RPG SFX](https://opengameart.org/content/80-cc0-rpg-sfx) | rubberduck | CC0 | item_gem_01 |
+| `item_use.ogg` | [80 CC0 RPG SFX](https://opengameart.org/content/80-cc0-rpg-sfx) | rubberduck | CC0 | spell_01 |
+
+### Save/Load Sounds
+
+| File | Source | Author | License | Original Name |
+|------|--------|--------|---------|---------------|
+| `save.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | Powerup 1 |
+| `load.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | Teleport 1 |
+
+### Stat Change Sounds
+
+| File | Source | Author | License | Original Name |
+|------|--------|--------|---------|---------------|
+| `stat_up.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | 1up 1 |
+| `stat_down.ogg` | [Sound Effects Pack 2](https://opengameart.org/content/sound-effects-pack-2) | phoenix1291 (SwissArcadeGameEntertainment) | CC0 | Lose 2 |
+
+### Ending Fanfares
+
+| File | Source | Author | License | Original Name |
+|------|--------|--------|---------|---------------|
+| `game_over.ogg` | [Music Jingles](https://kenney.nl/assets/music-jingles) | Kenney | CC0 | jingles_NES14 |
+| `victory.ogg` | [Music Jingles](https://kenney.nl/assets/music-jingles) | Kenney | CC0 | jingles_NES00 |
+
 ---
 
 ## Music
