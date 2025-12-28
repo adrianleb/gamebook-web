@@ -1,0 +1,35 @@
+{
+  "audioDir": "src/assets/audio",
+  "requiredSfx": [
+    "menu_move",
+    "menu_select",
+    "menu_back",
+    "menu_error",
+    "choice_hover",
+    "choice_select",
+    "page_turn",
+    "inventory_open",
+    "inventory_close",
+    "item_pickup",
+    "item_use",
+    "save",
+    "load",
+    "stat_up",
+    "stat_down",
+    "game_over",
+    "victory"
+  ],
+  "requiredMusic": [
+    "title",
+    "exploration",
+    "tension",
+    "victory",
+    "defeat"
+  ],
+  "limits": {
+    "sfxMaxSizeKB": 100,
+    "musicMaxSizeMB": 2
+  },
+  "allowedFormats": [".ogg"],
+  "fallbackFormats": [".mp3"]
+}
