@@ -2,189 +2,201 @@
 
 ## 1. Definition of the Deliverable (what we’re building, definition of done)
 
-### Product
-A fully playable, browser-based RPG/adventure game that adapts the referenced gamebook (https://github.com/adrianleb/gamebook) into an end-to-end experience.
+### Deliverable
+A complete, browser-based, start-to-finish playable RPG/adventure game adapted from the referenced gamebook repository (https://github.com/adrianleb/gamebook), presented with an old-school DOS / LucasArts-style adventure vibe (e.g., chunky UI, pixel-ish presentation, strong dialogue scenes, inventory interactions, punchy SFX).
 
-### Experience Goals
-- Old-school DOS vibe (EGA/VGA-like palette, chunky UI, bitmap-ish typography, terminal-ish framing).
-- Adventure-game feel inspired by LucasArts era: scene-based navigation, conversational/choice-driven progression, inventory/flags, readable feedback.
-- Runs entirely in-browser (desktop-first), no installs.
-
-### Functional Scope (must-have)
-- Start-to-finish playthrough: player can begin at the intro and reach one or more endings with no dead blockers.
-- Gamebook content faithfully represented: nodes/sections, choices, conditions, consequences.
-- Core systems:
-  - State: stats, inventory, flags, visited nodes, current location.
-  - Choice gating: requirements (items/flags/stats), skill checks (if present/derived), branching outcomes.
-  - Save/Load: localStorage (at minimum 3 slots), plus “restart”.
-  - UI: main viewport, text log, choices list, optional scene art panel, status panel.
-  - Accessibility basics: keyboard navigation for choices, readable contrast.
+### Non-negotiables
+- Playable from the first screen to an ending (win/lose or multiple endings), with no dead ends caused by missing content.
+- Fully functional game loop: title → new game → gameplay → save/load → ending → credits.
+- Narrative parity with the source: all book nodes/scenes are represented, including choices and outcomes, unless intentionally adapted (documented via ADR).
+- DOS-era presentation: keyboard-friendly, strong text/box UI, optional mouse, retro typography, sound cues.
+- Runs locally and in a typical static hosting environment (no server required unless explicitly decided).
 
 ### Definition of Done
-- ✅ Game can be played from start to a valid ending in a clean browser session.
-- ✅ No critical console errors; build passes CI.
-- ✅ Save/Load works reliably across refresh.
-- ✅ Content pipeline exists (data-driven), not hard-coded per scene.
-- ✅ QA checklist in section 6 fully satisfied.
-
-Non-goals (unless explicitly approved): multiplayer, 3D, procedural generation, voice acting, external accounts, large asset pipelines.
-
----
+Done means:
+1) The entire story graph is implemented and reachable.
+2) The engine supports all mechanics required by the story (flags, stats, combat if needed, inventory, skill checks, randomization if required).
+3) UI/UX supports reading, choosing, navigating, and managing player state without friction.
+4) Save/Load is reliable (slot-based) and versioned.
+5) Audio/visual package is coherent and consistent with the intended vibe.
+6) QA checklist passes; no P0/P1 bugs; the game can be completed in at least two full playthroughs.
 
 ## 2. Collaboration Rules (decision ownership by agent name, decision protocol)
 
-### Decision Ownership
-- Agent A owns integration decisions: final architecture, repo structure, build tooling, merge decisions.
-- Agent B owns game content mapping decisions: how the gamebook is translated into nodes/choices/flags, and correctness vs. source.
-- Agent C owns visual/interaction decisions: DOS vibe UI, typography, layout, input feel.
-- Agent D owns quality decisions: test plan, acceptance checks, regression prevention.
+### Decision ownership
+- Agent A owns final integration decisions, repo health, and release readiness.
+- Agent B owns narrative accuracy, dialogue tone, branching integrity, and content completeness.
+- Agent C owns engine/system design (state machine, data formats, save system, core mechanics).
+- Agent D owns UI/interaction patterns, visual language, accessibility, and “DOS vibe” execution.
+- Agent E owns audio pipeline, asset organization, and build-time tooling for content ingestion.
+- Agent F owns QA strategy, playthrough validation, bug triage, and regression tracking.
 
-### Decision Protocol
-1. Propose: any agent can propose via a short “Decision Note” in PR description (context → options → recommendation → impact).
-2. Review: at least one non-author agent reviews; Agent A is required for merges.
-3. Resolve: if conflict:
-   - Prefer data-driven and minimal custom logic.
-   - Prefer player-unblockable flow over perfect simulation.
-   - If still stuck: Agent A makes the final call after reading both sides.
+### Decision protocol
+- Any non-trivial change requires a short RFC (in /docs/rfcs) before implementation.
+- Architectural changes require an ADR (in /docs/adrs). Agent A merges ADRs after review by at least one other agent.
+- Conflicts are resolved by:
+  1) Documenting trade-offs in an RFC/ADR.
+  2) Agent A makes the final call after input from the relevant owners.
 
-### Working Agreements
-- No large PRs without a short plan.
-- “Broken main is forbidden”: all merges must pass build and smoke playthrough.
-- Every new feature must include at least one validation note (how to test quickly).
-
----
+### Review rules
+- Every PR needs at least one reviewer.
+- Cross-review expectations:
+  - Agent B reviews story-data changes that affect narrative.
+  - Agent C reviews engine/system changes.
+  - Agent D reviews UI changes.
+  - Agent F reviews anything that impacts testability or completion.
 
 ## 3. Workflow: Phases and Cycles (macro phases, micro cycle format)
 
-### Macro Phases
-1. **Discovery & Spec Lock**
-   - Confirm what the gamebook contains (format, nodes, rules).
-   - Draft a minimal rules model and content schema.
+### Macro phases
+1) Discovery & Specification
+   - Confirm source content structure, mechanics requirements, endings.
+   - Produce GDD + Story Map + Data Schema.
+2) Foundation Build
+   - Implement engine skeleton, renderer/UI shell, content loader, save/load.
+3) Vertical Slice (Representative Chapter)
+   - One full segment including inventory, checks, transitions, audio, save/load.
+4) Full Content Implementation
+   - Implement all scenes/nodes, items, flags, combat/checks, endings.
+5) Polish & Balancing
+   - UI polish, pacing, difficulty tuning, missing art/sfx, performance.
+6) QA & Release
+   - Full playthroughs, fixes, final build, release notes.
 
-2. **Vertical Slice**
-   - Implement engine + UI + one small chapter path end-to-end.
-   - Save/Load enabled.
-
-3. **Full Content Implementation**
-   - Convert all gamebook sections into structured data.
-   - Hook conditions, outcomes, endings.
-
-4. **Polish & QA**
-   - UI refinement (DOS vibe), performance, accessibility.
-   - Fix dead ends, add guardrails, finalize.
-
-### Micro Cycle (repeat weekly or per milestone)
-- Plan (½ day): choose 3–6 tickets, define acceptance.
-- Build (2–4 days): small PRs.
-- Integrate (½ day): merge, resolve conflicts.
-- Validate (½–1 day): smoke playthrough + checklist.
-
----
+### Micro cycle format (repeat weekly or per milestone)
+1) Plan: each agent proposes tasks + acceptance criteria.
+2) Implement: small PRs (ideally <500 LOC diff) aligned to acceptance.
+3) Review: required reviewers per section 2.
+4) Integrate: Agent A merges; resolve conflicts; update changelog.
+5) Validate: Agent F runs targeted regression + at least one path check.
 
 ## 4. Content Format & Conventions (domain-specific)
 
-### Canonical Game Model (data-driven)
-- **Node**: a playable section/screen.
-  - `id`: stable string.
-  - `title`: optional.
-  - `text`: array of paragraphs (support inline markup).
-  - `art`: optional reference.
-  - `effects`: list of state changes applied on entry.
-  - `choices`: list of player options.
+### Story/content model
+- Source material is treated as the canonical narrative reference.
+- Game content must be data-driven:
+  - Scenes/nodes with IDs
+  - Text blocks with optional speaker tags
+  - Choices with conditions/effects
+  - Effects: set/clear flags, stat changes, inventory changes, route transitions
 
-- **Choice**:
-  - `id`, `label`
-  - `requirements`: flags/items/stat thresholds.
-  - `checks`: optional RNG/skill check (seeded).
-  - `effects`: applied on select.
-  - `next`: next node id (or `ending`).
+### Data conventions
+- All nodes/scenes use stable IDs (no renaming without a migration note).
+- Conditions/effects are declarative (no embedded arbitrary code in content files).
+- Localization-ready text: no string concatenation for player-facing lines.
+- Every node must define at least:
+  - title (internal)
+  - body (text)
+  - exits/choices (or an explicit end)
 
-- **State**:
-  - `stats`: numeric
-  - `inventory`: set
-  - `flags`: set
-  - `history`: visited nodes, choice ids
+### UI/UX conventions
+- Keyboard-first navigation:
+  - Arrow keys / WASD to move selection
+  - Enter to confirm
+  - Esc to back/menu
+  - Hotkeys 1-9 for choices when applicable
+- DOS vibe constraints:
+  - Fixed grid-ish layout, strong borders, high-contrast palette
+  - Monospace/bitmap-style font (or convincingly retro)
+  - Responsive but keeps “terminal panel” feel on wide screens
 
-### Conventions
-- Content-first: adding content should not require code edits.
-- Deterministic randomness: seeded per save for reproducibility.
-- Text markup: minimal and explicit (e.g., `**bold**`, `_italics_`, `[item:SOMETHING]`).
-- All node ids are immutable once published; redirect via aliases if needed.
+### Save system conventions
+- Versioned saves with automatic migration where possible.
+- At minimum: 3 slots + autosave (optional but preferred).
 
----
+### Audio conventions
+- Short, punchy SFX for UI actions.
+- Background music optional but consistent; must not obstruct readability.
+- All assets credited and license-compatible.
 
 ## 5. Repo Layout
 
-- `/README.md` — run/dev/build instructions, gameplay summary
-- `/GANG.md` — this contract
-- `/docs/`
-  - `/docs/design.md` — UI + systems spec (Agent A owns)
-  - `/docs/content-spec.md` — node/choice schema + examples (Agent B owns)
-  - `/docs/qa.md` — test plan + playthrough checklist (Agent D owns)
-- `/src/`
-  - `/src/engine/` — state machine, rules, save/load
-  - `/src/content/` — compiled game content JSON (or TS objects)
-  - `/src/ui/` — components, layout, styling
-  - `/src/assets/` — fonts, palette, images, sounds
-  - `/src/index.*` — app entry
-- `/scripts/` — content build/validation scripts
-- `/tests/` — unit tests + content validation tests
-
----
+- /docs
+  - GDD.md (game design overview)
+  - STORY.md (story map, node index, endings)
+  - ENGINE.md (state model, data schema, save format)
+  - UI.md (screen flows, interaction, style guide)
+  - AUDIO.md (audio plan, asset list, pipeline)
+  - QA.md (test plan, playthrough scripts, bug rubric)
+  - /rfcs (short proposals)
+  - /adrs (architecture decisions)
+- /src
+  - /engine (state machine, rules, save/load)
+  - /content (compiled content output)
+  - /ui (components, screens, layout)
+  - /assets (fonts, images, audio)
+  - /tools (importers, validators)
+- /content-src
+  - (authoring format; imported/validated into /src/content)
+- /tests
+  - unit + content validation + golden path tests
 
 ## 6. QA & Validation Checklist
 
-### Build/Runtime
-- [ ] `npm test` (or equivalent) passes
-- [ ] `npm run build` produces a runnable bundle
-- [ ] No blocking console errors during play
+### Content completeness
+- [ ] All source nodes/sections represented and reachable.
+- [ ] No orphan nodes; no missing transitions.
+- [ ] Every ending reachable via at least one validated path.
 
-### Gameplay
-- [ ] Can start new game and reach at least one ending
-- [ ] No nodes with zero choices unless they are endings
-- [ ] No broken links (`next` points to missing node)
-- [ ] Requirements are satisfiable somewhere (no impossible gates)
-- [ ] Save/Load restores exact state (stats/inventory/flags/location)
-- [ ] Back/refresh resilience: refresh keeps game via autosave or explicit load
+### Engine correctness
+- [ ] Deterministic state updates (except explicit RNG).
+- [ ] Conditions/effects behave as specified.
+- [ ] Save/load preserves exact state (including RNG seed if used).
 
-### UI/UX
-- [ ] Keyboard navigation across choices
-- [ ] Readable text, consistent spacing, stable layout
-- [ ] DOS vibe implemented (palette/typography/windowing)
+### UX quality
+- [ ] Keyboard-only playthrough possible.
+- [ ] Choice selection always clear; no hidden required interactions.
+- [ ] Text is readable on common resolutions.
 
-### Content Validation
-- [ ] Schema validation for content files
-- [ ] Lint for unused flags/items, unreachable nodes report
+### Performance & stability
+- [ ] No hard crashes in full playthrough.
+- [ ] No memory leaks or runaway timers.
 
----
+### Audio/visual
+- [ ] Consistent palette/typography.
+- [ ] Audio levels balanced; mute/volume controls present.
+
+### Release readiness
+- [ ] Credits and licenses included.
+- [ ] Build produces a deployable artifact.
 
 ## 7. Kickoff Tasks (initial work per agent)
 
-### Agent A
-- Create project skeleton, build tooling, routing/state scaffolding.
-- Define initial engine interfaces (Node/Choice/State) aligned with content spec.
+- Agent A
+  - Create initial milestone plan and PR template.
+  - Establish CI checks (lint/test/build) and branching strategy.
+  - Draft /docs/GDD.md skeleton and acceptance criteria format.
 
-### Agent B
-- Inspect the referenced gamebook repo format.
-- Draft `/docs/content-spec.md` and produce a small converted sample (5–10 nodes) to power the vertical slice.
+- Agent B
+  - Audit the source gamebook structure and produce a node/scene index.
+  - Draft /docs/STORY.md with endings list and dependency notes (items/flags).
+  - Identify any unclear/ambiguous passages requiring adaptation.
 
-### Agent C
-- Draft UI style guide (palette, font approach, window chrome, layout).
-- Implement a first-pass UI shell compatible with engine (text log + choices + status panel).
+- Agent C
+  - Propose content schema + save schema and document in /docs/ENGINE.md.
+  - Implement minimal engine loop (load node → render → apply choice → next).
+  - Add content validator (missing IDs, invalid effects, unreachable nodes).
 
-### Agent D
-- Create `/docs/qa.md` and initial automated checks: schema validation + “no missing node ids”.
-- Define smoke playthrough steps for the vertical slice.
+- Agent D
+  - Draft /docs/UI.md: screen flow (title, game, inventory, pause, save/load).
+  - Produce a DOS-style layout spec (fonts, palette, borders, spacing).
+  - Define interaction model for inventory and choice lists.
 
----
+- Agent E
+  - Draft /docs/AUDIO.md with UI SFX list and music plan.
+  - Set up asset pipeline conventions and folder structure.
+  - Create initial UI sounds (placeholder allowed, licensed) and volume controls plan.
+
+- Agent F
+  - Draft /docs/QA.md including playthrough scripts and bug severity rubric.
+  - Define “golden path” test cases and content coverage targets.
+  - Set up a lightweight bug report template.
 
 ## 8. Guardrails (scope control, quality bar)
 
-- Don’t add new mechanics unless the gamebook requires them.
-- Prefer simple, robust systems over feature breadth (e.g., one solid save system).
-- Content conversion should be scripted/validated; avoid manual error-prone linking.
-- No large binary assets unless they directly improve readability or vibe.
-- Every PR must include:
-  - What changed
-  - How to test in <2 minutes
-  - Any content/schema impacts
+- No “we’ll do it later” placeholders in shipped content. Placeholders are allowed only during implementation and must be tracked in an issue list.
+- Any new mechanic must be justified by story needs and documented (RFC → ADR if accepted).
+- Avoid over-engineering: prefer a simple, testable state machine + declarative content.
+- Maintain retro vibe: do not drift into modern UI patterns that undermine the DOS/point-and-click feel.
+- Respect licensing: all third-party assets must be compatible and credited.
+- Quality bar: the game must be completable, readable, stable, and consistent; “MVP” shortcuts are out of scope.
