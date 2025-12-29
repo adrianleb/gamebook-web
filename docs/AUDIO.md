@@ -295,7 +295,7 @@ done
 
 # File size validation
 find src/assets/audio/sfx -name "*.ogg" -size +100k -exec echo "SFX too large: {}" \;
-find src/assets/audio/music -name "*.ogg" -size +2M -exec echo "Music too large: {}" \;
+find src/assets/audio/music -name "*.ogg" -size +3M -exec echo "Music too large: {}" \;
 ```
 
 ### Volume Persistence Tests
