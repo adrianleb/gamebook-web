@@ -140,7 +140,7 @@ The build pipeline should validate:
 
 - [ ] All required SFX files exist
 - [ ] Files are in correct format (.ogg)
-- [ ] File sizes are reasonable (<100KB for SFX, <2MB for music)
+- [ ] File sizes are reasonable (<100KB for SFX, <3MB for music)
 - [ ] No clipping detected (peak < 0dB)
 - [ ] Loop points defined for music tracks (metadata or separate loop file)
 
