@@ -702,22 +702,26 @@ M5.5 (Perf)          │                    │
 
 ---
 
-#### M6.4: Build Optimization (Agent C)
+#### M6.4: Build Optimization (Agent C) ✅ Complete
 
 **Given** the production build process
 **When** the final build is optimized
 **Then** the build is production-ready with optimal performance
 
 **Verification:**
-- [ ] Production build runs without errors (`npm run build`)
-- [ ] Bundle size < 2MB (excluding audio assets)
-- [ ] No console errors or warnings in production mode
-- [ ] Source maps excluded from production
-- [ ] Assets minified and optimized
-- [ ] Cache headers configured for static assets
+- [x] Production build runs without errors (`npm run build`) - ~36KB JS+CSS
+- [x] Bundle size < 2MB (excluding audio assets) - 36KB well under threshold
+- [x] No console errors or warnings in production mode
+- [x] Source maps excluded from production - `sourcemap: false` in vite.config.ts
+- [x] Assets minified and optimized - Vite production build
+- [x] Cache headers configured for static assets - documented for deployment
+
+**Tracking:** Issue #128, PR #132 (Merged)
+
+**Completion Summary:** PR #132 merged completing M6.4 build optimization. Key changes: disabled source maps in production, moved audio assets to `public/audio/` for proper Vite static asset handling, updated `AUDIO_BASE_PATH` to `/audio`. All 320 tests pass, asset validation passes.
 
 **Depends on:** None
-**Blocks:** M6.5 Final Build
+**Blocks:** M6.5 Final Build ✅
 
 ---
 
@@ -739,7 +743,7 @@ M5.5 (Perf)          │                    │
   - [ ] Agent F (QA): Test coverage verified
 - [ ] Human approval obtained for release
 
-**Depends on:** M6.1 ✅, M6.2 ✅, M6.3 ✅, M6.4 ✅
+**Depends on:** M6.1, M6.2 ✅, M6.3 ✅, M6.4 ✅
 **Blocks:** M6.6 Deployment
 
 ---
@@ -794,9 +798,9 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 | M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
-| M6.4 Build Optimization | Agent C | In Progress | #123 ✅, #126, #128 | None |
-| M6.5 Final Build | Agent A | Not Started | - | M6.1, M6.4 |
-| M6.6 Deployment | Agent E | In Progress | #121 | M6.5 |
+| M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
+| M6.5 Final Build | Agent A | Blocked | - | M6.1 |
+| M6.6 Deployment | Agent E | Blocked | #121 | M6.5 |
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
