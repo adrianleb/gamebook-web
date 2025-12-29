@@ -516,20 +516,20 @@ Verify content integrity and completeness.
 
 | Ending | Script Ready | Tested | Last Verified |
 |--------|--------------|--------|---------------|
-| Ending 1: Victory | ✅ | [ ] | - |
-| Ending 2: Sacrifice | ✅ | [ ] | - |
-| Ending 3: Betrayal | ✅ | [ ] | - |
-| Ending 4: Neutral | ✅ | [ ] | - |
-| Ending 5: Death | ✅ | [ ] | - |
+| Ending 1: Victory | ✅ | ✅ | 2025-12-29 |
+| Ending 2: Sacrifice | ✅ | ✅ | 2025-12-29 |
+| Ending 3: Betrayal | ✅ | ✅ | 2025-12-29 |
+| Ending 4: Neutral | ✅ | ✅ | 2025-12-29 |
+| Ending 5: Death | ✅ | ✅ | 2025-12-29 |
 
 ### Path Coverage
 
 | Metric | Target | Current |
 |--------|--------|---------|
 | Golden paths documented | 5/5 | ✅ 5/5 |
-| Golden paths verified | 5/5 | 0/5 |
+| Golden paths verified | 5/5 | ✅ 5/5 |
 | Edge cases documented | 10+ | ✅ 8 |
-| Regression suite size | 20+ cases | TBD |
+| Regression suite size | 20+ cases | ✅ 72 |
 
 ---
 
