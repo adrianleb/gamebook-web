@@ -288,16 +288,16 @@ M3 is complete when:
 
 #### M4.1 Scope Definition
 
-**Current State:** 71 nodes (40 Act1 + 14 Act2 + 17 Act3)
+**Current State:** 137 nodes (40 Act1 + 80 Act2 + 17 Act3)
 **Target State:** 165 nodes (~45 Act1 + ~64 Act2 + ~56 Act3)
-**Gap:** 94 nodes to add
+**Gap:** 28 nodes to add (Act 3 expansion only)
 
-> **Note:** Act 1 expanded from 8→40 nodes via PR #72 (2025-12-29). Acts 2-3 expansion in progress.
+> **Note:** Act 1 expanded 8→40 nodes (PR #72). Act 2 expanded 14→80 nodes (PR #81, exceeds target). Act 3 expansion pending.
 
 | Act | Current | Target | Gap | Focus Areas | Status |
 |-----|---------|--------|-----|-------------|--------|
 | Act 1 | 40 | ~45 | ~5 | Faction intro paths, optional exploration, ally recruitment branches | ✅ PR #72 |
-| Act 2 | 14 | ~64 | ~50 | Artifact quests, temptation/prophecy paths, heist sequence | In Progress #75 |
+| Act 2 | 80 | ~64 | +16 | Artifact quests, ally storylines, heist sequence, betrayal path | ✅ PR #81 |
 | Act 3 | 17 | ~56 | ~39 | Ending variations, final confrontation branches, doom paths | Pending |
 
 #### M4.2 Acceptance Criteria
@@ -309,8 +309,8 @@ M3 is complete when:
 **Then** all nodes are reachable and no dead ends exist
 
 **Verification:**
-- [ ] Act 1 expanded to ~45 nodes with all faction intro variations
-- [ ] Act 2 expanded to ~64 nodes with artifact quest lines for each faction
+- [x] Act 1 expanded to ~45 nodes with all faction intro variations (PR #72: 40 nodes)
+- [x] Act 2 expanded to ~64 nodes with artifact quest lines for each faction (PR #81: 80 nodes)
 - [ ] Act 3 expanded to ~56 nodes with all ending approach paths
 - [ ] All 25 critical nodes from STORY.md implemented
 - [ ] Content validator passes with 0 errors, 0 orphan warnings
@@ -382,7 +382,7 @@ M3 is complete when:
 | Component | Owner | Dependencies | Status |
 |-----------|-------|--------------|--------|
 | Act 1 content expansion (8→40 nodes) | agent-b | STORY.md | ✅ Complete (PR #72) |
-| Act 2 content expansion (~50 nodes) | agent-b | STORY.md | In Progress (#75) |
+| Act 2 content expansion (14→80 nodes) | agent-b | STORY.md | ✅ Complete (PR #81) |
 | Act 3 content expansion (~39 nodes) | agent-b | STORY.md | Pending |
 | SaveManager implementation | agent-c | ENGINE.md §6 | ✅ Complete (PR #79) |
 | Ending Screen | agent-d | UI.md | ✅ Complete (PR #66) |
@@ -411,7 +411,7 @@ M3 is complete when:
 #### M4.5 Definition of Done
 
 M4 is complete when:
-- [ ] 165 nodes implemented (all acts fully populated) — Currently 71/165
+- [ ] 165 nodes implemented (all acts fully populated) — Currently 137/165
 - [ ] All 5 endings reachable and tested
 - [ ] All 9 items acquirable
 - [ ] All 16 flags functional
