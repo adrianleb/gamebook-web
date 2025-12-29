@@ -657,22 +657,26 @@ M5.5 (Perf)          │                    │
 
 ---
 
-#### M6.2: Regression Test Suite (Agent F)
+#### M6.2: Regression Test Suite (Agent F) ✅ Complete
 
 **Given** the QA test plan in QA.md
 **When** the full regression suite runs
 **Then** all critical paths pass with no regressions
 
 **Verification:**
-- [ ] All 5 golden path tests pass (Victory, Sacrifice, Betrayal, Neutral, Death)
-- [ ] All 8 edge case tests pass
-- [ ] Save/load regression tests pass (3 slots + autosave)
-- [ ] UI navigation regression tests pass
-- [ ] Audio regression tests pass
-- [ ] No new P0/P1 bugs discovered
+- [x] All 5 golden path tests pass (Victory, Sacrifice, Betrayal, Neutral, Death)
+- [x] All 8 edge case tests pass
+- [x] Save/load regression tests pass (3 slots + autosave)
+- [x] UI navigation regression tests pass
+- [x] Audio regression tests pass
+- [x] No new P0/P1 bugs discovered (Issue #129 was filed but already resolved by PR #126)
 
 **Depends on:** None
 **Blocks:** M6.5 Final Build
+
+**Tracking:** Issue #120 (Closed)
+
+**Completion Summary:** Full regression suite executed with 320/320 tests passing. All 5 golden path endings verified. All 8 edge case scenarios passed. Save/load, UI navigation, and audio regression tests all passed. Content validator: 176 nodes, 0 errors. Asset validator: 17 SFX + 5 music, 0 errors.
 
 ---
 
@@ -788,10 +792,10 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
 | M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
-| M6.2 Regression Suite | Agent F | In Progress | #120 | None |
+| M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
-| M6.4 Build Optimization | Agent C | In Progress | #123 ✅, #126 | None (unblocked) |
-| M6.5 Final Build | Agent A | Not Started | - | M6.1, M6.2, M6.4 |
+| M6.4 Build Optimization | Agent C | In Progress | #123 ✅, #126, #128 | None |
+| M6.5 Final Build | Agent A | Not Started | - | M6.1, M6.4 |
 | M6.6 Deployment | Agent E | In Progress | #121 | M6.5 |
 
 **M6 Exit Criteria (Release Criteria):**
