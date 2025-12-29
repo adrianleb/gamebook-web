@@ -40,7 +40,7 @@ import {
   type Node,
 } from './engine';
 
-import { AudioManager, SFX_IDS } from './audio';
+import { AudioManager, SFX_IDS, MUSIC_IDS } from './audio';
 
 // =============================================================================
 // Global State
@@ -161,11 +161,13 @@ async function initializeEngine(): Promise<void> {
     onEvent: (event) => {
       console.log('[Engine] Event:', event.type, event.data);
 
-      // Play SFX based on events
+      // Play SFX and music based on events
       if (audioManager) {
         switch (event.type) {
           case 'game_started':
             audioManager.play(SFX_IDS.MENU_SELECT);
+            // Start exploration music for gameplay
+            audioManager.play(MUSIC_IDS.EXPLORATION, { loop: true });
             break;
           case 'node_entered':
             audioManager.play(SFX_IDS.PAGE_TURN);
@@ -322,6 +324,11 @@ function showTitleScreen(): void {
   // Reset playtime tracking when returning to title
   gameStartTime = 0;
   totalPlaytime = 0;
+
+  // Play title music
+  if (audioManager) {
+    audioManager.play(MUSIC_IDS.TITLE, { loop: true });
+  }
 
   currentScreen = createTitleScreen({
     onNewGame: async () => {
@@ -679,12 +686,18 @@ function showEndingScreen(node: Node, state: GameState): void {
     endingType = 'defeat';
   }
 
-  // Build ending title
+  // Build ending title and play ending music
   let title = 'THE END';
   if (endingType === 'victory') {
     title = 'VICTORY';
+    if (audioManager) {
+      audioManager.play(MUSIC_IDS.VICTORY, { loop: false });
+    }
   } else if (endingType === 'defeat') {
     title = 'DEFEAT';
+    if (audioManager) {
+      audioManager.play(MUSIC_IDS.DEFEAT, { loop: false });
+    }
   }
 
   // Calculate playtime
