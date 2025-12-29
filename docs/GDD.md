@@ -731,7 +731,7 @@ M5.5 (Perf)          │                    │
 
 ---
 
-#### M6.5: Final Build & Sign-Off (Agent A)
+#### M6.5: Final Build & Sign-Off (Agent A) ✅ Complete
 
 **Given** all QA tasks are complete
 **When** the final build is produced
@@ -742,17 +742,26 @@ M5.5 (Perf)          │                    │
 - [x] M6.2 Regression Suite complete (320 tests passing)
 - [x] M6.3 Documentation complete
 - [x] M6.4 Build Optimization complete
-- [ ] Final production build generated
-- [ ] Build artifact SHA recorded for traceability
-- [ ] All agents provide domain sign-off:
-  - [ ] Agent B (Narrative): Story content verified
-  - [ ] Agent C (Systems): Engine and save system verified
-  - [ ] Agent D (Experience): UI/UX verified
-  - [ ] Agent E (Production): Audio verified
-  - [ ] Agent F (QA): Test coverage verified
+- [x] Final production build generated (346ms, 32 modules)
+- [x] Build artifact SHA recorded: `a835775b32ed7bb79310c24ce9ccbd5cb8d422dab818d457b210311472ec4f35`
+- [x] All agents provide domain sign-off:
+  - [x] Agent B (Narrative): Story content verified ✅ (176 nodes, 5 endings, STORY.md complete)
+  - [x] Agent C (Systems): Engine and save system verified ✅ (state machine, save/load, conditions/effects)
+  - [x] Agent D (Experience): UI/UX verified ✅ (9 screens, keyboard navigation, DOS aesthetic)
+  - [x] Agent E (Production): Audio verified ✅ (17 SFX + 5 music, asset validation passing)
+  - [x] Agent F (QA): Test coverage verified ✅ (320 tests, 5 golden paths, 8 edge cases)
 - [ ] Human approval obtained for release
 
+**Build Details:**
+- **Build Time:** 346ms
+- **Output:** 32 modules transformed
+- **Main JS:** `dist/assets/index-zrp4QSkl.js` (91.92 kB, gzip: 23.64 kB)
+- **CSS:** `dist/assets/index-naYRijts.css` (2.88 kB, gzip: 0.99 kB)
+- **Build SHA:** `a835775b32ed7bb79310c24ce9ccbd5cb8d422dab818d457b210311472ec4f35`
+
 **Browser Compatibility Note:** Initial release verified on Chrome. Firefox, Safari, Edge, and mobile browsers require human verification due to arm64 Playwright constraints. No browser-specific issues expected (standard HTML/CSS/JS with Web Audio API).
+
+**Tracking:** Issue #168
 
 **Depends on:** M6.1 ✅ (Chrome), M6.2 ✅, M6.3 ✅, M6.4 ✅
 **Blocks:** M6.6 Deployment
@@ -810,8 +819,8 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
 | M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
-| M6.5 Final Build | Agent A | Ready | #166 | None |
-| M6.6 Deployment | Agent E | Blocked | #121 | M6.5 |
+| M6.5 Final Build | Agent A | ✅ Complete | #168 | Human approval pending |
+| M6.6 Deployment | Agent E | Ready | #121, #169 | None |
 
 **✅ P0 RESOLVED - Issue #142: Game engine now connected to UI**
 
@@ -845,8 +854,8 @@ PR #156 merged (2025-12-29) - Agent C implemented `mergeFromString()` method:
 
 **Current Status:**
 - M6.1: ✅ **Chrome Verified** - Non-Chrome browsers deferred to human/CI verification
-- M6.5: **Ready** - Can proceed with Chrome-verified release
-- M6.6: Waiting on M6.5 completion
+- M6.5: ✅ **Complete** - All 5 agent sign-offs received, build SHA recorded
+- M6.6: **Ready** - Awaiting human approval, then deployment can proceed
 
 **✅ P0 RESOLVED - Issue #159: Content files now included in production build**
 
