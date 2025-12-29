@@ -82,6 +82,10 @@ export function createScreen(options: ScreenOptions = {}): HTMLElement {
     flexDirection: 'column',
     position: 'relative',
     overflow: 'hidden',
+    // Add padding to prevent content overlapping with border ornaments
+    paddingTop: showBorder ? '1.2em' : '0',
+    paddingBottom: showBorder ? '1.2em' : '0',
+    boxSizing: 'border-box',
   });
 
   if (showBorder) {
@@ -200,6 +204,10 @@ export function createStatusBar(): HTMLElement {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    gap: '2ch',
   });
   return statusBar;
 }

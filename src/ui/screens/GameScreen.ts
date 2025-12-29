@@ -150,6 +150,10 @@ export function createGameScreen(
     if (state.hp) {
       const hpDisplay = document.createElement('span');
       hpDisplay.className = 'hp-display';
+      Object.assign(hpDisplay.style, {
+        flexShrink: '0',
+        whiteSpace: 'nowrap',
+      });
       const filled = Math.round((state.hp.current / state.hp.max) * 10);
       const empty = 10 - filled;
       const hpColor = state.hp.current / state.hp.max > 0.3
@@ -163,6 +167,10 @@ export function createGameScreen(
     if (state.gold !== undefined) {
       const goldDisplay = document.createElement('span');
       goldDisplay.className = 'gold-display';
+      Object.assign(goldDisplay.style, {
+        flexShrink: '0',
+        whiteSpace: 'nowrap',
+      });
       goldDisplay.innerHTML = `<span style="color: var(--color-warning, #FFFF55)">Gold:</span> ${state.gold}`;
       statusBar.appendChild(goldDisplay);
     }
@@ -171,6 +179,12 @@ export function createGameScreen(
     if (state.statusItems && state.statusItems.length > 0) {
       const itemsDisplay = document.createElement('span');
       itemsDisplay.className = 'status-items';
+      Object.assign(itemsDisplay.style, {
+        flexShrink: '1',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+      });
       itemsDisplay.textContent = state.statusItems.join('  ');
       statusBar.appendChild(itemsDisplay);
     }
