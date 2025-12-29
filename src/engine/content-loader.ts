@@ -29,6 +29,8 @@ export interface ContentLoader {
   getAllItems(): Item[];
   getInitialState(): InitialState;
   createInitialGameState(): GameState;
+  loadFromString(json: string): void;
+  mergeFromString(json: string): void;
 }
 
 export class JsonContentLoader implements ContentLoader {
@@ -82,6 +84,48 @@ export class JsonContentLoader implements ContentLoader {
         });
       }
       this.itemMap.set(item.id, item);
+    }
+  }
+
+  /**
+   * Merges content from a JSON string without clearing existing content.
+   * Use this for loading additional content files (e.g., act2, act3).
+   *
+   * @param json - JSON string containing additional content
+   * @throws EngineError if JSON is invalid
+   */
+  mergeFromString(json: string): void {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(json);
+    } catch {
+      throw new EngineError('INVALID_CONTENT', 'Failed to parse content JSON');
+    }
+
+    const manifest = parsed as ContentManifest;
+
+    // Add nodes without clearing (allow overwrites for cross-act references)
+    if (Array.isArray(manifest.nodes)) {
+      for (const node of manifest.nodes) {
+        this.nodeMap.set(node.id, node);
+      }
+    }
+
+    // Add items without clearing (allow overwrites for cross-act items)
+    if (Array.isArray(manifest.items)) {
+      for (const item of manifest.items) {
+        this.itemMap.set(item.id, item);
+      }
+    }
+
+    // Merge nodes and items into manifest.nodes/items arrays for getAllNodes/getAllItems
+    if (this.manifest) {
+      if (Array.isArray(manifest.nodes)) {
+        this.manifest.nodes.push(...manifest.nodes);
+      }
+      if (Array.isArray(manifest.items)) {
+        this.manifest.items.push(...manifest.items);
+      }
     }
   }
 

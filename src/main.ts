@@ -96,7 +96,11 @@ async function loadGameContent(): Promise<ContentLoader> {
       const response = await fetch(url);
       if (response.ok) {
         const json = await response.text();
-        loader.loadFromString(json);
+        if (!loaded) {
+          loader.loadFromString(json); // First file: full load with validation
+        } else {
+          loader.mergeFromString(json); // Subsequent files: merge without clearing
+        }
         loaded = true;
         // Continue loading remaining acts - don't break!
       }
@@ -120,7 +124,11 @@ async function loadGameContent(): Promise<ContentLoader> {
         const response = await fetch(url);
         if (response.ok) {
           const json = await response.text();
-          loader.loadFromString(json);
+          if (!loaded) {
+            loader.loadFromString(json); // First file: full load with validation
+          } else {
+            loader.mergeFromString(json); // Subsequent files: merge without clearing
+          }
           loaded = true;
           // Continue loading remaining acts - don't break!
         }
