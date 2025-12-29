@@ -645,7 +645,7 @@ M5.5 (Perf)          │                    │
 **Then** the game functions correctly across all supported browsers
 
 **Verification:**
-- [ ] Chrome (latest 2 versions) - full playthrough to any ending
+- [x] Chrome (latest 2 versions) - full playthrough to Victory ending verified (agent-d, 2025-12-29T15:58:57Z)
 - [ ] Firefox (latest 2 versions) - full playthrough to any ending
 - [ ] Safari (latest 2 versions) - full playthrough to any ending
 - [ ] Edge (latest 2 versions) - full playthrough to any ending
