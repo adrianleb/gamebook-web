@@ -5,18 +5,26 @@
  * Validates game content JSON against ENGINE.md schema and rules.
  * Catches errors at build time to prevent runtime issues.
  *
+ * Supports multi-file validation with two-pass approach:
+ *   Pass 1: Index all nodes with file origin, detect duplicate IDs
+ *   Pass 2: Validate cross-references against combined index
+ *
  * Exit codes: 0 = pass, 1 = error (blocking), 2 = warning
  *
  * Usage:
- *   node validate-content.js [--force] [--warn-only] [content-file]
+ *   node validate-content.js [--force] [--warn-only] [content-path]
+ *
+ * Examples:
+ *   node validate-content.js src/content              # Validate all act*.json in directory
+ *   node validate-content.js src/content/act1.json   # Validate single file
  *
  * Options:
  *   --force      Continue build even on errors (escape hatch)
  *   --warn-only  Report issues as warnings instead of errors
  *
  * Validation Rules (from ENGINE.md):
- *   1. DUPLICATE_NODE_ID   - Node ID uniqueness
- *   2. INVALID_TARGET      - Choice targets exist
+ *   1. DUPLICATE_NODE_ID   - Node ID uniqueness (across all files)
+ *   2. INVALID_TARGET      - Choice targets exist (cross-act references supported)
  *   3. INVALID_ITEM_REF    - Item references in conditions/effects are valid
  *   4. POTENTIAL_DEAD_END  - Nodes with no choices that aren't endings
  *   5. ORPHAN_NODE         - Nodes unreachable from start
@@ -34,45 +42,55 @@ import path from 'path';
 const args = process.argv.slice(2);
 const forceMode = args.includes('--force');
 const warnOnly = args.includes('--warn-only');
-const contentFile = args.find(arg => !arg.startsWith('--')) || 'src/content/content.json';
+const contentPath = args.find(arg => !arg.startsWith('--')) || 'src/content';
 
 // Validation result tracking
 const results = {
   errors: [],
-  warnings: []
+  warnings: [],
+  fileStats: new Map() // Track per-file statistics
 };
 
 /**
  * @typedef {Object} ValidationError
  * @property {string} code - Error code from ENGINE.md
  * @property {string} message - Human-readable error message
+ * @property {string} [file] - Source file path
  * @property {string} [nodeId] - Related node ID
  * @property {string} [choiceId] - Related choice ID
  * @property {string} [itemId] - Related item ID
  */
 
 /**
+ * @typedef {Object} NodeEntry
+ * @property {string} file - Source file path (relative)
+ * @property {Object} node - The node object
+ */
+
+/**
  * Log an error
  * @param {string} code - Error code
  * @param {string} message - Error message
- * @param {Object} [context] - Additional context
+ * @param {Object} [context] - Additional context (file, nodeId, etc.)
  */
 function error(code, message, context = {}) {
   const err = { code, message, ...context };
   results.errors.push(err);
-  console.error(`[ERROR] ${code}: ${message}`);
+  const filePrefix = context.file ? `[${context.file}] ` : '';
+  console.error(`[ERROR] ${filePrefix}${code}: ${message}`);
 }
 
 /**
  * Log a warning
  * @param {string} code - Warning code
  * @param {string} message - Warning message
- * @param {Object} [context] - Additional context
+ * @param {Object} [context] - Additional context (file, nodeId, etc.)
  */
 function warn(code, message, context = {}) {
   const warning = { code, message, ...context };
   results.warnings.push(warning);
-  console.warn(`[WARN] ${code}: ${message}`);
+  const filePrefix = context.file ? `[${context.file}] ` : '';
+  console.warn(`[WARN] ${filePrefix}${code}: ${message}`);
 }
 
 /**
@@ -84,6 +102,42 @@ function info(message) {
 }
 
 /**
+ * Discover content files from path (file or directory)
+ * @param {string} contentPath - Path to file or directory
+ * @returns {string[]} Array of file paths
+ */
+function discoverContentFiles(contentPath) {
+  const fullPath = path.join(process.cwd(), contentPath);
+
+  if (!fs.existsSync(fullPath)) {
+    error('PATH_NOT_FOUND', `Content path not found: ${contentPath}`);
+    return [];
+  }
+
+  const stats = fs.statSync(fullPath);
+
+  if (stats.isFile()) {
+    return [contentPath];
+  }
+
+  if (stats.isDirectory()) {
+    const files = fs.readdirSync(fullPath)
+      .filter(f => f.match(/^act.*\.json$/i))
+      .sort()
+      .map(f => path.join(contentPath, f));
+
+    if (files.length === 0) {
+      error('NO_CONTENT_FILES', `No act*.json files found in: ${contentPath}`);
+    }
+
+    return files;
+  }
+
+  error('INVALID_PATH', `Path is neither file nor directory: ${contentPath}`);
+  return [];
+}
+
+/**
  * Load and parse content JSON
  * @param {string} filePath - Path to content file
  * @returns {Object|null} Parsed content or null on error
@@ -92,7 +146,7 @@ function loadContent(filePath) {
   const fullPath = path.join(process.cwd(), filePath);
 
   if (!fs.existsSync(fullPath)) {
-    error('FILE_NOT_FOUND', `Content file not found: ${filePath}`);
+    error('FILE_NOT_FOUND', `Content file not found: ${filePath}`, { file: filePath });
     return null;
   }
 
@@ -100,88 +154,126 @@ function loadContent(filePath) {
     const content = fs.readFileSync(fullPath, 'utf-8');
     return JSON.parse(content);
   } catch (e) {
-    error('PARSE_ERROR', `Failed to parse content file: ${e.message}`);
+    error('PARSE_ERROR', `Failed to parse content file: ${e.message}`, { file: filePath });
     return null;
   }
 }
 
 /**
- * Validate basic schema structure
+ * Validate basic schema structure (per-file check)
  * @param {Object} manifest - Content manifest
+ * @param {string} filePath - Source file path
  * @returns {boolean} True if structure is valid
  */
-function validateSchema(manifest) {
+function validateSchema(manifest, filePath) {
   let valid = true;
 
   if (!manifest.schemaVersion) {
-    error('MISSING_SCHEMA_VERSION', 'Content manifest missing schemaVersion');
+    error('MISSING_SCHEMA_VERSION', 'Content manifest missing schemaVersion', { file: filePath });
     valid = false;
   }
 
   if (!Array.isArray(manifest.nodes)) {
-    error('MISSING_NODES', 'Content manifest missing nodes array');
+    error('MISSING_NODES', 'Content manifest missing nodes array', { file: filePath });
     valid = false;
   }
 
-  if (!Array.isArray(manifest.items)) {
-    error('MISSING_ITEMS', 'Content manifest missing items array');
-    valid = false;
-  }
-
-  if (!manifest.initialState) {
-    error('MISSING_INITIAL_STATE', 'Content manifest missing initialState');
-    valid = false;
-  }
+  // items and initialState are optional for individual act files
+  // Only the first act (act1) needs these for combined validation
 
   return valid;
 }
 
 /**
- * Rule 1: Validate node ID uniqueness
- * @param {Array} nodes - Array of node objects
- * @returns {Set<string>} Set of valid node IDs
+ * PASS 1: Build node index with file origin tracking
+ * Indexes all nodes from all files and detects duplicate IDs early
+ * @param {Map<string, Object>} manifests - Map of filePath -> parsed manifest
+ * @returns {{nodeIndex: Map<string, NodeEntry>, itemIds: Set<string>, initialState: Object|null, startFile: string|null}}
  */
-function validateNodeIdUniqueness(nodes) {
-  const seenIds = new Set();
-  const validIds = new Set();
+function buildNodeIndex(manifests) {
+  const nodeIndex = new Map(); // nodeId -> { file, node }
+  const itemIds = new Set();
+  let initialState = null;
+  let startFile = null;
 
-  for (const node of nodes) {
-    if (!node.id) {
-      error('MISSING_NODE_ID', 'Node missing required id field', { nodeId: '(unknown)' });
-      continue;
+  for (const [filePath, manifest] of manifests) {
+    const shortPath = path.basename(filePath);
+
+    // Track per-file stats
+    results.fileStats.set(filePath, {
+      nodes: manifest.nodes?.length || 0,
+      items: manifest.items?.length || 0
+    });
+
+    // Index nodes with file origin
+    if (Array.isArray(manifest.nodes)) {
+      for (const node of manifest.nodes) {
+        if (!node.id) {
+          error('MISSING_NODE_ID', 'Node missing required id field', {
+            file: shortPath,
+            nodeId: '(unknown)'
+          });
+          continue;
+        }
+
+        if (nodeIndex.has(node.id)) {
+          const existing = nodeIndex.get(node.id);
+          error('DUPLICATE_NODE_ID', `Duplicate node ID '${node.id}' found in ${shortPath} and ${path.basename(existing.file)}`, {
+            file: shortPath,
+            nodeId: node.id
+          });
+        } else {
+          nodeIndex.set(node.id, { file: filePath, node });
+        }
+      }
     }
 
-    if (seenIds.has(node.id)) {
-      error('DUPLICATE_NODE_ID', `Duplicate node ID: ${node.id}`, { nodeId: node.id });
-    } else {
-      seenIds.add(node.id);
-      validIds.add(node.id);
+    // Collect all item IDs
+    if (Array.isArray(manifest.items)) {
+      for (const item of manifest.items) {
+        if (item.id) {
+          itemIds.add(item.id);
+        }
+      }
+    }
+
+    // Use initialState from first file that has one (act1)
+    if (manifest.initialState && !initialState) {
+      initialState = manifest.initialState;
+      startFile = filePath;
     }
   }
 
-  return validIds;
+  return { nodeIndex, itemIds, initialState, startFile };
 }
 
 /**
- * Rule 2: Validate choice targets exist
- * @param {Array} nodes - Array of node objects
- * @param {Set<string>} nodeIds - Set of valid node IDs
+ * PASS 2: Validate cross-references against combined index
+ * All validation functions now use nodeIndex for file origin tracking
  */
-function validateChoiceTargets(nodes, nodeIds) {
-  for (const node of nodes) {
+
+/**
+ * Rule 2: Validate choice targets exist (using combined node index)
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
+ */
+function validateChoiceTargets(nodeIndex) {
+  for (const [nodeId, { file, node }] of nodeIndex) {
     if (!Array.isArray(node.choices)) continue;
+    const shortPath = path.basename(file);
 
     for (const choice of node.choices) {
       if (!choice.targetId) {
         error('MISSING_TARGET', `Choice "${choice.id}" missing targetId`, {
+          file: shortPath,
           nodeId: node.id,
           choiceId: choice.id
         });
         continue;
       }
 
-      if (!nodeIds.has(choice.targetId)) {
+      if (!nodeIndex.has(choice.targetId)) {
         error('INVALID_TARGET', `Choice "${choice.id}" targets non-existent node "${choice.targetId}"`, {
+          file: shortPath,
           nodeId: node.id,
           choiceId: choice.id
         });
@@ -192,14 +284,16 @@ function validateChoiceTargets(nodes, nodeIds) {
 
 /**
  * Rule 3: Validate item references in conditions and effects
- * @param {Array} nodes - Array of node objects
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  * @param {Set<string>} itemIds - Set of valid item IDs
  */
-function validateItemReferences(nodes, itemIds) {
-  for (const node of nodes) {
+function validateItemReferences(nodeIndex, itemIds) {
+  for (const [nodeId, { file, node }] of nodeIndex) {
+    const shortPath = path.basename(file);
+
     // Check onEnter effects
     if (Array.isArray(node.onEnter)) {
-      validateEffectItemRefs(node.onEnter, itemIds, node.id, null);
+      validateEffectItemRefs(node.onEnter, itemIds, node.id, null, shortPath);
     }
 
     if (!Array.isArray(node.choices)) continue;
@@ -207,12 +301,12 @@ function validateItemReferences(nodes, itemIds) {
     for (const choice of node.choices) {
       // Check choice conditions
       if (Array.isArray(choice.conditions)) {
-        validateConditionItemRefs(choice.conditions, itemIds, node.id, choice.id);
+        validateConditionItemRefs(choice.conditions, itemIds, node.id, choice.id, shortPath);
       }
 
       // Check choice effects
       if (Array.isArray(choice.effects)) {
-        validateEffectItemRefs(choice.effects, itemIds, node.id, choice.id);
+        validateEffectItemRefs(choice.effects, itemIds, node.id, choice.id, shortPath);
       }
     }
   }
@@ -224,21 +318,23 @@ function validateItemReferences(nodes, itemIds) {
  * @param {Set<string>} itemIds - Set of valid item IDs
  * @param {string} nodeId - Parent node ID
  * @param {string|null} choiceId - Parent choice ID
+ * @param {string} file - Source file path
  */
-function validateConditionItemRefs(conditions, itemIds, nodeId, choiceId) {
+function validateConditionItemRefs(conditions, itemIds, nodeId, choiceId, file) {
   for (const condition of conditions) {
     if (condition.type === 'item') {
       if (!itemIds.has(condition.itemId)) {
         error('INVALID_ITEM_REF', `Condition references non-existent item "${condition.itemId}"`, {
+          file,
           nodeId,
           choiceId,
           itemId: condition.itemId
         });
       }
     } else if (condition.type === 'not' && condition.condition) {
-      validateConditionItemRefs([condition.condition], itemIds, nodeId, choiceId);
+      validateConditionItemRefs([condition.condition], itemIds, nodeId, choiceId, file);
     } else if ((condition.type === 'and' || condition.type === 'or') && Array.isArray(condition.conditions)) {
-      validateConditionItemRefs(condition.conditions, itemIds, nodeId, choiceId);
+      validateConditionItemRefs(condition.conditions, itemIds, nodeId, choiceId, file);
     }
   }
 }
@@ -249,12 +345,14 @@ function validateConditionItemRefs(conditions, itemIds, nodeId, choiceId) {
  * @param {Set<string>} itemIds - Set of valid item IDs
  * @param {string} nodeId - Parent node ID
  * @param {string|null} choiceId - Parent choice ID
+ * @param {string} file - Source file path
  */
-function validateEffectItemRefs(effects, itemIds, nodeId, choiceId) {
+function validateEffectItemRefs(effects, itemIds, nodeId, choiceId, file) {
   for (const effect of effects) {
     if (effect.type === 'addItem' || effect.type === 'removeItem') {
       if (!itemIds.has(effect.itemId)) {
         error('INVALID_ITEM_REF', `Effect references non-existent item "${effect.itemId}"`, {
+          file,
           nodeId,
           choiceId,
           itemId: effect.itemId
@@ -266,15 +364,16 @@ function validateEffectItemRefs(effects, itemIds, nodeId, choiceId) {
 
 /**
  * Rule 4: Detect potential dead-ends
- * @param {Array} nodes - Array of node objects
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  */
-function validateDeadEnds(nodes) {
-  for (const node of nodes) {
+function validateDeadEnds(nodeIndex) {
+  for (const [nodeId, { file, node }] of nodeIndex) {
     const hasChoices = Array.isArray(node.choices) && node.choices.length > 0;
     const isEnding = Array.isArray(node.tags) && node.tags.includes('ending');
 
     if (!hasChoices && !isEnding) {
       warn('POTENTIAL_DEAD_END', `Node "${node.id}" has no choices and is not tagged as ending`, {
+        file: path.basename(file),
         nodeId: node.id
       });
     }
@@ -282,14 +381,13 @@ function validateDeadEnds(nodes) {
 }
 
 /**
- * Rule 5: Find reachable nodes from start
- * @param {Array} nodes - Array of node objects
+ * Rule 5: Find reachable nodes from start (using node index)
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  * @param {string} startId - Starting node ID
  * @returns {Set<string>} Set of reachable node IDs
  */
-function findReachableNodes(nodes, startId) {
+function findReachableNodes(nodeIndex, startId) {
   const reachable = new Set();
-  const nodeMap = new Map(nodes.map(n => [n.id, n]));
   const queue = [startId];
 
   while (queue.length > 0) {
@@ -297,10 +395,10 @@ function findReachableNodes(nodes, startId) {
     if (reachable.has(nodeId)) continue;
     reachable.add(nodeId);
 
-    const node = nodeMap.get(nodeId);
-    if (!node || !Array.isArray(node.choices)) continue;
+    const entry = nodeIndex.get(nodeId);
+    if (!entry || !Array.isArray(entry.node.choices)) continue;
 
-    for (const choice of node.choices) {
+    for (const choice of entry.node.choices) {
       if (choice.targetId && !reachable.has(choice.targetId)) {
         queue.push(choice.targetId);
       }
@@ -312,14 +410,15 @@ function findReachableNodes(nodes, startId) {
 
 /**
  * Detect orphan nodes (unreachable from start)
- * @param {Array} nodes - Array of node objects
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  * @param {Set<string>} reachable - Set of reachable node IDs
  */
-function validateOrphanNodes(nodes, reachable) {
-  for (const node of nodes) {
-    if (!reachable.has(node.id)) {
-      warn('ORPHAN_NODE', `Node "${node.id}" is not reachable from start`, {
-        nodeId: node.id
+function validateOrphanNodes(nodeIndex, reachable) {
+  for (const [nodeId, { file, node }] of nodeIndex) {
+    if (!reachable.has(nodeId)) {
+      warn('ORPHAN_NODE', `Node "${nodeId}" is not reachable from start`, {
+        file: path.basename(file),
+        nodeId
       });
     }
   }
@@ -327,11 +426,10 @@ function validateOrphanNodes(nodes, reachable) {
 
 /**
  * Rule 6: Find cycles using Tarjan's algorithm for strongly connected components
- * @param {Array} nodes - Array of node objects
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  * @returns {Array<Array<string>>} Array of cycle node ID arrays
  */
-function findStronglyConnectedComponents(nodes) {
-  const nodeMap = new Map(nodes.map(n => [n.id, n]));
+function findStronglyConnectedComponents(nodeIndex) {
   const index = new Map();
   const lowlink = new Map();
   const onStack = new Set();
@@ -346,9 +444,9 @@ function findStronglyConnectedComponents(nodes) {
     stack.push(nodeId);
     onStack.add(nodeId);
 
-    const node = nodeMap.get(nodeId);
-    if (node && Array.isArray(node.choices)) {
-      for (const choice of node.choices) {
+    const entry = nodeIndex.get(nodeId);
+    if (entry && Array.isArray(entry.node.choices)) {
+      for (const choice of entry.node.choices) {
         const targetId = choice.targetId;
         if (!targetId) continue;
 
@@ -377,9 +475,9 @@ function findStronglyConnectedComponents(nodes) {
     }
   }
 
-  for (const node of nodes) {
-    if (!index.has(node.id)) {
-      strongConnect(node.id);
+  for (const nodeId of nodeIndex.keys()) {
+    if (!index.has(nodeId)) {
+      strongConnect(nodeId);
     }
   }
 
@@ -389,18 +487,17 @@ function findStronglyConnectedComponents(nodes) {
 /**
  * Check if a cycle has an exit path
  * @param {Array<string>} cycle - Array of node IDs in the cycle
- * @param {Array} nodes - All nodes
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  * @returns {boolean} True if cycle has an exit
  */
-function cycleHasExit(cycle, nodes) {
+function cycleHasExit(cycle, nodeIndex) {
   const cycleSet = new Set(cycle);
-  const nodeMap = new Map(nodes.map(n => [n.id, n]));
 
   for (const nodeId of cycle) {
-    const node = nodeMap.get(nodeId);
-    if (!node || !Array.isArray(node.choices)) continue;
+    const entry = nodeIndex.get(nodeId);
+    if (!entry || !Array.isArray(entry.node.choices)) continue;
 
-    for (const choice of node.choices) {
+    for (const choice of entry.node.choices) {
       if (choice.targetId && !cycleSet.has(choice.targetId)) {
         return true; // Found an exit from the cycle
       }
@@ -412,14 +509,17 @@ function cycleHasExit(cycle, nodes) {
 
 /**
  * Validate cycles have exits
- * @param {Array} nodes - Array of node objects
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  */
-function validateCycles(nodes) {
-  const cycles = findStronglyConnectedComponents(nodes);
+function validateCycles(nodeIndex) {
+  const cycles = findStronglyConnectedComponents(nodeIndex);
 
   for (const cycle of cycles) {
-    if (!cycleHasExit(cycle, nodes)) {
+    if (!cycleHasExit(cycle, nodeIndex)) {
+      // Get file origin for the first node in cycle
+      const firstEntry = nodeIndex.get(cycle[0]);
       error('INESCAPABLE_CYCLE', `Cycle detected with no exit: ${cycle.join(' -> ')}`, {
+        file: firstEntry ? path.basename(firstEntry.file) : undefined,
         nodeId: cycle[0]
       });
     }
@@ -428,21 +528,27 @@ function validateCycles(nodes) {
 
 /**
  * Rule 7: Validate ending reachability
- * @param {Array} nodes - Array of node objects
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
  * @param {Set<string>} reachable - Set of reachable node IDs
  */
-function validateEndingReachability(nodes, reachable) {
-  const endings = nodes.filter(n => Array.isArray(n.tags) && n.tags.includes('ending'));
+function validateEndingReachability(nodeIndex, reachable) {
+  const endings = [];
+  for (const [nodeId, { file, node }] of nodeIndex) {
+    if (Array.isArray(node.tags) && node.tags.includes('ending')) {
+      endings.push({ nodeId, file, node });
+    }
+  }
 
   if (endings.length === 0) {
     warn('NO_ENDINGS', 'No nodes tagged as endings found');
     return;
   }
 
-  for (const ending of endings) {
-    if (!reachable.has(ending.id)) {
-      error('UNREACHABLE_ENDING', `Ending "${ending.id}" is not reachable from start`, {
-        nodeId: ending.id
+  for (const { nodeId, file } of endings) {
+    if (!reachable.has(nodeId)) {
+      error('UNREACHABLE_ENDING', `Ending "${nodeId}" is not reachable from start`, {
+        file: path.basename(file),
+        nodeId
       });
     }
   }
@@ -451,26 +557,37 @@ function validateEndingReachability(nodes, reachable) {
 /**
  * Rule 8: Validate initial state
  * @param {Object} initialState - Initial state object
- * @param {Set<string>} nodeIds - Set of valid node IDs
+ * @param {Map<string, NodeEntry>} nodeIndex - Node index with file origins
+ * @param {string} startFile - File containing the initial state
  */
-function validateInitialState(initialState, nodeIds) {
-  if (!initialState.currentNodeId) {
-    error('MISSING_START_NODE', 'Initial state missing currentNodeId');
+function validateInitialState(initialState, nodeIndex, startFile) {
+  if (!initialState) {
+    error('MISSING_INITIAL_STATE', 'No initialState found in any content file');
     return;
   }
 
-  if (!nodeIds.has(initialState.currentNodeId)) {
-    error('INVALID_START_NODE', `Initial node "${initialState.currentNodeId}" does not exist`);
+  if (!initialState.currentNodeId) {
+    error('MISSING_START_NODE', 'Initial state missing currentNodeId', {
+      file: path.basename(startFile)
+    });
+    return;
+  }
+
+  if (!nodeIndex.has(initialState.currentNodeId)) {
+    error('INVALID_START_NODE', `Initial node "${initialState.currentNodeId}" does not exist`, {
+      file: path.basename(startFile)
+    });
   }
 }
 
 /**
- * Main validation function
+ * Main validation function (two-pass approach)
  */
 function main() {
   console.log('');
   console.log('========================================');
   console.log('  Content Validation (ENGINE.md Rules)');
+  console.log('  Multi-file support enabled');
   console.log('========================================');
   console.log('');
 
@@ -480,51 +597,94 @@ function main() {
   if (warnOnly) {
     console.log('[MODE] Warn-only mode - all issues reported as warnings');
   }
-  console.log(`[FILE] ${contentFile}`);
+  console.log(`[PATH] ${contentPath}`);
   console.log('');
 
-  // Load content
-  const manifest = loadContent(contentFile);
-  if (!manifest) {
+  // Discover content files
+  info('Discovering content files...');
+  const contentFiles = discoverContentFiles(contentPath);
+
+  if (contentFiles.length === 0) {
     printSummary();
     process.exit(1);
   }
 
-  // Validate basic schema
-  if (!validateSchema(manifest)) {
+  info(`Found ${contentFiles.length} content file(s): ${contentFiles.map(f => path.basename(f)).join(', ')}`);
+  console.log('');
+
+  // Load all content files
+  info('Loading content files...');
+  const manifests = new Map();
+  let hasSchemaErrors = false;
+
+  for (const filePath of contentFiles) {
+    const manifest = loadContent(filePath);
+    if (!manifest) {
+      hasSchemaErrors = true;
+      continue;
+    }
+
+    if (!validateSchema(manifest, filePath)) {
+      hasSchemaErrors = true;
+      continue;
+    }
+
+    manifests.set(filePath, manifest);
+    info(`  ✓ Loaded ${path.basename(filePath)}`);
+  }
+
+  if (manifests.size === 0) {
+    error('NO_VALID_FILES', 'No valid content files could be loaded');
     printSummary();
     process.exit(1);
   }
 
-  // Build lookup sets
-  const nodeIds = validateNodeIdUniqueness(manifest.nodes);
-  const itemIds = new Set(manifest.items.map(i => i.id));
+  console.log('');
 
-  info(`Found ${nodeIds.size} nodes, ${itemIds.size} items`);
-  info('');
+  // PASS 1: Build combined node index
+  info('Pass 1: Building node index...');
+  const { nodeIndex, itemIds, initialState, startFile } = buildNodeIndex(manifests);
 
-  // Run validation rules
-  info('Checking choice targets...');
-  validateChoiceTargets(manifest.nodes, nodeIds);
+  // Report per-file and combined stats
+  let totalNodes = 0;
+  let totalItems = 0;
+  for (const [filePath, stats] of results.fileStats) {
+    info(`  ${path.basename(filePath)}: ${stats.nodes} nodes, ${stats.items} items`);
+    totalNodes += stats.nodes;
+    totalItems += stats.items;
+  }
+  info(`  Combined: ${nodeIndex.size} unique nodes, ${itemIds.size} items`);
+  console.log('');
 
-  info('Checking item references...');
-  validateItemReferences(manifest.nodes, itemIds);
+  // PASS 2: Validate cross-references against combined index
+  info('Pass 2: Validating cross-references...');
 
-  info('Checking for dead-ends...');
-  validateDeadEnds(manifest.nodes);
+  info('  Checking choice targets...');
+  validateChoiceTargets(nodeIndex);
 
-  info('Checking reachability...');
-  const reachable = findReachableNodes(manifest.nodes, manifest.initialState.currentNodeId);
-  validateOrphanNodes(manifest.nodes, reachable);
+  info('  Checking item references...');
+  validateItemReferences(nodeIndex, itemIds);
 
-  info('Checking for inescapable cycles...');
-  validateCycles(manifest.nodes);
+  info('  Checking for dead-ends...');
+  validateDeadEnds(nodeIndex);
 
-  info('Checking ending reachability...');
-  validateEndingReachability(manifest.nodes, reachable);
+  info('  Checking initial state...');
+  validateInitialState(initialState, nodeIndex, startFile);
 
-  info('Checking initial state...');
-  validateInitialState(manifest.initialState, nodeIds);
+  // Reachability analysis (requires valid start node)
+  if (initialState && initialState.currentNodeId && nodeIndex.has(initialState.currentNodeId)) {
+    info('  Checking reachability...');
+    const reachable = findReachableNodes(nodeIndex, initialState.currentNodeId);
+    validateOrphanNodes(nodeIndex, reachable);
+
+    info('  Checking for inescapable cycles...');
+    validateCycles(nodeIndex);
+
+    info('  Checking ending reachability...');
+    validateEndingReachability(nodeIndex, reachable);
+  } else {
+    warn('SKIP_REACHABILITY', 'Skipping reachability checks - no valid start node');
+  }
 
   // Summary
   printSummary();
@@ -558,6 +718,16 @@ function printSummary() {
   console.log('========================================');
   console.log('  Validation Summary');
   console.log('========================================');
+
+  // Per-file breakdown
+  if (results.fileStats.size > 1) {
+    console.log('  Files validated:');
+    for (const [filePath, stats] of results.fileStats) {
+      console.log(`    ${path.basename(filePath)}: ${stats.nodes} nodes`);
+    }
+    console.log('');
+  }
+
   console.log(`  Errors:   ${results.errors.length}`);
   console.log(`  Warnings: ${results.warnings.length}`);
   console.log('========================================');
