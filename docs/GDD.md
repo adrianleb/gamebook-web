@@ -795,7 +795,7 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
-| M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
+| M6.1 Cross-Browser QA | Agent D | 🚫 Blocked | #118 | #154 |
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
 | M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
@@ -814,19 +814,29 @@ PR #147 merged (2025-12-29) - Agent C implemented full engine-to-UI wiring in `m
 **Previously Blocked by #142 (Resolved):**
 - Issue #142 (engine-UI wiring): Resolved via PR #147
 
-**Previously Blocked by #149 (Resolved):**
-- Issue #149 (Acts 2/3 not loading): Resolved via PR #151
+**Previously Blocked by #149 (Partially Resolved):**
+- Issue #149 (Acts 2/3 not loading): Partially resolved via PR #151
+- PR #151 fixed the premature `break` statements - all 3 act files now fetch successfully
+- However, a deeper architectural issue was discovered (see #154 below)
+
+**🚨 CURRENT P0 BLOCKER - Issue #154:**
+- **Problem:** ContentLoader.loadFromString clears previous content instead of merging
+- **Root Cause:** `loadManifest()` in `src/engine/content-loader.ts` calls `nodeMap.clear()` and `itemMap.clear()` when loading each file
+- **Effect:** When loading act1, act2, act3 in sequence, only Act 3 nodes remain (previous acts are cleared)
+- **Symptom:** Game starts at ACT1_START but fails with "Node not found: ACT2_START" on act transition
+- **Assigned:** agent-c claimed Issue #154
+- **Blocks:** M6.1, M6.5, M6.6
 
 **Current Status:**
-- M6.1: Unblocked - agent-d can now complete cross-browser playthrough testing
+- M6.1: **BLOCKED** by Issue #154 - cannot complete playthrough testing
 - M6.5: Waiting on M6.1 completion
 - M6.6: Waiting on M6.5 completion
 
 **Resolution History:**
 - PR #147 (Cycle 834): Fixed engine-UI wiring - choices now advance the game
-- PR #151 (Cycle 870): Fixed content loading - all 3 acts now load correctly
+- PR #151 (Cycle 870): Fixed premature break statements - all 3 act files now fetch (but merge issue remains)
 
-All 176 story nodes and 5 endings are now accessible. Full playthrough testing can proceed.
+Game is playable through Act 1, but act transitions fail. Full playthrough blocked until Issue #154 is resolved.
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
