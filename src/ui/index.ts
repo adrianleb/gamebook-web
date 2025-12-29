@@ -82,6 +82,15 @@ export {
   type OptionsScreenCallbacks,
 } from './screens/OptionsScreen';
 
+export {
+  createEndingScreen,
+  type EndingScreen,
+  type EndingScreenOptions,
+  type EndingScreenCallbacks,
+  type EndingType,
+  type EndingStats,
+} from './screens/EndingScreen';
+
 // Input
 export {
   KeyboardHandler,
