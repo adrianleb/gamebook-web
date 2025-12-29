@@ -306,6 +306,7 @@ export function createOptionsScreen(callbacks: OptionsScreenCallbacks): OptionsS
     const spacing = ' '.repeat(Math.max(1, 18 - labelPart.length));
 
     el.innerHTML = `<span style="color: var(--color-border, #AA5500)">${BoxChars.dblVertical}</span> <span style="color: ${markerColor}">${marker}</span> <span style="color: ${labelColor}">${labelPart}${spacing}${valueDisplay}</span>`;
+    el.style.backgroundColor = isSelected ? 'rgba(85, 255, 85, 0.1)' : 'transparent';
   }
 
   function updateSelection(newIndex: number): void {

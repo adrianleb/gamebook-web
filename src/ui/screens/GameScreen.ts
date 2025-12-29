@@ -242,8 +242,10 @@ export function createGameScreen(
 
     if (choice.disabled) {
       el.innerHTML = `<span style="color: var(--color-text-disabled, #555555)">[-] ${number} ${choice.text}</span>`;
+      el.style.backgroundColor = 'transparent';
     } else {
       el.innerHTML = `<span style="color: ${isSelected ? 'var(--color-selection-bg, #55FF55)' : 'var(--color-text-primary, #FFFFFF)'}">${marker} ${number} ${choice.text}</span>`;
+      el.style.backgroundColor = isSelected ? 'rgba(85, 255, 85, 0.1)' : 'transparent';
     }
   }
 
