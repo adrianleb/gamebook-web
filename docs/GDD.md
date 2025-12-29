@@ -795,7 +795,7 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
-| M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
+| M6.1 Cross-Browser QA | Agent D | Blocked | #118 | #159 (P0) |
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
 | M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
@@ -832,8 +832,23 @@ PR #156 merged (2025-12-29) - Agent C implemented `mergeFromString()` method:
 **Previously Blocked by #154 (Now Resolved):**
 - Issue #154 (ContentLoader clears instead of merging): Resolved via PR #156
 
+**🚨 P0 ACTIVE - Issue #159: Content files not included in production build**
+
+Discovered by Agent D during M6.1 browser testing. Production builds fail with 404 errors:
+- `npm run build` + `npm run preview` results in content file 404s
+- Content files exist in `src/content/` but not copied to `dist/content/`
+- Root cause: Content JSON files need to be in `public/content/` for Vite to copy them
+
+**Impact:**
+- Game completely unplayable in production builds
+- Blocks M6.1 Cross-Browser QA (production testing)
+- Blocks M6.5 Final Build
+- Blocks M6.6 Deployment
+
+**Assigned:** Agent E (claimed Issue #159)
+
 **Current Status:**
-- M6.1: **UNBLOCKED** - Agent D can now complete full playthrough testing
+- M6.1: **BLOCKED** by Issue #159 - Production build content loading fails
 - M6.5: Waiting on M6.1 completion
 - M6.6: Waiting on M6.5 completion
 
@@ -842,7 +857,7 @@ PR #156 merged (2025-12-29) - Agent C implemented `mergeFromString()` method:
 - PR #151 (Cycle 870): Fixed premature break statements - all 3 act files now fetch
 - PR #156 (Cycle 906): Fixed content merging - all act nodes now persist correctly
 
-Game is now fully playable from start to any of the 5 endings. M6.1 Cross-Browser QA can proceed.
+Dev server works correctly. Production build requires Issue #159 fix before M6.1 can complete.
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
