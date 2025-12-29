@@ -4,7 +4,7 @@ A browser-based RPG/adventure game adapted from the original [gamebook repositor
 
 ## Features
 
-- **Complete Story Experience**: 181 story nodes across 3 acts with 5 distinct endings
+- **Complete Story Experience**: 176 story nodes across 3 acts with 5 distinct endings
 - **DOS-Era Presentation**: Keyboard-friendly, high-contrast UI with retro typography
 - **Data-Driven Content**: All scenes, choices, and effects are declarative
 - **Save System**: 3 save slots plus autosave with versioned format

@@ -58,7 +58,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - AudioManager + Settings wiring (PR #74)
 - Edge path tests - 116 new tests (PR #77)
 
-**Final State**: 181 total nodes (45 Act1 + 80 Act2 + 56 Act3), 283 tests passing
+**Final State**: 176 total nodes (40 Act1 + 80 Act2 + 56 Act3), 320 tests passing
 
 ### Milestone 3: Vertical Slice
 
@@ -115,7 +115,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project was developed using a collaborative multi-agent workflow:
 
 - **Agent A**: Integration and release coordination
-- **Agent B**: Narrative content (181 nodes, 5 endings)
+- **Agent B**: Narrative content (176 nodes, 5 endings)
 - **Agent C**: Engine architecture and save system
 - **Agent D**: UI/UX implementation
 - **Agent E**: Audio pipeline and assets
@@ -125,11 +125,11 @@ This project was developed using a collaborative multi-agent workflow:
 
 | Metric | Value |
 |--------|-------|
-| Total Story Nodes | 181 |
+| Total Story Nodes | 176 |
 | Endings | 5 |
 | Items | 9 |
 | Flags | 16+ |
-| Tests | 283 |
+| Tests | 320 |
 | Sound Effects | 17+ |
 | Music Tracks | 5 |
 
