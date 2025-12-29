@@ -286,17 +286,17 @@ M3 is complete when:
 
 **Goal:** Expand from 39 sample nodes to 165 complete nodes, implement all story paths, and enable all 5 endings.
 
-**Completion Summary:** All content expanded to 181 total nodes (exceeding 165 target). All 5 endings implemented and reachable. SaveManager, Ending Screen, Options Screen, Credits Screen, and AudioManager all integrated. 283 tests passing.
+**Completion Summary:** All content expanded to 176 total nodes (exceeding 165 target). All 5 endings implemented and reachable. SaveManager, Ending Screen, Options Screen, Credits Screen, and AudioManager all integrated. 283 tests passing.
 
 #### M4.1 Scope Definition
 
-**Final State:** 181 nodes (45 Act1 + 80 Act2 + 56 Act3)
+**Final State:** 176 nodes (40 Act1 + 80 Act2 + 56 Act3)
 **Target State:** 165 nodes (~45 Act1 + ~64 Act2 + ~56 Act3)
-**Result:** Exceeded target by 16 nodes
+**Result:** Exceeded target by 11 nodes
 
 | Act | Final | Target | Delta | Focus Areas | Status |
 |-----|-------|--------|-------|-------------|--------|
-| Act 1 | 45 | ~45 | 0 | Faction intro paths, optional exploration, ally recruitment branches | ✅ PR #72 |
+| Act 1 | 40 | ~45 | -5 | Faction intro paths, optional exploration, ally recruitment branches | ✅ PR #72 |
 | Act 2 | 80 | ~64 | +16 | Artifact quests, ally storylines, heist sequence, betrayal path | ✅ PR #81 |
 | Act 3 | 56 | ~56 | 0 | Ending variations, final confrontation branches, doom paths | ✅ PR #87 |
 
@@ -411,7 +411,7 @@ M3 is complete when:
 #### M4.5 Definition of Done
 
 M4 is complete when:
-- [x] 181 nodes implemented (exceeds 165 target: 45 Act1 + 80 Act2 + 56 Act3)
+- [x] 176 nodes implemented (exceeds 165 target: 40 Act1 + 80 Act2 + 56 Act3)
 - [x] All 5 endings reachable and tested
 - [x] All 9 items acquirable
 - [x] All 16 flags functional
@@ -429,11 +429,11 @@ M4 is complete when:
 ### M5: Polish & Balancing
 
 **Status:** In Progress
-**Prerequisites:** M4 Complete (181 nodes implemented, all 5 endings reachable, 283 tests passing)
+**Prerequisites:** M4 Complete (176 nodes implemented, all 5 endings reachable, 283 tests passing)
 
 #### M5.1: Narrative Pacing Review (Agent B)
 
-**Given** all 181 nodes are implemented across 3 acts
+**Given** all 176 nodes are implemented across 3 acts
 **When** the pacing analysis is complete
 **Then** a report documents node statistics, pacing outliers, and emotional beat distribution
 
@@ -575,7 +575,7 @@ M5.5 (Perf)          │                    │
 ```
 
 **Pre-M5 Gate:**
-- [x] M4 Complete - 181 nodes implemented (exceeds 165 target)
+- [x] M4 Complete - 176 nodes implemented (exceeds 165 target)
 - [x] M4 Complete - All 5 endings reachable
 - [x] M4 Complete - 283 tests passing
 
