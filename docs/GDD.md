@@ -284,19 +284,21 @@ M3 is complete when:
 
 ### M4: Full Content Implementation
 
-**Goal:** Expand from 116 sample nodes to 165 complete nodes, implement all story paths, and enable all 5 endings.
+**Goal:** Expand from 39 sample nodes to 165 complete nodes, implement all story paths, and enable all 5 endings.
 
 #### M4.1 Scope Definition
 
-**Current State:** 116 nodes (26 Act1 + 44 Act2 + 46 Act3)
+**Current State:** 39 nodes (8 Act1 + 14 Act2 + 17 Act3)
 **Target State:** 165 nodes (~45 Act1 + ~64 Act2 + ~56 Act3)
-**Gap:** 49 nodes to add
+**Gap:** 126 nodes to add
+
+> **Note:** Previous documentation stated 116 nodes, which was aspirational. Actual content file counts verified 2025-12-29.
 
 | Act | Current | Target | Gap | Focus Areas |
 |-----|---------|--------|-----|-------------|
-| Act 1 | 26 | ~45 | ~19 | Faction intro paths, optional exploration, ally recruitment branches |
-| Act 2 | 44 | ~64 | ~20 | Artifact quests, temptation/prophecy paths, heist sequence |
-| Act 3 | 46 | ~56 | ~10 | Ending variations, final confrontation branches, doom paths |
+| Act 1 | 8 | ~45 | ~37 | Faction intro paths, optional exploration, ally recruitment branches |
+| Act 2 | 14 | ~64 | ~50 | Artifact quests, temptation/prophecy paths, heist sequence |
+| Act 3 | 17 | ~56 | ~39 | Ending variations, final confrontation branches, doom paths |
 
 #### M4.2 Acceptance Criteria
 
