@@ -427,11 +427,175 @@ M4 is complete when:
 **M4 COMPLETE** - All content implemented. Ready for M5 polish & balancing.
 
 ### M5: Polish & Balancing
-- [ ] UI polish complete
-- [ ] Pacing reviewed
-- [ ] Difficulty balanced
-- [ ] All art/SFX final
-- [ ] Performance optimized
+
+**Status:** In Progress
+**Prerequisites:** M4 Complete (181 nodes implemented, all 5 endings reachable, 283 tests passing)
+
+#### M5.1: Narrative Pacing Review (Agent B)
+
+**Given** all 181 nodes are implemented across 3 acts
+**When** the pacing analysis is complete
+**Then** a report documents node statistics, pacing outliers, and emotional beat distribution
+
+**Verification:**
+- [ ] Average node text length calculated per act
+- [ ] Choice density analysis complete (nodes with <2 or >5 choices flagged)
+- [ ] Pacing outliers identified (nodes <50 chars or >1000 chars)
+- [ ] Emotional beats mapped (tension/relief/climax) verified against 3-act structure
+- [ ] Specific adjustment recommendations documented
+- [ ] Issues created for nodes needing revision (if any)
+
+**Depends on:** None (can start immediately)
+**Blocks:** M5.6 Final Content Validation
+
+**Tracking:** Issue #89
+
+---
+
+#### M5.2: UI Polish Pass (Agent D)
+
+**Given** all screens are functional from M4
+**When** UI polish is applied
+**Then** consistent styling, smooth transitions, and keyboard navigation are polished
+
+**Verification:**
+- [ ] Consistent border styles and spacing across all screens
+- [ ] Choice selection highlight visible and consistent
+- [ ] Scene transitions smooth (no jarring jumps)
+- [ ] Inventory panel properly styled
+- [ ] Ending screens match DOS aesthetic
+- [ ] Text legibility verified at 1080p and 720p
+- [ ] Keyboard navigation tested across all screen types
+
+**Depends on:** None (can start immediately)
+**Blocks:** M5.5 Performance Optimization
+
+---
+
+#### M5.3: Difficulty & Balance Review (Agent C)
+
+**Given** all stat checks, combat encounters, and item requirements are implemented
+**When** balance review is complete
+**Then** difficulty is appropriate and no path is unfairly blocked
+
+**Verification:**
+- [ ] All stat check thresholds documented
+- [ ] Item requirements verified (no impossible requirements)
+- [ ] Combat encounters (if any) balanced
+- [ ] Minimum viable item set for each ending verified
+- [ ] No "unfair" difficulty spikes identified
+- [ ] Recommendations for adjustments documented
+
+**Depends on:** None (can start immediately)
+**Blocks:** M5.6 Final Content Validation
+
+---
+
+#### M5.4: Audio Polish (Agent E)
+
+**Given** audio system is functional from M3/M4
+**When** audio polish is complete
+**Then** all SFX are final, volume levels balanced, and audio enhances gameplay
+
+**Verification:**
+- [ ] All UI SFX present and consistent
+- [ ] Choice selection has satisfying audio feedback
+- [ ] Scene transition audio implemented
+- [ ] Ending-specific audio (if applicable)
+- [ ] Volume levels balanced across all SFX
+- [ ] Mute/unmute functions correctly
+- [ ] No audio glitches or stuttering
+
+**Depends on:** None (can start immediately)
+**Blocks:** M5.6 Final Content Validation
+
+---
+
+#### M5.5: Performance Optimization (Agent C)
+
+**Given** full game is playable
+**When** performance optimization is complete
+**Then** game runs smoothly with no memory leaks or performance issues
+
+**Verification:**
+- [ ] Initial load time < 3 seconds
+- [ ] Scene transitions < 100ms
+- [ ] No memory leaks during extended play (30+ min)
+- [ ] No frame drops during normal gameplay
+- [ ] Save/load operations < 500ms
+- [ ] Works on low-end devices (test with CPU throttling)
+
+**Depends on:** M5.2 UI Polish Pass
+**Blocks:** M5.6 Final Content Validation
+
+---
+
+#### M5.6: Final Content Validation (Agent F)
+
+**Given** all polish tasks are complete
+**When** final content validation runs
+**Then** game is ready for QA phase
+
+**Verification:**
+- [ ] Content validator passes with 0 errors
+- [ ] All 5 endings reachable (verified by playthrough)
+- [ ] All items obtainable and usable
+- [ ] All flags properly set/cleared
+- [ ] No orphan nodes or broken references
+- [ ] Cross-act navigation works correctly
+- [ ] Playthrough scripts for all 5 endings pass
+
+**Depends on:** M5.1, M5.3, M5.4, M5.5
+**Blocks:** M6 QA & Release
+
+---
+
+#### M5 Integration Checklist
+
+**Dependency Graph:**
+
+```
+       M5.1 (Pacing)
+              │
+              ▼
+       ┌──────┴──────┐
+       │             │
+M5.2 (UI)       M5.3 (Balance)       M5.4 (Audio)
+       │             │                    │
+       ▼             │                    │
+M5.5 (Perf)          │                    │
+       │             │                    │
+       └──────┬──────┴────────────────────┘
+              │
+              ▼
+       M5.6 (Final Validation)
+              │
+              ▼
+         M6 Ready
+```
+
+**Pre-M5 Gate:**
+- [x] M4 Complete - 181 nodes implemented (exceeds 165 target)
+- [x] M4 Complete - All 5 endings reachable
+- [x] M4 Complete - 283 tests passing
+
+**Agent Assignments Summary:**
+
+| Sub-task | Owner | Status | Issue | Blockers |
+|----------|-------|--------|-------|----------|
+| M5.1 Pacing Review | Agent B | In Progress | #89 | None |
+| M5.2 UI Polish | Agent D | Not Started | - | None |
+| M5.3 Balance Review | Agent C | Not Started | - | None |
+| M5.4 Audio Polish | Agent E | Not Started | - | None |
+| M5.5 Performance | Agent C | Not Started | - | M5.2 |
+| M5.6 Final Validation | Agent F | Not Started | - | M5.1, M5.3, M5.4, M5.5 |
+
+**M5 Exit Criteria:**
+- [ ] All M5.1-M5.6 verification checklists complete
+- [ ] No P0 or P1 bugs open
+- [ ] Content validator shows 100% coverage
+- [ ] At least one full playthrough per ending documented
+- [ ] All agents sign off on their domain areas
 
 ### M6: QA & Release
 - [ ] Full playthroughs completed
