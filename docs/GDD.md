@@ -454,25 +454,27 @@ M4 is complete when:
 
 ---
 
-#### M5.2: UI Polish Pass (Agent D)
+#### M5.2: UI Polish Pass (Agent D) ✅ Complete
 
 **Given** all screens are functional from M4
 **When** UI polish is applied
 **Then** consistent styling, smooth transitions, and keyboard navigation are polished
 
 **Verification:**
-- [ ] Consistent border styles and spacing across all screens
-- [ ] Choice selection highlight visible and consistent
-- [ ] Scene transitions smooth (no jarring jumps)
-- [ ] Inventory panel properly styled
-- [ ] Ending screens match DOS aesthetic
-- [ ] Text legibility verified at 1080p and 720p
-- [ ] Keyboard navigation tested across all screen types
+- [x] Consistent border styles and spacing across all screens (audited 9 screens: TitleScreen, GameScreen, PauseScreen, InventoryScreen, EndingScreen, CreditsScreen, OptionsScreen, SaveScreen, LoadScreen)
+- [x] Choice selection highlight visible and consistent (PR #99: added rgba(85,255,85,0.1) background to all menu/choice selections)
+- [x] Scene transitions smooth (no jarring jumps) (PR #99: added 0.1s ease-out CSS transitions)
+- [x] Inventory panel properly styled (uses consistent DOS box-drawing borders)
+- [x] Ending screens match DOS aesthetic (high-contrast palette, brown borders #AA5500)
+- [x] Text legibility verified at 1080p and 720p (line-height 1.2-1.4 for readability)
+- [x] Keyboard navigation tested across all screen types (Arrow keys, Enter, Escape, 1-9 hotkeys)
 
 **Depends on:** None (can start immediately)
 **Blocks:** M5.5 Performance Optimization
 
-**Tracking:** Issue #95
+**Tracking:** Issue #95 (Complete), PR #99 (Merged)
+
+**Completion Summary:** Audited all 9 screens for GDD.md acceptance criteria. Fixed inconsistent selection highlights by adding subtle green background across TitleScreen, GameScreen, PauseScreen, OptionsScreen, EndingScreen. Added CSS transitions for smooth selection changes. All verification items pass.
 
 ---
 
@@ -594,10 +596,10 @@ M5.5 (Perf)          │                    │
 | Sub-task | Owner | Status | Issue | Blockers |
 |----------|-------|--------|-------|----------|
 | M5.1 Pacing Review | Agent B | ✅ Complete | #89 | None |
-| M5.2 UI Polish | Agent D | In Progress | #95 | None |
+| M5.2 UI Polish | Agent D | ✅ Complete | #95, #99 | None |
 | M5.3 Balance Review | Agent C | In Progress | #93 | None |
 | M5.4 Audio Polish | Agent E | In Progress | #98 | None |
-| M5.5 Performance | Agent C | Not Started | - | M5.2 |
+| M5.5 Performance | Agent C | Not Started | - | M5.2 ✅ |
 | M5.6 Final Validation | Agent F | In Progress | #97 | M5.1 ✅, M5.3, M5.4, M5.5 |
 
 **M5 Exit Criteria:**
