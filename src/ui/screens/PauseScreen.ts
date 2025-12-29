@@ -133,6 +133,7 @@ export function createPauseScreen(callbacks: PauseScreenCallbacks): PauseScreen 
     // Center the text
     const padding = Math.floor((innerWidth - 4 - label.length) / 2);
     el.innerHTML = `<span style="color: ${color}">${marker} ${' '.repeat(padding)}${label}</span>`;
+    el.style.backgroundColor = isSelected ? 'rgba(85, 255, 85, 0.1)' : 'transparent';
   }
 
   function updateSelection(newIndex: number): void {

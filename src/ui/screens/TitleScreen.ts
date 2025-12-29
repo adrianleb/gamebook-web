@@ -147,6 +147,9 @@ export function createTitleScreen(options: TitleScreenOptions): TitleScreen {
     el.style.color = isSelected
       ? 'var(--color-selection-bg, #55FF55)'
       : 'var(--color-text-primary, #FFFFFF)';
+    el.style.backgroundColor = isSelected
+      ? 'rgba(85, 255, 85, 0.1)'
+      : 'transparent';
     el.setAttribute('aria-selected', isSelected ? 'true' : 'false');
     el.setAttribute('tabindex', isSelected ? '0' : '-1');
   }

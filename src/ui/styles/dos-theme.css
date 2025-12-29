@@ -108,6 +108,16 @@ body {
   color: var(--color-selection-bg);
 }
 
+/* === Smooth Selection Transitions (M5.2 UI Polish) === */
+.menu-item,
+.choice-item,
+.pause-menu-item,
+.options-menu-item,
+.ending-menu-item,
+.inventory-item {
+  transition: background-color 0.1s ease-out, color 0.1s ease-out;
+}
+
 /* === Text Styles === */
 .text-primary {
   color: var(--color-text-primary);

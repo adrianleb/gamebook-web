@@ -308,6 +308,7 @@ export function createEndingScreen(
     const labelPadding = Math.floor((innerWidth - bracketedLabel.length - 2) / 2);
 
     el.innerHTML = `<span style="color: ${endingColor}">${BoxChars.dblVertical}</span>${' '.repeat(labelPadding)}<span style="color: ${markerColor}">${marker}</span> <span style="color: ${labelColor}">${bracketedLabel}</span>${' '.repeat(innerWidth - labelPadding - bracketedLabel.length - 2)}<span style="color: ${endingColor}">${BoxChars.dblVertical}</span>`;
+    el.style.backgroundColor = isSelected ? 'rgba(85, 255, 85, 0.1)' : 'transparent';
   }
 
   function updateSelection(newIndex: number): void {
