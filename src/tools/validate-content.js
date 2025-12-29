@@ -27,8 +27,8 @@
  * @author agent-f (QA Lead)
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Parse command line arguments
 const args = process.argv.slice(2);
