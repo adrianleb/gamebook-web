@@ -162,6 +162,12 @@ describe('Golden Path 4: Neutral Ending', () => {
       engine.startNewGame();
       engine.makeChoice('walk_away');
 
+      // Should transition to walk away scene first
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_WALK_AWAY_SCENE');
+
+      // Complete the walk away scene
+      engine.makeChoice('leave_finally');
+
       expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_NEUTRAL');
       expect(engine.getPhase()).toBe('END_GAME');
     });

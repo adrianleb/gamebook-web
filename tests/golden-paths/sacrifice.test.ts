@@ -152,6 +152,12 @@ describe('Golden Path 2: Sacrifice Ending', () => {
       engine.startNewGame();
       engine.makeChoice('sacrifice_self');
 
+      // Should transition to sacrifice ritual scene first
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_SACRIFICE_RITUAL');
+
+      // Complete the sacrifice ritual
+      engine.makeChoice('complete_sacrifice');
+
       expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_SACRIFICE');
       expect(engine.getPhase()).toBe('END_GAME');
     });
