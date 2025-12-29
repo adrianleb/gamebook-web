@@ -686,7 +686,17 @@ function analyzeEndings(
 // =============================================================================
 
 export function analyzeBalance(manifest: ContentManifest): BalanceReport {
-  const { nodes, initialState } = manifest;
+  const { nodes } = manifest;
+
+  // Provide default initialState for content files that don't define it
+  // (act2/act3 don't have initialState - they're loaded with act1)
+  const initialState: InitialState = manifest.initialState ?? {
+    currentNodeId: nodes[0]?.id ?? 'unknown',
+    flags: {},
+    stats: { health: 100, maxHealth: 100 },
+    inventory: [],
+    factions: {},
+  };
 
   const thresholds = analyzeThresholds(nodes, initialState);
   const items = analyzeItems(nodes, initialState);
