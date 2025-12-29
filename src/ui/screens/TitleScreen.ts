@@ -5,7 +5,7 @@
  * Per UI.md specification with ASCII art title and keyboard navigation.
  */
 
-import { createScreen, createDivider, BoxChars } from '../components/Screen';
+import { createScreen, createDivider } from '../components/Screen';
 import { getKeyboardHandler, createMenuNavigation, type KeyHandler } from '../input/KeyboardHandler';
 
 export interface TitleScreenOptions {
@@ -103,6 +103,7 @@ export function createTitleScreen(options: TitleScreenOptions): TitleScreen {
   const menuElements: HTMLElement[] = [];
   for (let i = 0; i < MENU_ITEMS.length; i++) {
     const item = MENU_ITEMS[i];
+    if (!item) continue;
     const menuItem = document.createElement('div');
     menuItem.id = `menu-${item.id}`;
     menuItem.className = 'menu-item';
@@ -157,12 +158,18 @@ export function createTitleScreen(options: TitleScreenOptions): TitleScreen {
   // Update visual selection
   function updateSelection(newIndex: number): void {
     for (let i = 0; i < menuElements.length; i++) {
-      updateMenuItem(menuElements[i], MENU_ITEMS[i].label, i === newIndex);
+      const menuEl = menuElements[i];
+      const menuItem = MENU_ITEMS[i];
+      if (menuEl && menuItem) {
+        updateMenuItem(menuEl, menuItem.label, i === newIndex);
+      }
     }
     selectedIndex = newIndex;
     // Announce for screen readers
     const selectedItem = MENU_ITEMS[newIndex];
-    announceSelection(selectedItem.label);
+    if (selectedItem) {
+      announceSelection(selectedItem.label);
+    }
   }
 
   // Screen reader announcement
@@ -179,6 +186,7 @@ export function createTitleScreen(options: TitleScreenOptions): TitleScreen {
   // Handle menu selection
   function handleConfirm(index: number): void {
     const item = MENU_ITEMS[index];
+    if (!item) return;
     switch (item.id) {
       case 'new-game':
         options.onNewGame();
@@ -208,8 +216,10 @@ export function createTitleScreen(options: TitleScreenOptions): TitleScreen {
   // Mouse/touch support
   for (let i = 0; i < menuElements.length; i++) {
     const el = menuElements[i];
-    el.addEventListener('mouseenter', () => updateSelection(i));
-    el.addEventListener('click', () => handleConfirm(i));
+    if (el) {
+      el.addEventListener('mouseenter', () => updateSelection(i));
+      el.addEventListener('click', () => handleConfirm(i));
+    }
   }
 
   // Return screen interface

@@ -102,14 +102,14 @@ export class KeyboardHandler {
    * Start listening for keyboard events
    */
   attach(target: HTMLElement | Document = document): void {
-    target.addEventListener('keydown', this.boundHandleKeyDown);
+    target.addEventListener('keydown', this.boundHandleKeyDown as EventListener);
   }
 
   /**
    * Stop listening for keyboard events
    */
   detach(target: HTMLElement | Document = document): void {
-    target.removeEventListener('keydown', this.boundHandleKeyDown);
+    target.removeEventListener('keydown', this.boundHandleKeyDown as EventListener);
   }
 
   /**
@@ -183,7 +183,7 @@ export class KeyboardHandler {
 
     const keyEvent: KeyEvent = {
       action: mapping.action,
-      number: mapping.number,
+      ...(mapping.number !== undefined && { number: mapping.number }),
       originalEvent: e,
     };
 
