@@ -23,6 +23,7 @@ import {
   MAX_CONCURRENT_SFX,
 } from './types';
 import { SoundId, SOUND_REGISTRY, getSoundCategory, isSfx } from './constants';
+import { getSettingsService, type GameSettings } from '../services/SettingsService';
 
 /**
  * Singleton AudioManager instance.
@@ -54,6 +55,12 @@ export class AudioManager {
 
   /** Dev mode: generate tones instead of loading files */
   private devMode = false;
+
+  /** Whether we're subscribed to SettingsService */
+  private settingsSubscribed = false;
+
+  /** Unsubscribe function from SettingsService */
+  private settingsUnsubscribe: (() => void) | null = null;
 
   private constructor() {
     this.settings = this.loadSettings();
@@ -95,6 +102,67 @@ export class AudioManager {
       console.error('[AudioManager] Failed to initialize:', error);
       // Continue without audio - graceful degradation
     }
+  }
+
+  /**
+   * Subscribe to SettingsService for centralized settings management.
+   * This eliminates duplicate localStorage persistence and enables
+   * Options Screen volume controls to work with AudioManager.
+   *
+   * Call after init() for best results. Safe to call multiple times.
+   */
+  subscribeToSettings(): void {
+    if (this.settingsSubscribed) return;
+
+    try {
+      const settingsService = getSettingsService();
+
+      // Sync current settings from SettingsService
+      this.syncFromGameSettings(settingsService.getSettings());
+
+      // Subscribe to future changes
+      this.settingsUnsubscribe = settingsService.subscribe((settings) => {
+        this.syncFromGameSettings(settings);
+      });
+
+      this.settingsSubscribed = true;
+      console.log('[AudioManager] Subscribed to SettingsService');
+    } catch (error) {
+      console.warn('[AudioManager] Failed to subscribe to SettingsService:', error);
+      // Continue with standalone mode - graceful degradation
+    }
+  }
+
+  /**
+   * Sync audio settings from GameSettings.
+   * Maps SettingsService fields to AudioManager internal state.
+   */
+  private syncFromGameSettings(gameSettings: Readonly<GameSettings>): void {
+    this.settings.masterVolume = gameSettings.masterVolume;
+    this.settings.musicVolume = gameSettings.musicVolume;
+    this.settings.sfxVolume = gameSettings.sfxVolume;
+    this.settings.muted = gameSettings.muted;
+
+    this.applySettings();
+  }
+
+  /**
+   * Unsubscribe from SettingsService.
+   * Called automatically on dispose().
+   */
+  unsubscribeFromSettings(): void {
+    if (this.settingsUnsubscribe) {
+      this.settingsUnsubscribe();
+      this.settingsUnsubscribe = null;
+    }
+    this.settingsSubscribed = false;
+  }
+
+  /**
+   * Check if AudioManager is subscribed to SettingsService.
+   */
+  isSubscribedToSettings(): boolean {
+    return this.settingsSubscribed;
   }
 
   /**
@@ -192,48 +260,77 @@ export class AudioManager {
 
   /**
    * Set master volume (0-100).
+   * When subscribed to SettingsService, delegates to it for persistence.
    */
   setMasterVolume(volume: number): void {
-    this.settings.masterVolume = Math.max(0, Math.min(100, volume));
-    this.applySettings();
-    this.saveSettings();
+    const clampedVolume = Math.max(0, Math.min(100, volume));
+    if (this.settingsSubscribed) {
+      // Delegate to SettingsService - we'll get updated via subscription
+      getSettingsService().set('masterVolume', clampedVolume);
+    } else {
+      this.settings.masterVolume = clampedVolume;
+      this.applySettings();
+      this.saveSettings();
+    }
   }
 
   /**
    * Set SFX volume (0-100).
+   * When subscribed to SettingsService, delegates to it for persistence.
    */
   setSfxVolume(volume: number): void {
-    this.settings.sfxVolume = Math.max(0, Math.min(100, volume));
-    this.applySettings();
-    this.saveSettings();
+    const clampedVolume = Math.max(0, Math.min(100, volume));
+    if (this.settingsSubscribed) {
+      getSettingsService().set('sfxVolume', clampedVolume);
+    } else {
+      this.settings.sfxVolume = clampedVolume;
+      this.applySettings();
+      this.saveSettings();
+    }
   }
 
   /**
    * Set music volume (0-100).
+   * When subscribed to SettingsService, delegates to it for persistence.
    */
   setMusicVolume(volume: number): void {
-    this.settings.musicVolume = Math.max(0, Math.min(100, volume));
-    this.applySettings();
-    this.saveSettings();
+    const clampedVolume = Math.max(0, Math.min(100, volume));
+    if (this.settingsSubscribed) {
+      getSettingsService().set('musicVolume', clampedVolume);
+    } else {
+      this.settings.musicVolume = clampedVolume;
+      this.applySettings();
+      this.saveSettings();
+    }
   }
 
   /**
    * Toggle mute state.
+   * When subscribed to SettingsService, delegates to it for persistence.
    */
   toggleMute(): boolean {
-    this.settings.muted = !this.settings.muted;
-    this.applySettings();
-    this.saveSettings();
-    return this.settings.muted;
+    if (this.settingsSubscribed) {
+      return getSettingsService().toggleMute();
+    } else {
+      this.settings.muted = !this.settings.muted;
+      this.applySettings();
+      this.saveSettings();
+      return this.settings.muted;
+    }
   }
 
   /**
    * Set mute state explicitly.
+   * When subscribed to SettingsService, delegates to it for persistence.
    */
   setMuted(muted: boolean): void {
-    this.settings.muted = muted;
-    this.applySettings();
-    this.saveSettings();
+    if (this.settingsSubscribed) {
+      getSettingsService().set('muted', muted);
+    } else {
+      this.settings.muted = muted;
+      this.applySettings();
+      this.saveSettings();
+    }
   }
 
   /**
@@ -650,6 +747,7 @@ export class AudioManager {
    */
   dispose(): void {
     this.stopAll();
+    this.unsubscribeFromSettings();
     this.loadedSounds.clear();
     if (this.context) {
       this.context.close();
