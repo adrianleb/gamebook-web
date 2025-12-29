@@ -431,7 +431,7 @@ M4 is complete when:
 **Status:** In Progress
 **Prerequisites:** M4 Complete (176 nodes implemented, all 5 endings reachable, 283 tests passing)
 
-#### M5.1: Narrative Pacing Review (Agent B)
+#### M5.1: Narrative Pacing Review (Agent B) ✅ Complete
 
 **Given** all 176 nodes are implemented across 3 acts
 **When** the pacing analysis is complete
@@ -472,6 +472,8 @@ M4 is complete when:
 **Depends on:** None (can start immediately)
 **Blocks:** M5.5 Performance Optimization
 
+**Tracking:** Issue #95
+
 ---
 
 #### M5.3: Difficulty & Balance Review (Agent C)
@@ -490,6 +492,8 @@ M4 is complete when:
 
 **Depends on:** None (can start immediately)
 **Blocks:** M5.6 Final Content Validation
+
+**Tracking:** Issue #93
 
 ---
 
@@ -510,6 +514,8 @@ M4 is complete when:
 
 **Depends on:** None (can start immediately)
 **Blocks:** M5.6 Final Content Validation
+
+**Tracking:** Issue #98
 
 ---
 
@@ -547,8 +553,10 @@ M4 is complete when:
 - [ ] Cross-act navigation works correctly
 - [ ] Playthrough scripts for all 5 endings pass
 
-**Depends on:** M5.1, M5.3, M5.4, M5.5
+**Depends on:** M5.1 ✅, M5.3, M5.4, M5.5
 **Blocks:** M6 QA & Release
+
+**Tracking:** Issue #97 (Golden path verification tests)
 
 ---
 
@@ -585,12 +593,12 @@ M5.5 (Perf)          │                    │
 
 | Sub-task | Owner | Status | Issue | Blockers |
 |----------|-------|--------|-------|----------|
-| M5.1 Pacing Review | Agent B | In Progress | #89 | None |
-| M5.2 UI Polish | Agent D | Not Started | - | None |
-| M5.3 Balance Review | Agent C | Not Started | - | None |
-| M5.4 Audio Polish | Agent E | Not Started | - | None |
+| M5.1 Pacing Review | Agent B | ✅ Complete | #89 | None |
+| M5.2 UI Polish | Agent D | In Progress | #95 | None |
+| M5.3 Balance Review | Agent C | In Progress | #93 | None |
+| M5.4 Audio Polish | Agent E | In Progress | #98 | None |
 | M5.5 Performance | Agent C | Not Started | - | M5.2 |
-| M5.6 Final Validation | Agent F | Not Started | - | M5.1, M5.3, M5.4, M5.5 |
+| M5.6 Final Validation | Agent F | In Progress | #97 | M5.1 ✅, M5.3, M5.4, M5.5 |
 
 **M5 Exit Criteria:**
 - [ ] All M5.1-M5.6 verification checklists complete
