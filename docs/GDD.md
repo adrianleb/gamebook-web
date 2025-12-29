@@ -795,7 +795,7 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
-| M6.1 Cross-Browser QA | Agent D | 🚫 Blocked | #118 | #154 |
+| M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
 | M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
@@ -814,29 +814,35 @@ PR #147 merged (2025-12-29) - Agent C implemented full engine-to-UI wiring in `m
 **Previously Blocked by #142 (Resolved):**
 - Issue #142 (engine-UI wiring): Resolved via PR #147
 
-**Previously Blocked by #149 (Partially Resolved):**
-- Issue #149 (Acts 2/3 not loading): Partially resolved via PR #151
-- PR #151 fixed the premature `break` statements - all 3 act files now fetch successfully
-- However, a deeper architectural issue was discovered (see #154 below)
+**✅ P0 RESOLVED - Issue #149: Acts 2/3 now loading correctly**
 
-**🚨 CURRENT P0 BLOCKER - Issue #154:**
-- **Problem:** ContentLoader.loadFromString clears previous content instead of merging
-- **Root Cause:** `loadManifest()` in `src/engine/content-loader.ts` calls `nodeMap.clear()` and `itemMap.clear()` when loading each file
-- **Effect:** When loading act1, act2, act3 in sequence, only Act 3 nodes remain (previous acts are cleared)
-- **Symptom:** Game starts at ACT1_START but fails with "Node not found: ACT2_START" on act transition
-- **Assigned:** agent-c claimed Issue #154
-- **Blocks:** M6.1, M6.5, M6.6
+PR #151 merged (2025-12-29) - Agent E removed premature break statements:
+- All 3 act files (act1, act2, act3) now fetch successfully
+- Combined with PR #156, all 176 nodes are accessible
+
+**✅ P0 RESOLVED - Issue #154: ContentLoader now merges content correctly**
+
+PR #156 merged (2025-12-29) - Agent C implemented `mergeFromString()` method:
+- Added `mergeFromString()` to ContentLoader that adds nodes/items without clearing existing content
+- Updated `loadGameContent()` to use `loadFromString()` for first act file (full validation)
+- Subsequent act files use `mergeFromString()` (merge without clearing)
+- All 176 nodes now load correctly: Act 1 (56) + Act 2 (64) + Act 3 (56)
+- All 5 endings now reachable: Victory, Sacrifice, Betrayal, Neutral, Death
+
+**Previously Blocked by #154 (Now Resolved):**
+- Issue #154 (ContentLoader clears instead of merging): Resolved via PR #156
 
 **Current Status:**
-- M6.1: **BLOCKED** by Issue #154 - cannot complete playthrough testing
+- M6.1: **UNBLOCKED** - Agent D can now complete full playthrough testing
 - M6.5: Waiting on M6.1 completion
 - M6.6: Waiting on M6.5 completion
 
 **Resolution History:**
 - PR #147 (Cycle 834): Fixed engine-UI wiring - choices now advance the game
-- PR #151 (Cycle 870): Fixed premature break statements - all 3 act files now fetch (but merge issue remains)
+- PR #151 (Cycle 870): Fixed premature break statements - all 3 act files now fetch
+- PR #156 (Cycle 906): Fixed content merging - all act nodes now persist correctly
 
-Game is playable through Act 1, but act transitions fail. Full playthrough blocked until Issue #154 is resolved.
+Game is now fully playable from start to any of the 5 endings. M6.1 Cross-Browser QA can proceed.
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
