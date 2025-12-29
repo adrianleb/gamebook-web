@@ -20,7 +20,7 @@ const path = require('path');
 
 // Default configuration (overridden by config file)
 const DEFAULT_CONFIG = {
-  audioDir: 'src/assets/audio',
+  audioDir: 'public/audio',
   requiredSfx: [
     'menu_move',
     'menu_select',

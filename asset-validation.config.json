@@ -1,5 +1,5 @@
 {
-  "audioDir": "src/assets/audio",
+  "audioDir": "public/audio",
   "requiredSfx": [
     "menu_move",
     "menu_select",

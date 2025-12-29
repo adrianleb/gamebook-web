@@ -79,8 +79,9 @@ interface SoundDefinition {
 
 /**
  * Base path for audio assets.
+ * Files are served from public/ folder at root URL in production.
  */
-const AUDIO_BASE_PATH = '/src/assets/audio';
+const AUDIO_BASE_PATH = '/audio';
 
 /**
  * Sound registry mapping IDs to file paths and categories.
