@@ -629,14 +629,174 @@ M5.5 (Perf)          │                    │
 - [x] No P0 or P1 bugs open (0 bugs, content validator 0 errors)
 - [x] Content validator shows 100% coverage (176/176 nodes reachable, 9/9 items validated)
 - [x] At least one full playthrough per ending documented (5 golden path test suites: Victory, Sacrifice, Betrayal, Neutral, Death)
-- [ ] All agents sign off on their domain areas (pending agent reviews)
+- [x] All agents sign off on their domain areas (verified via PR reviews)
+
+**M5 COMPLETE** (2025-12-29) - All polish and balancing work done. 320 tests passing, 176 nodes validated, all 5 endings verified. Ready for M6 QA & Release.
 
 ### M6: QA & Release
-- [ ] Full playthroughs completed
-- [ ] All P0/P1 bugs fixed
-- [ ] Final build produced
-- [ ] Release notes written
-- [ ] Deployment verified
+
+**Status:** Ready to Begin
+**Prerequisites:** M5 Complete (all sub-tasks verified, 320 tests passing, 0 P0/P1 bugs)
+
+#### M6.1: Cross-Browser Playthrough (Agent D)
+
+**Given** the game runs in a browser environment
+**When** playthroughs are executed in target browsers
+**Then** the game functions correctly across all supported browsers
+
+**Verification:**
+- [ ] Chrome (latest 2 versions) - full playthrough to any ending
+- [ ] Firefox (latest 2 versions) - full playthrough to any ending
+- [ ] Safari (latest 2 versions) - full playthrough to any ending
+- [ ] Edge (latest 2 versions) - full playthrough to any ending
+- [ ] Mobile responsive check (Chrome/Safari mobile)
+- [ ] No browser-specific rendering or audio issues
+
+**Depends on:** None
+**Blocks:** M6.5 Final Build
+
+---
+
+#### M6.2: Regression Test Suite (Agent F)
+
+**Given** the QA test plan in QA.md
+**When** the full regression suite runs
+**Then** all critical paths pass with no regressions
+
+**Verification:**
+- [ ] All 5 golden path tests pass (Victory, Sacrifice, Betrayal, Neutral, Death)
+- [ ] All 8 edge case tests pass
+- [ ] Save/load regression tests pass (3 slots + autosave)
+- [ ] UI navigation regression tests pass
+- [ ] Audio regression tests pass
+- [ ] No new P0/P1 bugs discovered
+
+**Depends on:** None
+**Blocks:** M6.5 Final Build
+
+---
+
+#### M6.3: Documentation & Release Notes (Agent B)
+
+**Given** the game is feature-complete
+**When** documentation is finalized
+**Then** all player-facing and developer documentation is complete
+
+**Verification:**
+- [ ] README.md updated with final play instructions
+- [ ] CHANGELOG.md created with version history
+- [ ] Release notes drafted (features, known issues, credits)
+- [ ] In-game credits verified (all contributors listed)
+- [ ] License files verified (CC0 audio assets, code license)
+
+**Depends on:** None
+**Blocks:** M6.6 Deployment
+
+---
+
+#### M6.4: Build Optimization (Agent C)
+
+**Given** the production build process
+**When** the final build is optimized
+**Then** the build is production-ready with optimal performance
+
+**Verification:**
+- [ ] Production build runs without errors (`npm run build`)
+- [ ] Bundle size < 2MB (excluding audio assets)
+- [ ] No console errors or warnings in production mode
+- [ ] Source maps excluded from production
+- [ ] Assets minified and optimized
+- [ ] Cache headers configured for static assets
+
+**Depends on:** None
+**Blocks:** M6.5 Final Build
+
+---
+
+#### M6.5: Final Build & Sign-Off (Agent A)
+
+**Given** all QA tasks are complete
+**When** the final build is produced
+**Then** the build is verified and ready for deployment
+
+**Verification:**
+- [ ] All M6.1-M6.4 verification checklists complete
+- [ ] Final production build generated
+- [ ] Build artifact SHA recorded for traceability
+- [ ] All agents provide domain sign-off:
+  - [ ] Agent B (Narrative): Story content verified
+  - [ ] Agent C (Systems): Engine and save system verified
+  - [ ] Agent D (Experience): UI/UX verified
+  - [ ] Agent E (Production): Audio verified
+  - [ ] Agent F (QA): Test coverage verified
+- [ ] Human approval obtained for release
+
+**Depends on:** M6.1 ✅, M6.2 ✅, M6.3 ✅, M6.4 ✅
+**Blocks:** M6.6 Deployment
+
+---
+
+#### M6.6: Deployment (Agent E)
+
+**Given** the final build is approved
+**When** deployment is executed
+**Then** the game is live and accessible
+
+**Verification:**
+- [ ] Deployment target configured (GitHub Pages / Vercel / Netlify)
+- [ ] Production deployment executed
+- [ ] Live URL verified and accessible
+- [ ] Post-deployment smoke test passed (new game → save → load)
+- [ ] No 404s or broken asset links
+- [ ] Analytics/monitoring configured (if applicable)
+
+**Depends on:** M6.5 Final Build ✅
+**Blocks:** None (Final milestone)
+
+---
+
+#### M6 Integration Checklist
+
+**Dependency Graph:**
+
+```
+M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
+       │                      │                  │                │
+       └──────────────┬───────┴──────────────────┴────────────────┘
+                      │
+                      ▼
+              M6.5 (Final Build & Sign-Off)
+                      │
+                      ▼
+              M6.6 (Deployment)
+                      │
+                      ▼
+                 🎮 RELEASE
+```
+
+**Pre-M6 Gate:**
+- [x] M5 Complete - All 6 sub-tasks verified
+- [x] M5 Complete - 320 tests passing
+- [x] M5 Complete - 0 P0/P1 bugs
+
+**Agent Assignments Summary:**
+
+| Sub-task | Owner | Status | Issue/PR | Blockers |
+|----------|-------|--------|----------|----------|
+| M6.1 Cross-Browser QA | Agent D | Not Started | - | None |
+| M6.2 Regression Suite | Agent F | Not Started | - | None |
+| M6.3 Documentation | Agent B | Not Started | - | None |
+| M6.4 Build Optimization | Agent C | Not Started | - | None |
+| M6.5 Final Build | Agent A | Not Started | - | M6.1-M6.4 |
+| M6.6 Deployment | Agent E | Not Started | - | M6.5 |
+
+**M6 Exit Criteria (Release Criteria):**
+- [ ] All M6.1-M6.6 verification checklists complete
+- [ ] No open P0 or P1 bugs
+- [ ] Final build artifact archived
+- [ ] Release notes published
+- [ ] Game live at production URL
+- [ ] Post-launch monitoring active
 
 ---
 
