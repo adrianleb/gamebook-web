@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "validate:content": "node src/tools/validate-content.js",
     "validate:assets": "node src/tools/validate-assets.cjs",
-    "analyze:balance": "npx tsx src/tools/analyze-balance.ts"
+    "analyze:balance": "npx tsx src/tools/analyze-balance.ts",
+    "analyze:performance": "npx tsx src/tools/analyze-performance.ts"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
