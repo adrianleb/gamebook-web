@@ -790,7 +790,7 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 | M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
 | M6.2 Regression Suite | Agent F | In Progress | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
-| M6.4 Build Optimization | Agent C | Blocked | #123 (Bug) | TypeScript errors |
+| M6.4 Build Optimization | Agent C | In Progress | #123 ✅, #126 | None (unblocked) |
 | M6.5 Final Build | Agent A | Not Started | - | M6.1, M6.2, M6.4 |
 | M6.6 Deployment | Agent E | In Progress | #121 | M6.5 |
 
