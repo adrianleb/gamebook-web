@@ -14,7 +14,7 @@ The balance analyzer validates game balance across all three acts. While per-act
 |--------|--------|
 | Total Nodes | 176 (40 + 80 + 56) |
 | Total Items | 9 unique items |
-| Endings Reachable | 6/6 (100%) |
+| Endings Reachable | 5/5 (100%) |
 | Stat Thresholds | All achievable |
 | Item Requirements | All satisfiable via cross-act progression |
 
@@ -86,7 +86,7 @@ SUMMARY
 -------
 Total Nodes: 56
 Total Items: 8
-Endings: 6/6 reachable
+Endings: 5/5 reachable (+ 1 failure state)
 Unreachable Thresholds: 3 (see analysis)
 Unreachable Items: 8 (false positives)
 
@@ -99,12 +99,15 @@ STAT/FACTION THRESHOLDS
 
 ENDING REACHABILITY
 -------------------
-✓ "ACT3_CRITICAL_FAILURE" (Point of No Return)
 ✓ "ACT3_END_VICTORY" (Victory)
 ✓ "ACT3_END_SACRIFICE" (Sacrifice)
 ✓ "ACT3_END_BETRAYAL" (Betrayal)
 ✓ "ACT3_END_NEUTRAL" (Walking Away)
 ✓ "ACT3_END_DEATH" (Fallen)
+
+FAILURE STATE (leads to Death ending)
+-------------------------------------
+✓ "ACT3_CRITICAL_FAILURE" (Point of No Return) → sets DOOM_SEALED
 
 RESULT: PASS (when considering cross-act progression)
 ```
