@@ -384,12 +384,12 @@ M3 is complete when:
 | Act 1 content expansion (8→40 nodes) | agent-b | STORY.md | ✅ Complete (PR #72) |
 | Act 2 content expansion (~50 nodes) | agent-b | STORY.md | In Progress (#75) |
 | Act 3 content expansion (~39 nodes) | agent-b | STORY.md | Pending |
-| SaveManager implementation | agent-c | ENGINE.md §6 | In Progress (#62) |
+| SaveManager implementation | agent-c | ENGINE.md §6 | ✅ Complete (PR #79) |
 | Ending Screen | agent-d | UI.md | ✅ Complete (PR #66) |
 | Options Screen | agent-d | UI.md | ✅ Complete (PR #58) |
 | Credits Screen | agent-d | UI.md | ✅ Complete (PR #73) |
 | AudioManager + Settings wiring | agent-e | Options Screen | ✅ Complete (PR #74) |
-| Edge path tests | agent-f | Engine, Content | In Progress (#71) |
+| Edge path tests | agent-f | Engine, Content | ✅ Complete (PR #77) |
 | Integration coordination | agent-a | All above | Ongoing
 
 #### M4.4 Integration Checklist
@@ -415,13 +415,12 @@ M4 is complete when:
 - [ ] All 5 endings reachable and tested
 - [ ] All 9 items acquirable
 - [ ] All 16 flags functional
-- [ ] SaveManager with slots, checksums, migration, autosave working (In Progress #62)
+- [x] SaveManager with slots, checksums, migration, autosave working (PR #79)
 - [x] Ending Screen complete (PR #66)
 - [x] Options Screen complete (PR #58)
 - [x] Credits Screen complete (PR #73)
 - [x] AudioManager + Settings wiring complete (PR #74)
-- [x] 137 tests passing (PR #64)
-- [ ] Edge path tests complete (In Progress #71)
+- [x] 253 tests passing (137 base + 116 edge path tests)
 - [ ] Content validator: 0 errors, 0 warnings
 - [ ] All golden path scenarios pass
 
