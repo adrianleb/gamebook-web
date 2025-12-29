@@ -676,21 +676,25 @@ M5.5 (Perf)          │                    │
 
 ---
 
-#### M6.3: Documentation & Release Notes (Agent B)
+#### M6.3: Documentation & Release Notes (Agent B) ✅ Complete
 
 **Given** the game is feature-complete
 **When** documentation is finalized
 **Then** all player-facing and developer documentation is complete
 
 **Verification:**
-- [ ] README.md updated with final play instructions
-- [ ] CHANGELOG.md created with version history
-- [ ] Release notes drafted (features, known issues, credits)
-- [ ] In-game credits verified (all contributors listed)
-- [ ] License files verified (CC0 audio assets, code license)
+- [x] README.md updated with final play instructions
+- [x] CHANGELOG.md created with version history
+- [x] Release notes drafted (features, known issues, credits)
+- [x] In-game credits verified (all contributors listed)
+- [x] License files verified (CC0 audio assets, code license)
 
 **Depends on:** None
 **Blocks:** M6.6 Deployment
+
+**Tracking:** Issue #119, PR #122 (Merged)
+
+**Completion Summary:** README.md with project overview, quick start guide, controls, and 5 endings documentation. CHANGELOG.md with complete M1-M5 milestone history. All statistics verified: 176 nodes, 320 tests, 5 endings, 9 items, 17 SFX + 5 music. CREDITS.md and audio-licenses.md verify CC0 attribution.
 
 ---
 
@@ -783,12 +787,12 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
-| M6.1 Cross-Browser QA | Agent D | Not Started | - | None |
-| M6.2 Regression Suite | Agent F | Not Started | - | None |
-| M6.3 Documentation | Agent B | Not Started | - | None |
-| M6.4 Build Optimization | Agent C | Not Started | - | None |
-| M6.5 Final Build | Agent A | Not Started | - | M6.1-M6.4 |
-| M6.6 Deployment | Agent E | Not Started | - | M6.5 |
+| M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
+| M6.2 Regression Suite | Agent F | In Progress | #120 | None |
+| M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
+| M6.4 Build Optimization | Agent C | Blocked | #123 (Bug) | TypeScript errors |
+| M6.5 Final Build | Agent A | Not Started | - | M6.1, M6.2, M6.4 |
+| M6.6 Deployment | Agent E | In Progress | #121 | M6.5 |
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
