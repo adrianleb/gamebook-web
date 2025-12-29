@@ -9,13 +9,323 @@
         {
           "id": "seek_audience",
           "text": "Travel to the faction stronghold for your audience",
-          "targetId": "ACT2_LEADER_AUDIENCE"
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD"
+        },
+        {
+          "id": "explore_first",
+          "text": "Explore the surrounding lands before presenting yourself",
+          "targetId": "ACT2_FRONTIER_EXPLORATION"
         }
       ],
       "onEnter": [
         { "type": "triggerEvent", "event": "act_start", "data": { "act": 2 } }
       ],
       "tags": ["start", "act2"]
+    },
+    {
+      "id": "ACT2_TRAVEL_TO_STRONGHOLD",
+      "title": "The Road to Power",
+      "body": "The journey to your faction's stronghold takes you through diverse terrain. The roads are busy with travelers, merchants, and soldiers—all bearing the signs of the ongoing conflict between factions.\n\nAs you travel, you notice a commotion ahead. A group of travelers is being harassed by bandits.",
+      "choices": [
+        {
+          "id": "intervene",
+          "text": "Intervene on behalf of the travelers",
+          "targetId": "ACT2_BANDIT_ENCOUNTER",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 }
+          ]
+        },
+        {
+          "id": "observe",
+          "text": "Observe from a distance and gather information",
+          "targetId": "ACT2_BANDIT_OBSERVE",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 5 }
+          ]
+        },
+        {
+          "id": "avoid",
+          "text": "Take a longer route to avoid trouble",
+          "targetId": "ACT2_LEADER_AUDIENCE"
+        }
+      ],
+      "tags": ["travel", "act2"]
+    },
+    {
+      "id": "ACT2_BANDIT_ENCOUNTER",
+      "title": "Highway Justice",
+      "body": "You charge into the fray, surprising the bandits with your sudden assault. The travelers—a merchant family—cower behind their cart as steel clashes.\n\nThe bandits are numerous but poorly trained. Within minutes, three lie unconscious and the rest have fled into the hills.",
+      "choices": [
+        {
+          "id": "help_family",
+          "text": "Help the merchant family recover",
+          "targetId": "ACT2_MERCHANT_GRATITUDE",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionC", "delta": 5 }
+          ]
+        },
+        {
+          "id": "pursue_bandits",
+          "text": "Pursue the fleeing bandits",
+          "targetId": "ACT2_BANDIT_CAMP"
+        }
+      ],
+      "tags": ["combat", "act2"]
+    },
+    {
+      "id": "ACT2_BANDIT_OBSERVE",
+      "title": "Patient Watching",
+      "body": "From your hidden vantage point, you observe the bandits carefully. They wear mismatched armor, but their leader bears a sigil you recognize—deserters from one of the faction armies.\n\nAfter taking what they want, the bandits head east toward the hills. You've learned something valuable about the lawlessness spreading across the realm.",
+      "choices": [
+        {
+          "id": "follow_bandits",
+          "text": "Follow the bandits to their camp",
+          "targetId": "ACT2_BANDIT_CAMP"
+        },
+        {
+          "id": "continue_journey",
+          "text": "Continue to the faction stronghold",
+          "targetId": "ACT2_LEADER_AUDIENCE",
+          "effects": [
+            { "type": "setFlag", "flag": "KNOWS_BANDIT_LOCATION" }
+          ]
+        }
+      ],
+      "tags": ["stealth", "act2"]
+    },
+    {
+      "id": "ACT2_MERCHANT_GRATITUDE",
+      "title": "A Merchant's Thanks",
+      "body": "The merchant, a rotund man named Aldric, clasps your hands gratefully. 'You've saved our lives! These roads have grown dangerous—the factions care only for their wars, not for common folk.'\n\nHe presses a pouch of coins into your palm. 'Take this, and know that the Merchant's Guild remembers those who help its members. If you ever need supplies or information, seek out our sign.'",
+      "speaker": "Aldric",
+      "choices": [
+        {
+          "id": "accept_gift",
+          "text": "Accept the gift and continue",
+          "targetId": "ACT2_LEADER_AUDIENCE",
+          "effects": [
+            { "type": "setFlag", "flag": "MERCHANT_GUILD_FAVOR" },
+            { "type": "modifyFaction", "faction": "factionC", "delta": 5 }
+          ]
+        },
+        {
+          "id": "refuse_gift",
+          "text": "Refuse payment—you did what was right",
+          "targetId": "ACT2_LEADER_AUDIENCE",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 },
+            { "type": "setFlag", "flag": "NOBLE_REPUTATION" }
+          ]
+        }
+      ],
+      "tags": ["dialogue", "reward", "act2"]
+    },
+    {
+      "id": "ACT2_BANDIT_CAMP",
+      "title": "Den of Thieves",
+      "body": "You track the bandits to their camp—a collection of tents hidden in a rocky ravine. There are perhaps two dozen of them, too many to fight directly.\n\nBut you notice something interesting: crates marked with faction symbols. These aren't just bandits—they're intercepting supply shipments. This information could be valuable.",
+      "choices": [
+        {
+          "id": "steal_intel",
+          "text": "Sneak in and gather evidence",
+          "targetId": "ACT2_BANDIT_INTEL",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 5 }
+          ]
+        },
+        {
+          "id": "report_location",
+          "text": "Report this location to the authorities",
+          "targetId": "ACT2_LEADER_AUDIENCE",
+          "effects": [
+            { "type": "setFlag", "flag": "REPORTED_BANDIT_CAMP" }
+          ]
+        }
+      ],
+      "tags": ["stealth", "discovery", "act2"]
+    },
+    {
+      "id": "ACT2_BANDIT_INTEL",
+      "title": "Secrets Stolen",
+      "body": "Moving silently through the camp, you find manifests and letters in the leader's tent. The truth is worse than you suspected—these bandits are being paid by someone within the factions to disrupt supply lines.\n\nA signature at the bottom of one letter reads: 'S.B.' The Shadow Broker, perhaps?",
+      "choices": [
+        {
+          "id": "take_evidence",
+          "text": "Take the evidence and leave",
+          "targetId": "ACT2_LEADER_AUDIENCE",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_BANDIT_EVIDENCE" },
+            { "type": "setFlag", "flag": "KNOWS_SHADOW_BROKER_PLOT" }
+          ]
+        }
+      ],
+      "tags": ["intelligence", "act2"]
+    },
+    {
+      "id": "ACT2_FRONTIER_EXPLORATION",
+      "title": "The Frontier Lands",
+      "body": "The lands between faction territories are wild and lawless—but also full of opportunity. Ancient ruins dot the hillsides, and rumors speak of treasures left behind by civilizations long fallen.\n\nAs you explore, you come across three points of interest: a crumbling watchtower, an overgrown temple, and a merchant caravan making camp.",
+      "choices": [
+        {
+          "id": "investigate_tower",
+          "text": "Investigate the watchtower",
+          "targetId": "ACT2_FRONTIER_TOWER"
+        },
+        {
+          "id": "investigate_temple",
+          "text": "Explore the overgrown temple",
+          "targetId": "ACT2_FRONTIER_TEMPLE"
+        },
+        {
+          "id": "approach_caravan",
+          "text": "Approach the merchant caravan",
+          "targetId": "ACT2_FRONTIER_CARAVAN"
+        }
+      ],
+      "tags": ["exploration", "act2"]
+    },
+    {
+      "id": "ACT2_FRONTIER_TOWER",
+      "title": "The Abandoned Watchtower",
+      "body": "The watchtower offers a commanding view of the surrounding lands. From its top, you can see the strongholds of all three factions—distant but distinct on the horizon.\n\nAmong the debris, you find old tactical maps showing troop movements from a war long past. Some of the marked paths still exist—hidden routes that could prove useful.",
+      "choices": [
+        {
+          "id": "study_maps",
+          "text": "Study the tactical maps carefully",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD",
+          "effects": [
+            { "type": "setFlag", "flag": "KNOWS_HIDDEN_ROUTES" }
+          ]
+        }
+      ],
+      "tags": ["exploration", "lore", "act2"]
+    },
+    {
+      "id": "ACT2_FRONTIER_TEMPLE",
+      "title": "Temple of Forgotten Gods",
+      "body": "The temple is older than any faction—a remnant of when the land was whole. Vines cover the entrance, but the interior is surprisingly well-preserved.\n\nAt the heart of the temple, you find an altar with three offerings: a warrior's medallion, a scholar's lens, and a merchant's scale. Each seems to call to something within you.",
+      "choices": [
+        {
+          "id": "take_medallion",
+          "text": "Take the warrior's medallion",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_A_JOINED", "value": true }
+          ],
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 10 },
+            { "type": "setFlag", "flag": "HAS_TEMPLE_BLESSING" }
+          ]
+        },
+        {
+          "id": "take_lens",
+          "text": "Take the scholar's lens",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_B_JOINED", "value": true }
+          ],
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 10 },
+            { "type": "setFlag", "flag": "HAS_TEMPLE_BLESSING" }
+          ]
+        },
+        {
+          "id": "take_scale",
+          "text": "Take the merchant's scale",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_C_JOINED", "value": true }
+          ],
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionC", "delta": 10 },
+            { "type": "setFlag", "flag": "HAS_TEMPLE_BLESSING" }
+          ]
+        },
+        {
+          "id": "leave_offerings",
+          "text": "Leave the offerings undisturbed",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD"
+        }
+      ],
+      "tags": ["exploration", "shrine", "act2"]
+    },
+    {
+      "id": "ACT2_FRONTIER_CARAVAN",
+      "title": "Travelers' Rest",
+      "body": "The caravan master, a shrewd woman named Mira, welcomes you to their fire. 'Dangerous to travel alone these days,' she observes. 'The factions grow more aggressive, and bandits prey on whoever's left.'\n\nShe offers you a warm meal and news from across the realm. In exchange, she asks only for stories from your travels.",
+      "speaker": "Mira",
+      "choices": [
+        {
+          "id": "share_stories",
+          "text": "Share tales of your journey so far",
+          "targetId": "ACT2_CARAVAN_NEWS",
+          "effects": [
+            { "type": "setFlag", "flag": "CARAVAN_FRIEND" }
+          ]
+        },
+        {
+          "id": "ask_rumors",
+          "text": "Ask about rumors and opportunities",
+          "targetId": "ACT2_CARAVAN_RUMORS"
+        }
+      ],
+      "tags": ["dialogue", "act2"]
+    },
+    {
+      "id": "ACT2_CARAVAN_NEWS",
+      "title": "News from Afar",
+      "body": "Mira listens to your tales with evident interest, then shares her own observations. 'The Shadow Conclave has been recruiting heavily. The Northern Alliance lost a border fortress. And the Golden Circle...' She lowers her voice. 'They say someone's been stealing from their vaults.'\n\nShe hands you a small token. 'Show this at any caravan bearing my sign. You'll find friends there.'",
+      "speaker": "Mira",
+      "choices": [
+        {
+          "id": "thank_continue",
+          "text": "Thank her and continue your journey",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_CARAVAN_TOKEN" }
+          ]
+        }
+      ],
+      "tags": ["dialogue", "lore", "act2"]
+    },
+    {
+      "id": "ACT2_CARAVAN_RUMORS",
+      "title": "Whispers of Opportunity",
+      "body": "Mira's eyes gleam. 'Looking for work, are you? I hear the factions are always looking for capable agents. But if you want something... less official...'\n\nShe leans closer. 'There's talk of a vault job. Big score, big risk. The kind of thing that could set someone up for life—or get them killed. Interested?'",
+      "speaker": "Mira",
+      "choices": [
+        {
+          "id": "interested_vault",
+          "text": "Tell me more about this vault",
+          "targetId": "ACT2_HEIST_INTRO",
+          "effects": [
+            { "type": "setFlag", "flag": "HEIST_OFFERED" }
+          ]
+        },
+        {
+          "id": "not_interested",
+          "text": "I'll stick with legitimate work",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD"
+        }
+      ],
+      "tags": ["dialogue", "heist_path", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_INTRO",
+      "title": "The Score",
+      "body": "Mira sketches a rough map in the dirt. 'The old fortress at Blackrock Pass—it's been converted into a treasury. Three factions use it as neutral ground to store their most valuable assets.'\n\nShe taps the drawing. 'Heavy security, magical wards, the works. But every vault has weaknesses. I know someone who's putting together a team. Meet them at the Crow's Nest tavern in the frontier town.'",
+      "speaker": "Mira",
+      "choices": [
+        {
+          "id": "accept_job",
+          "text": "I'll check it out",
+          "targetId": "ACT2_TRAVEL_TO_STRONGHOLD",
+          "effects": [
+            { "type": "setFlag", "flag": "HEIST_CONTACT_KNOWN" }
+          ]
+        }
+      ],
+      "tags": ["heist_path", "act2"]
     },
     {
       "id": "ACT2_LEADER_AUDIENCE",
@@ -106,42 +416,232 @@
     },
     {
       "id": "ACT2_ARTIFACT",
-      "title": "Claiming the Artifact",
-      "body": "After weeks of travel and countless dangers, you stand before the fortress vault. The artifact gleams before you—a symbol of your faction's power made manifest.\n\nAs you reach for it, you feel its energy coursing through you. This is what you were meant to carry. This is your destiny.",
+      "title": "The Journey Begins",
+      "body": "The faction leader's quest sends you on a perilous journey to retrieve the artifact. The path varies depending on your faction allegiance—each artifact lies in a different stronghold, guarded by ancient protections.",
       "choices": [
         {
-          "id": "claim_artifact_a",
-          "text": "Claim the Crown of the North",
-          "targetId": "ACT2_PROPHECY",
+          "id": "artifact_a_path",
+          "text": "Travel to the Northern Citadel",
+          "targetId": "ACT2_ARTIFACT_A_JOURNEY",
           "conditions": [
             { "type": "flag", "flag": "FACTION_A_JOINED", "value": true }
-          ],
+          ]
+        },
+        {
+          "id": "artifact_b_path",
+          "text": "Descend into the Shadow Depths",
+          "targetId": "ACT2_ARTIFACT_B_JOURNEY",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_B_JOINED", "value": true }
+          ]
+        },
+        {
+          "id": "artifact_c_path",
+          "text": "Seek the Golden Treasury",
+          "targetId": "ACT2_ARTIFACT_C_JOURNEY",
+          "conditions": [
+            { "type": "flag", "flag": "FACTION_C_JOINED", "value": true }
+          ]
+        }
+      ],
+      "tags": ["faction_specific", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_A_JOURNEY",
+      "title": "The Northern Citadel",
+      "body": "The journey north takes you through frozen mountain passes and abandoned fortresses. The Northern Alliance once controlled all these lands, but war has pushed their borders back.\n\nAt last, the ancient citadel rises before you—a fortress built into the mountainside, its stones carved with the symbols of forgotten kings.",
+      "choices": [
+        {
+          "id": "approach_citadel",
+          "text": "Approach the citadel gates",
+          "targetId": "ACT2_ARTIFACT_A_GATE"
+        },
+        {
+          "id": "scout_citadel",
+          "text": "Scout the perimeter first",
+          "targetId": "ACT2_ARTIFACT_A_SCOUT"
+        }
+      ],
+      "tags": ["faction_a", "artifact_quest", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_A_GATE",
+      "title": "The Guardian's Challenge",
+      "body": "An ancient spirit materializes before the gates—a spectral warrior in armor of a bygone age. 'Only those worthy of the Crown may pass,' it intones. 'Prove your worth in combat, or be destroyed.'\n\nThe ghost draws a sword of ethereal light. This will not be an easy fight.",
+      "choices": [
+        {
+          "id": "fight_guardian",
+          "text": "Accept the challenge",
+          "targetId": "ACT2_ARTIFACT_A_CLAIM",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -20, "clampMin": 1 }
+          ]
+        }
+      ],
+      "tags": ["combat", "faction_a", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_A_SCOUT",
+      "title": "Hidden Entrance",
+      "body": "Your scouting reveals a partially collapsed section of wall—a secret entrance, perhaps used by ancient kings to escape in times of siege.\n\nThe passage is narrow and dark, but it bypasses the main defenses entirely.",
+      "choices": [
+        {
+          "id": "use_passage",
+          "text": "Enter through the hidden passage",
+          "targetId": "ACT2_ARTIFACT_A_CLAIM",
+          "effects": [
+            { "type": "setFlag", "flag": "USED_SECRET_ENTRANCE" }
+          ]
+        }
+      ],
+      "tags": ["stealth", "faction_a", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_A_CLAIM",
+      "title": "The Crown of the North",
+      "body": "In the heart of the citadel, upon a throne of ice and stone, rests the Crown of the North. It gleams with an inner light, and you feel the weight of history as you approach.\n\nAs you lift it, visions flash through your mind—great kings, terrible wars, and the unification of the northern tribes. This crown carries the legitimacy of centuries.",
+      "choices": [
+        {
+          "id": "take_crown",
+          "text": "Accept the Crown's burden",
+          "targetId": "ACT2_PROPHECY",
           "effects": [
             { "type": "addItem", "itemId": "ITEM_FACTION_A_ARTIFACT" },
             { "type": "modifyFaction", "faction": "factionA", "delta": 15 },
             { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_FACTION_A_ARTIFACT" } }
           ]
+        }
+      ],
+      "tags": ["item", "faction_a", "artifact_quest", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_B_JOURNEY",
+      "title": "The Shadow Depths",
+      "body": "The Shadow Conclave's artifact lies beneath the earth, in caverns that have never seen sunlight. The entrance is hidden within an ancient library, accessible only to those who know the secret words.\n\nAs you descend, the darkness seems alive—watching, waiting.",
+      "choices": [
+        {
+          "id": "proceed_carefully",
+          "text": "Proceed with caution through the darkness",
+          "targetId": "ACT2_ARTIFACT_B_TRIAL"
         },
         {
-          "id": "claim_artifact_b",
-          "text": "Claim the Blade of Shadows",
+          "id": "use_light",
+          "text": "Light a torch to guide your way",
+          "targetId": "ACT2_ARTIFACT_B_LIGHT"
+        }
+      ],
+      "tags": ["faction_b", "artifact_quest", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_B_TRIAL",
+      "title": "The Trial of Shadows",
+      "body": "In the darkness, your other senses sharpen. You begin to perceive things not with your eyes, but with something deeper. The shadows themselves seem to whisper secrets.\n\nA voice speaks from everywhere and nowhere: 'To claim the Blade, you must become one with the shadow. Surrender your fear of the dark.'",
+      "choices": [
+        {
+          "id": "embrace_shadow",
+          "text": "Let the shadows embrace you",
+          "targetId": "ACT2_ARTIFACT_B_CLAIM",
+          "effects": [
+            { "type": "setFlag", "flag": "EMBRACED_SHADOW" }
+          ]
+        }
+      ],
+      "tags": ["trial", "faction_b", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_B_LIGHT",
+      "title": "Defying Darkness",
+      "body": "Your torch flares to life, pushing back the shadows. For a moment, you can see the path ahead—and the countless eyes watching from the darkness.\n\n'Interesting,' whispers a voice. 'You bring light into our domain. Bold... or foolish. Perhaps both. Very well—prove your worth through knowledge.'",
+      "choices": [
+        {
+          "id": "accept_test",
+          "text": "Accept the test of knowledge",
+          "targetId": "ACT2_ARTIFACT_B_CLAIM",
+          "effects": [
+            { "type": "setFlag", "flag": "DEFIED_SHADOW" }
+          ]
+        }
+      ],
+      "tags": ["trial", "faction_b", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_B_CLAIM",
+      "title": "The Blade of Shadows",
+      "body": "At the heart of the cavern, suspended in a column of absolute darkness, floats the Blade of Shadows. It seems to drink in the light around it, leaving only void.\n\nAs your fingers close around the hilt, the blade speaks to you in whispers—secrets of your enemies, truths hidden from the world, knowledge that could elevate or destroy.",
+      "choices": [
+        {
+          "id": "take_blade",
+          "text": "Accept the Blade's whispers",
           "targetId": "ACT2_PROPHECY",
-          "conditions": [
-            { "type": "flag", "flag": "FACTION_B_JOINED", "value": true }
-          ],
           "effects": [
             { "type": "addItem", "itemId": "ITEM_FACTION_B_ARTIFACT" },
             { "type": "modifyFaction", "faction": "factionB", "delta": 15 },
             { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_FACTION_B_ARTIFACT" } }
           ]
+        }
+      ],
+      "tags": ["item", "faction_b", "artifact_quest", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_C_JOURNEY",
+      "title": "The Golden Treasury",
+      "body": "The Staff of Ages lies within the Golden Circle's most secure vault—a treasury said to contain the accumulated wealth of a thousand years. The vault is located in their capital, hidden beneath the Grand Exchange.\n\nGaining access requires either incredible wealth, or incredible cunning.",
+      "choices": [
+        {
+          "id": "bribe_guards",
+          "text": "Bribe your way past the guards",
+          "targetId": "ACT2_ARTIFACT_C_BRIBE",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionC", "delta": -5 }
+          ]
         },
         {
-          "id": "claim_artifact_c",
-          "text": "Claim the Staff of Ages",
+          "id": "use_connections",
+          "text": "Use your faction connections",
+          "targetId": "ACT2_ARTIFACT_C_CONNECTIONS"
+        }
+      ],
+      "tags": ["faction_c", "artifact_quest", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_C_BRIBE",
+      "title": "The Price of Entry",
+      "body": "The guards accept your coin with practiced discretion. 'The vault is through there,' one says quietly. 'You have one hour before the shift change. After that, we never saw you.'\n\nYou slip through the secret door into the treasury's outer chambers. Piles of gold and jewels line the walls—but you're here for something more valuable.",
+      "choices": [
+        {
+          "id": "find_staff",
+          "text": "Search for the Staff of Ages",
+          "targetId": "ACT2_ARTIFACT_C_CLAIM"
+        }
+      ],
+      "tags": ["faction_c", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_C_CONNECTIONS",
+      "title": "Professional Courtesy",
+      "body": "Your standing with the Golden Circle grants you an audience with the Treasury Master. 'The Staff of Ages?' he muses. 'A significant request. But you've proven your value to the Circle.'\n\nHe hands you a golden key. 'The inner vault. Take what you need—but remember, the Circle always collects on its debts.'",
+      "speaker": "Treasury Master",
+      "choices": [
+        {
+          "id": "accept_key",
+          "text": "Accept the key and your obligation",
+          "targetId": "ACT2_ARTIFACT_C_CLAIM",
+          "effects": [
+            { "type": "setFlag", "flag": "OWES_CIRCLE_DEBT" }
+          ]
+        }
+      ],
+      "tags": ["faction_c", "act2"]
+    },
+    {
+      "id": "ACT2_ARTIFACT_C_CLAIM",
+      "title": "The Staff of Ages",
+      "body": "The Staff of Ages stands in a crystal case at the center of the inner vault. Unlike the gold around it, the staff is simple—wooden, ancient, worn smooth by countless hands over millennia.\n\nBut as you lift it, you understand its power. This staff has sealed treaties, ended wars, and built empires. It is the symbol of legitimate trade and fair dealing throughout the realm.",
+      "choices": [
+        {
+          "id": "take_staff",
+          "text": "Accept the Staff's responsibility",
           "targetId": "ACT2_PROPHECY",
-          "conditions": [
-            { "type": "flag", "flag": "FACTION_C_JOINED", "value": true }
-          ],
           "effects": [
             { "type": "addItem", "itemId": "ITEM_FACTION_C_ARTIFACT" },
             { "type": "modifyFaction", "faction": "factionC", "delta": 15 },
@@ -149,7 +649,7 @@
           ]
         }
       ],
-      "tags": ["faction_specific", "item", "act2"]
+      "tags": ["item", "faction_c", "artifact_quest", "act2"]
     },
     {
       "id": "ACT2_TEMPTATION",
@@ -199,26 +699,124 @@
       "speaker": "Shadow Broker",
       "choices": [
         {
-          "id": "sign_pact",
-          "text": "Sign the Dark Pact",
-          "targetId": "ACT2_ALLY_THORNE",
+          "id": "ask_terms",
+          "text": "What exactly are you asking of me?",
+          "targetId": "ACT2_BROKER_TERMS"
+        },
+        {
+          "id": "sign_immediately",
+          "text": "Sign the Dark Pact without hesitation",
+          "targetId": "ACT2_PACT_SIGNED",
           "effects": [
-            { "type": "setFlag", "flag": "SECRET_DEAL_MADE" },
-            { "type": "addItem", "itemId": "ITEM_DARK_PACT_SCROLL" },
-            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_DARK_PACT_SCROLL" } }
-          ],
-          "tooltip": "This seals your path toward betrayal"
+            { "type": "setFlag", "flag": "EAGER_BETRAYER" }
+          ]
         },
         {
           "id": "refuse_pact",
           "text": "No. This is not the power I seek.",
-          "targetId": "ACT2_ALLY_ELENA",
-          "effects": [
-            { "type": "clearFlag", "flag": "BETRAYER_PATH" }
-          ]
+          "targetId": "ACT2_BROKER_REFUSED"
         }
       ],
       "tags": ["hidden", "betrayal_path", "act2"]
+    },
+    {
+      "id": "ACT2_BROKER_TERMS",
+      "title": "The Price of Power",
+      "body": "The Shadow Broker's form ripples with amusement. 'Cautious. Good. Very well—here are the terms.'\n\nThey gesture to the maps. 'You continue your rise within your faction. You share what you learn with me. And when the time comes—and it will come—you act on my instructions. Nothing more.'\n\nTheir voice drops. 'In return, you receive my network, my knowledge, and protection from those who would destroy you. The factions are doomed regardless. This way, you survive.'",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "accept_terms",
+          "text": "These terms are... acceptable.",
+          "targetId": "ACT2_PACT_SIGNED"
+        },
+        {
+          "id": "negotiate_terms",
+          "text": "I want more. What else can you offer?",
+          "targetId": "ACT2_BROKER_SWEETEN"
+        },
+        {
+          "id": "refuse_after_hearing",
+          "text": "No deal. I won't be your puppet.",
+          "targetId": "ACT2_BROKER_REFUSED"
+        }
+      ],
+      "tags": ["betrayal_path", "act2"]
+    },
+    {
+      "id": "ACT2_BROKER_SWEETEN",
+      "title": "Sweetening the Deal",
+      "body": "The Shadow Broker laughs—a sound like whispers in an empty room. 'Ambitious! I like it.'\n\nThey reach into the darkness and produce a small vial filled with swirling shadows. 'This is the Essence of Shadows. Consume it, and you will be able to walk unseen when you wish. A useful gift for... delicate situations.'",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "accept_with_gift",
+          "text": "Now we have a deal",
+          "targetId": "ACT2_PACT_SIGNED",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_SHADOW_ESSENCE" }
+          ]
+        },
+        {
+          "id": "still_refuse",
+          "text": "Even with this, my answer is no",
+          "targetId": "ACT2_BROKER_REFUSED"
+        }
+      ],
+      "tags": ["betrayal_path", "act2"]
+    },
+    {
+      "id": "ACT2_PACT_SIGNED",
+      "title": "Bound in Shadow",
+      "body": "You take the quill—carved from bone, dripping with ink that seems to move on its own—and sign your name. The moment you finish, the parchment dissolves into shadow and flows into your skin.\n\n'It is done,' the Shadow Broker says with evident satisfaction. 'You are now one of mine. The pact cannot be broken—only fulfilled.'\n\nThey hand you the Dark Pact Scroll. 'Keep this as a reminder. When I call, you will answer.'",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "accept_fate",
+          "text": "I understand. Now give me what you promised.",
+          "targetId": "ACT2_BROKER_NETWORK",
+          "effects": [
+            { "type": "setFlag", "flag": "SECRET_DEAL_MADE" },
+            { "type": "addItem", "itemId": "ITEM_DARK_PACT_SCROLL" }
+          ]
+        }
+      ],
+      "tags": ["betrayal_path", "act2"]
+    },
+    {
+      "id": "ACT2_BROKER_NETWORK",
+      "title": "The Spider's Web",
+      "body": "The Shadow Broker reveals the extent of their network. Spies in every faction. Assassins on retainer. Blackmail on half the nobility of the realm.\n\n'Use these resources wisely,' they advise. 'Each favor spent must be repaid with information. And remember—I am always watching.'\n\nThey give you a small black token. 'Show this to any of my agents. They will know what it means.'",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "take_token",
+          "text": "Accept the token and leave",
+          "targetId": "ACT2_ALLY_ELENA",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_BROKER_TOKEN" }
+          ]
+        }
+      ],
+      "tags": ["betrayal_path", "act2"]
+    },
+    {
+      "id": "ACT2_BROKER_REFUSED",
+      "title": "Walking Away",
+      "body": "The Shadow Broker's form seems to darken. 'A pity. You would have been useful.'\n\nThey gesture, and the shadows around you seem to press closer. 'Leave, then. But know this—you have seen my face, or what passes for it. You know of my existence. That knowledge... has a price.'\n\nBefore you can respond, the shadows engulf you. When they clear, you're standing in an alley, alone, with no sign of the hidden chamber.",
+      "speaker": "Shadow Broker",
+      "choices": [
+        {
+          "id": "leave_quickly",
+          "text": "Get as far from here as possible",
+          "targetId": "ACT2_ALLY_ELENA",
+          "effects": [
+            { "type": "clearFlag", "flag": "BETRAYER_PATH" },
+            { "type": "setFlag", "flag": "BROKER_KNOWS_YOU" }
+          ]
+        }
+      ],
+      "tags": ["betrayal_path", "act2"]
     },
     {
       "id": "ACT2_PROPHECY",
@@ -249,21 +847,222 @@
         {
           "id": "save_brother",
           "text": "We'll save your brother together. Lead the way.",
-          "targetId": "ACT2_ALLY_THORNE",
-          "effects": [
-            { "type": "setFlag", "flag": "ELENA_RECRUITED" },
-            { "type": "modifyStat", "stat": "health", "delta": -15, "clampMin": 1 }
-          ],
-          "tooltip": "Elena will join your party (dangerous mission)"
+          "targetId": "ACT2_ELENA_RESCUE_PLAN",
+          "tooltip": "Begin Elena's rescue mission"
         },
         {
           "id": "refuse_elena",
           "text": "I'm sorry, but I cannot risk this mission.",
+          "targetId": "ACT2_ELENA_FAREWELL",
+          "tooltip": "Elena will leave permanently"
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_RESCUE_PLAN",
+      "title": "Planning the Rescue",
+      "body": "Elena leads you to a secluded camp where she spreads out a rough map. 'The raiders have a base in the Broken Hills,' she explains. 'Maybe thirty of them, plus their leader—a brute named Korgan.'\n\nShe points to different approaches. 'We could hit them at night, when most are asleep. Or we could try to sneak in through the old mines. Or...' she hesitates, 'we could try to buy my brother's freedom.'",
+      "speaker": "Elena",
+      "choices": [
+        {
+          "id": "night_raid",
+          "text": "We attack at night. Surprise is our advantage.",
+          "targetId": "ACT2_ELENA_NIGHT_RAID"
+        },
+        {
+          "id": "stealth_approach",
+          "text": "The mines sound safer. Let's avoid a direct fight.",
+          "targetId": "ACT2_ELENA_STEALTH"
+        },
+        {
+          "id": "negotiate",
+          "text": "What would they want for his release?",
+          "targetId": "ACT2_ELENA_NEGOTIATE"
+        }
+      ],
+      "tags": ["ally", "planning", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_NIGHT_RAID",
+      "title": "Under Cover of Darkness",
+      "body": "You and Elena wait until the small hours of the night, when even the guards grow drowsy. Moving through the raider camp is nerve-wracking—one wrong step could wake the entire band.\n\nBut your timing is perfect. You find Elena's brother, Tomas, bound in a cage near the center of camp. As you work on his bonds, Korgan himself emerges from his tent, alerted by some sixth sense.",
+      "choices": [
+        {
+          "id": "fight_korgan",
+          "text": "Fight Korgan while Elena frees Tomas",
+          "targetId": "ACT2_ELENA_FIGHT",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -20, "clampMin": 1 }
+          ]
+        },
+        {
+          "id": "flee_with_tomas",
+          "text": "Grab Tomas and run for it",
+          "targetId": "ACT2_ELENA_ESCAPE"
+        }
+      ],
+      "tags": ["combat", "ally", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_STEALTH",
+      "title": "The Forgotten Mines",
+      "body": "The old mine tunnels are cramped and dark, but they lead directly beneath the raider camp. Elena moves with practiced ease, her scout training evident in every silent step.\n\nYou emerge in a storage cave connected to the prisoner area. Tomas is there, weak but alive. 'Elena?' he whispers, scarcely believing his eyes.",
+      "choices": [
+        {
+          "id": "quick_escape",
+          "text": "Get him out through the mines",
+          "targetId": "ACT2_ELENA_SUCCESS"
+        },
+        {
+          "id": "sabotage_camp",
+          "text": "Sabotage their supplies before leaving",
+          "targetId": "ACT2_ELENA_SABOTAGE"
+        }
+      ],
+      "tags": ["stealth", "ally", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_NEGOTIATE",
+      "title": "The Price of a Life",
+      "body": "Elena's face hardens. 'They want gold, of course. More than I have.' She pauses. 'But there's something else. Korgan mentioned he needs someone... disposed of. A rival who's been cutting into his territory.'\n\nShe looks at you with conflicted eyes. 'If we do this, we'd be helping raiders. But my brother would live.'",
+      "choices": [
+        {
+          "id": "refuse_deal",
+          "text": "We're not assassins. Let's find another way.",
+          "targetId": "ACT2_ELENA_NIGHT_RAID"
+        },
+        {
+          "id": "consider_deal",
+          "text": "Who is this rival?",
+          "targetId": "ACT2_ELENA_DARK_DEAL"
+        }
+      ],
+      "tags": ["moral_choice", "ally", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_FIGHT",
+      "title": "Duel in the Dark",
+      "body": "Korgan is a mountain of muscle and rage, his blade heavy enough to cleave you in two. But he's slow, and years of easy victories have made him careless.\n\nYou trade blows in the flickering torchlight, each strike echoing through the sleeping camp. Finally, you find an opening—and Korgan falls, clutching his side.",
+      "choices": [
+        {
+          "id": "spare_korgan",
+          "text": "Leave him alive",
+          "targetId": "ACT2_ELENA_SUCCESS",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 },
+            { "type": "setFlag", "flag": "KORGAN_LIVES" }
+          ]
+        },
+        {
+          "id": "finish_korgan",
+          "text": "End him permanently",
+          "targetId": "ACT2_ELENA_SUCCESS",
+          "effects": [
+            { "type": "setFlag", "flag": "KORGAN_DEAD" }
+          ]
+        }
+      ],
+      "tags": ["combat", "moral_choice", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_ESCAPE",
+      "title": "Desperate Flight",
+      "body": "You grab Tomas and run, Elena covering your retreat with well-placed arrows. The raiders scramble to pursue, but in the darkness and confusion, you have the advantage.\n\nBy dawn, you've put miles between you and the camp. Tomas is safe—battered and weak, but alive.",
+      "choices": [
+        {
+          "id": "continue_together",
+          "text": "Get Tomas to safety",
+          "targetId": "ACT2_ELENA_SUCCESS"
+        }
+      ],
+      "tags": ["action", "ally", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_SABOTAGE",
+      "title": "Seeds of Chaos",
+      "body": "While Elena helps Tomas through the tunnels, you take a moment to ensure the raiders won't be troubling anyone soon. Their food stores go into the mud. Their weapons find new homes in crevices. Their horses' tethers develop mysterious weaknesses.\n\nBy the time they realize what's happened, you'll be long gone—and they'll have bigger problems than one escaped prisoner.",
+      "choices": [
+        {
+          "id": "escape_mines",
+          "text": "Escape through the mines",
+          "targetId": "ACT2_ELENA_SUCCESS",
+          "effects": [
+            { "type": "setFlag", "flag": "SABOTAGED_RAIDERS" }
+          ]
+        }
+      ],
+      "tags": ["stealth", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_DARK_DEAL",
+      "title": "The Dark Bargain",
+      "body": "The rival is a merchant named Gareth—a man who's been undercutting Korgan's smuggling operation. 'He operates out of the frontier town,' Elena says quietly. 'Korgan wants him dead. In exchange, Tomas goes free.'\n\nThis is murder, plain and simple. But the alternative is watching Elena's brother die.",
+      "choices": [
+        {
+          "id": "refuse_murder",
+          "text": "This is too far. We find another way.",
+          "targetId": "ACT2_ELENA_NIGHT_RAID"
+        },
+        {
+          "id": "accept_dark_deal",
+          "text": "For your brother... I'll do it.",
+          "targetId": "ACT2_ELENA_MURDER",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": -20 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -15 },
+            { "type": "setFlag", "flag": "MURDERED_FOR_RAIDERS" }
+          ]
+        }
+      ],
+      "tags": ["moral_choice", "dark_path", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_MURDER",
+      "title": "Blood on Your Hands",
+      "body": "The deed is done. Gareth lies still, his life traded for Tomas's freedom. Elena says nothing when you return—but she knows. You can see it in her eyes.\n\nKorgan keeps his word. Tomas is released, though he's confused about why the raiders suddenly showed such mercy. Neither you nor Elena enlighten him.",
+      "choices": [
+        {
+          "id": "move_on",
+          "text": "Some prices must be paid",
+          "targetId": "ACT2_ELENA_SUCCESS",
+          "effects": [
+            { "type": "setFlag", "flag": "ELENA_KNOWS_DARK_SECRET" }
+          ]
+        }
+      ],
+      "tags": ["dark_path", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_SUCCESS",
+      "title": "A Sister's Gratitude",
+      "body": "With Tomas safe, Elena's relief is palpable. 'I can never repay what you've done,' she says, clasping your hands. 'But I can offer you this: my skills, my network, my loyalty.'\n\nShe kneels before you in the old way. 'From this day forward, where you go, I follow. Your enemies are my enemies, and your goals are mine. I swear it.'",
+      "speaker": "Elena",
+      "choices": [
+        {
+          "id": "accept_oath",
+          "text": "I accept your oath. Welcome, Elena.",
+          "targetId": "ACT2_ALLY_THORNE",
+          "effects": [
+            { "type": "setFlag", "flag": "ELENA_RECRUITED" },
+            { "type": "setFlag", "flag": "ALLY_ELENA_ALIVE" }
+          ]
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_ELENA_FAREWELL",
+      "title": "Parting Ways",
+      "body": "Elena's face falls, but she nods slowly. 'I understand. Everyone has their own battles to fight.' She turns away, her shoulders set with determination.\n\n'I'll find another way. I always do.' Without another word, she disappears into the wilderness. You may never see her again.",
+      "choices": [
+        {
+          "id": "continue_alone",
+          "text": "Continue on your path",
           "targetId": "ACT2_ALLY_THORNE",
           "effects": [
             { "type": "clearFlag", "flag": "ALLY_ELENA_ALIVE" }
-          ],
-          "tooltip": "Elena will leave permanently"
+          ]
         }
       ],
       "tags": ["ally", "act2"]
@@ -276,17 +1075,169 @@
       "choices": [
         {
           "id": "recruit_thorne",
-          "text": "Welcome aboard, Thorne. Your skills are needed.",
-          "targetId": "ACT2_HEIST",
-          "effects": [
-            { "type": "setFlag", "flag": "ALLY_THORNE_ALIVE" },
-            { "type": "setFlag", "flag": "THORNE_RECRUITED" }
-          ],
-          "tooltip": "Thorne will join your party"
+          "text": "Tell me more about yourself first.",
+          "targetId": "ACT2_THORNE_BACKSTORY"
+        },
+        {
+          "id": "test_thorne",
+          "text": "Skills can be proven. Show me what you can do.",
+          "targetId": "ACT2_THORNE_TEST"
         },
         {
           "id": "refuse_thorne",
           "text": "I prefer allies I can trust. Farewell.",
+          "targetId": "ACT2_THORNE_FAREWELL"
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_BACKSTORY",
+      "title": "A Warrior's Past",
+      "body": "Thorne's face darkens. 'You want my story? Fine. I served the Northern Alliance for fifteen years. Rose to captain. Commanded a hundred men.'\n\nHe spits on the ground. 'Then my lords decided that my garrison was... expendable. Sacrificed to buy time for their retreat. I'm the only one who survived.'\n\nHis eyes meet yours. 'Now I serve only myself. And whoever's willing to pay for my blade.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "sympathize",
+          "text": "That's a terrible betrayal. I understand your cynicism.",
+          "targetId": "ACT2_THORNE_BOND"
+        },
+        {
+          "id": "challenge",
+          "text": "And how do I know you won't abandon me when things get hard?",
+          "targetId": "ACT2_THORNE_CHALLENGE"
+        }
+      ],
+      "tags": ["dialogue", "backstory", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_TEST",
+      "title": "Proving Ground",
+      "body": "Thorne smiles—the first genuine emotion you've seen from him. 'Fair enough. I respect that.'\n\nHe draws his blade and takes a fighting stance. 'Let's spar. Hold nothing back—I won't.'",
+      "choices": [
+        {
+          "id": "accept_duel",
+          "text": "Draw your weapon and face him",
+          "targetId": "ACT2_THORNE_DUEL"
+        }
+      ],
+      "tags": ["combat", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_BOND",
+      "title": "Understanding",
+      "body": "Something shifts in Thorne's expression. The hard cynicism softens, just slightly. 'Most people hear my story and assume I'm a traitor waiting to happen. You're different.'\n\nHe extends his hand. 'I don't give my loyalty easily anymore. But I'll give you this: honest work, honest fighting, and I'll never stab you in the back. That's more than most would promise.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "accept_bond",
+          "text": "Then we have an accord. Welcome, Thorne.",
+          "targetId": "ACT2_THORNE_RECRUITED",
+          "effects": [
+            { "type": "setFlag", "flag": "THORNE_TRUSTS_YOU" }
+          ]
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_CHALLENGE",
+      "title": "The Mercenary's Code",
+      "body": "Thorne laughs bitterly. 'You're asking the right questions. Here's my answer: I've never broken a contract. Not once. When I'm hired, I stay hired until the job is done or I'm dead.'\n\nHe leans forward. 'My former lords didn't hire me—I served out of loyalty, and look where that got me. Contracts are cleaner. You pay, I fight. Simple. Honest. No betrayals.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "accept_terms",
+          "text": "Fair enough. What are your terms?",
+          "targetId": "ACT2_THORNE_TERMS"
+        },
+        {
+          "id": "still_refuse",
+          "text": "I need more than a mercenary. I need someone who believes in the cause.",
+          "targetId": "ACT2_THORNE_FAREWELL"
+        }
+      ],
+      "tags": ["dialogue", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_DUEL",
+      "title": "Blades Cross",
+      "body": "The duel is intense but controlled. Thorne is everything the rumors suggested—fast, precise, and creative. You find yourself pressed harder than you have in months.\n\nBut you hold your own. After a dozen exchanges, Thorne steps back and sheathes his blade. 'Impressive. You've got skill. More importantly, you've got heart.'\n\nHe nods with what might be respect. 'I'll fight beside you.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "welcome_thorne",
+          "text": "The feeling is mutual. Welcome to the team.",
+          "targetId": "ACT2_THORNE_RECRUITED",
+          "effects": [
+            { "type": "setFlag", "flag": "PROVED_TO_THORNE" }
+          ]
+        }
+      ],
+      "tags": ["combat", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_TERMS",
+      "title": "The Contract",
+      "body": "'Simple,' Thorne says. 'I get a share of any spoils. You cover my expenses—food, equipment, healing. And if things go truly sideways, you don't expect me to die for a lost cause.'\n\nHe pauses. 'In return, I give you the best fighting arm you'll ever have, tactical advice from two decades of warfare, and absolute loyalty as long as the contract holds.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "accept_contract",
+          "text": "Agreed. You have a deal.",
+          "targetId": "ACT2_THORNE_RECRUITED"
+        },
+        {
+          "id": "negotiate",
+          "text": "The 'not dying for a lost cause' clause concerns me.",
+          "targetId": "ACT2_THORNE_NEGOTIATE"
+        }
+      ],
+      "tags": ["dialogue", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_NEGOTIATE",
+      "title": "Honest Negotiations",
+      "body": "'Look,' Thorne says, 'I'm not going to charge a dragon single-handed because you ordered me to. But I'm not a coward either. I've held the line when others ran. I've faced death more times than I can count.'\n\nHe meets your gaze. 'What I won't do is throw my life away for nothing. If you're the type to spend lives like copper coins, we're done here. If not... we'll be fine.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "respect_stance",
+          "text": "I value my allies' lives. You have my word.",
+          "targetId": "ACT2_THORNE_RECRUITED",
+          "effects": [
+            { "type": "setFlag", "flag": "THORNE_LOYALTY_SECURED" }
+          ]
+        }
+      ],
+      "tags": ["dialogue", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_RECRUITED",
+      "title": "The Sellsword",
+      "body": "Thorne clasps your arm in the warrior's grip. 'Then we have an accord. I'll gather my gear and meet you at the next town.'\n\nAs he turns to leave, he pauses. 'For what it's worth—I've got a good feeling about this. Don't make me regret it.'",
+      "speaker": "Thorne",
+      "choices": [
+        {
+          "id": "continue_journey",
+          "text": "Continue on your path",
+          "targetId": "ACT2_HEIST",
+          "effects": [
+            { "type": "setFlag", "flag": "ALLY_THORNE_ALIVE" },
+            { "type": "setFlag", "flag": "THORNE_RECRUITED" }
+          ]
+        }
+      ],
+      "tags": ["ally", "act2"]
+    },
+    {
+      "id": "ACT2_THORNE_FAREWELL",
+      "title": "The Sellsword's Departure",
+      "body": "Thorne shrugs, his expression returning to its usual mask of cynicism. 'Your loss. But I won't beg for work.'\n\nHe turns and walks away, not looking back. A skilled warrior, lost to pride—or perhaps wisdom. Time will tell if you made the right choice.",
+      "choices": [
+        {
+          "id": "continue_alone",
+          "text": "Continue on your path",
           "targetId": "ACT2_HEIST"
         }
       ],
@@ -300,11 +1251,7 @@
         {
           "id": "attempt_heist",
           "text": "Plan and execute the vault heist",
-          "targetId": "ACT2_VAULT",
-          "effects": [
-            { "type": "addItem", "itemId": "ITEM_KEY_VAULT" },
-            { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_KEY_VAULT" } }
-          ],
+          "targetId": "ACT2_HEIST_PLANNING",
           "tooltip": "Attempt the dangerous heist"
         },
         {
@@ -316,45 +1263,420 @@
       "tags": ["optional", "act2"]
     },
     {
+      "id": "ACT2_HEIST_PLANNING",
+      "title": "Gathering the Team",
+      "body": "A job this big requires careful planning. You meet with potential partners at a dimly-lit tavern to discuss the approach.\n\nThree specialists offer their services: a locksmith who knows the vault's mechanisms, a distraction artist who can draw away the guards, and a former insider who knows the patrol routes.",
+      "choices": [
+        {
+          "id": "hire_locksmith",
+          "text": "The locksmith is essential",
+          "targetId": "ACT2_HEIST_APPROACH",
+          "effects": [
+            { "type": "setFlag", "flag": "HIRED_LOCKSMITH" }
+          ]
+        },
+        {
+          "id": "hire_distraction",
+          "text": "The distraction will give us more time",
+          "targetId": "ACT2_HEIST_APPROACH",
+          "effects": [
+            { "type": "setFlag", "flag": "HIRED_DISTRACTION" }
+          ]
+        },
+        {
+          "id": "hire_insider",
+          "text": "Inside knowledge is invaluable",
+          "targetId": "ACT2_HEIST_APPROACH",
+          "effects": [
+            { "type": "setFlag", "flag": "HIRED_INSIDER" }
+          ]
+        }
+      ],
+      "tags": ["heist", "planning", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_APPROACH",
+      "title": "Night of the Heist",
+      "body": "The night arrives. The fortress looms against the stars, its guards patrolling with clockwork precision. Your team moves into position.\n\nYou have three possible entry points: the main gate during a guard change, a sewer entrance that leads to the basement, or the roof via a neighboring building.",
+      "choices": [
+        {
+          "id": "main_gate",
+          "text": "Time the guard change perfectly",
+          "targetId": "ACT2_HEIST_GATE",
+          "conditions": [
+            { "type": "flag", "flag": "HIRED_INSIDER", "value": true }
+          ]
+        },
+        {
+          "id": "sewer_entry",
+          "text": "Use the sewer entrance",
+          "targetId": "ACT2_HEIST_SEWER"
+        },
+        {
+          "id": "roof_entry",
+          "text": "Go in through the roof",
+          "targetId": "ACT2_HEIST_ROOF",
+          "conditions": [
+            { "type": "flag", "flag": "HIRED_DISTRACTION", "value": true }
+          ]
+        }
+      ],
+      "tags": ["heist", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_GATE",
+      "title": "Perfect Timing",
+      "body": "Your insider's information proves accurate. During the guard change, there's a seventeen-second window when the gate is unwatched. You slip through like shadows, your heart pounding.\n\nInside, the fortress is eerily quiet. The vault entrance is just ahead—but so are the night guards.",
+      "choices": [
+        {
+          "id": "avoid_guards",
+          "text": "Slip past the guards",
+          "targetId": "ACT2_HEIST_VAULT_DOOR"
+        },
+        {
+          "id": "neutralize_guards",
+          "text": "Quietly neutralize the guards",
+          "targetId": "ACT2_HEIST_VAULT_DOOR",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -10, "clampMin": 1 }
+          ]
+        }
+      ],
+      "tags": ["heist", "stealth", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_SEWER",
+      "title": "The Underbelly",
+      "body": "The sewers are foul but unguarded. You wade through darkness and worse, following the rough map your contacts provided.\n\nAfter what feels like hours, you emerge in the fortress basement—not far from the vault. But the door here is locked with a mechanism you've never seen before.",
+      "choices": [
+        {
+          "id": "pick_lock",
+          "text": "Attempt to pick the lock",
+          "targetId": "ACT2_HEIST_VAULT_DOOR",
+          "conditions": [
+            { "type": "flag", "flag": "HIRED_LOCKSMITH", "value": true }
+          ]
+        },
+        {
+          "id": "force_door",
+          "text": "Force the door open",
+          "targetId": "ACT2_HEIST_ALARM"
+        }
+      ],
+      "tags": ["heist", "stealth", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_ROOF",
+      "title": "From Above",
+      "body": "Your distraction specialist triggers chaos in the market square—a fire that draws guards from their posts. You scale the neighboring building and leap to the fortress roof.\n\nFrom here, a skylight offers access to the interior. The vault is three floors below.",
+      "choices": [
+        {
+          "id": "descend_carefully",
+          "text": "Descend through the fortress carefully",
+          "targetId": "ACT2_HEIST_VAULT_DOOR"
+        }
+      ],
+      "tags": ["heist", "stealth", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_ALARM",
+      "title": "Alarm!",
+      "body": "The door gives way with a crash that echoes through the fortress. Within seconds, alarm bells ring throughout the building.\n\nYou have minutes at best before guards swarm your position. Whatever you do, you'll have to do it fast.",
+      "choices": [
+        {
+          "id": "rush_vault",
+          "text": "Rush to the vault before they arrive",
+          "targetId": "ACT2_HEIST_VAULT_DOOR",
+          "effects": [
+            { "type": "setFlag", "flag": "HEIST_ALARMED" }
+          ]
+        }
+      ],
+      "tags": ["heist", "action", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_VAULT_DOOR",
+      "title": "The Final Lock",
+      "body": "The vault door is a masterwork of dwarven engineering—a massive iron portal covered in intricate mechanisms. Without the proper key, bypassing it seems impossible.\n\nBut you didn't come this far to be stopped by a door.",
+      "choices": [
+        {
+          "id": "expert_bypass",
+          "text": "Use expert lockpicking",
+          "targetId": "ACT2_VAULT",
+          "conditions": [
+            { "type": "flag", "flag": "HIRED_LOCKSMITH", "value": true }
+          ],
+          "effects": [
+            { "type": "addItem", "itemId": "ITEM_KEY_VAULT" }
+          ]
+        },
+        {
+          "id": "brute_force",
+          "text": "Find another way in",
+          "targetId": "ACT2_VAULT",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -15, "clampMin": 1 }
+          ]
+        }
+      ],
+      "tags": ["heist", "act2"]
+    },
+    {
       "id": "ACT2_VAULT",
       "title": "The Treasure Room",
       "body": "Against all odds, you breach the vault. Ancient treasures glitter in the torchlight—gold, jewels, and artifacts of forgotten ages. But more valuable than any treasure is the information you find: documents revealing the enemy's plans.\n\nThis intelligence could prove decisive in the battles ahead.",
       "choices": [
         {
-          "id": "take_intel",
-          "text": "Secure the intelligence and leave",
-          "targetId": "ACT2_EXPLORE_2",
+          "id": "take_intel_only",
+          "text": "Take only the intelligence",
+          "targetId": "ACT2_HEIST_ESCAPE",
           "effects": [
             { "type": "setFlag", "flag": "VAULT_INTEL_SECURED" },
             { "type": "modifyFaction", "faction": "factionA", "delta": 10 },
             { "type": "modifyFaction", "faction": "factionB", "delta": 10 },
             { "type": "modifyFaction", "faction": "factionC", "delta": 10 }
           ]
+        },
+        {
+          "id": "take_everything",
+          "text": "Fill your bags with treasure too",
+          "targetId": "ACT2_HEIST_ESCAPE_HEAVY",
+          "effects": [
+            { "type": "setFlag", "flag": "VAULT_INTEL_SECURED" },
+            { "type": "setFlag", "flag": "VAULT_TREASURE_TAKEN" }
+          ]
         }
       ],
       "tags": ["optional", "act2"]
     },
     {
+      "id": "ACT2_HEIST_ESCAPE",
+      "title": "Clean Getaway",
+      "body": "Traveling light, you slip out of the fortress the same way you came. The guards are none the wiser—by the time they discover the theft, you'll be miles away.\n\nThe intelligence you've secured could change everything. Names, dates, troop movements—the enemy's entire war plan laid bare.",
+      "choices": [
+        {
+          "id": "continue_journey",
+          "text": "Disappear into the night",
+          "targetId": "ACT2_EXPLORE_2",
+          "effects": [
+            { "type": "setFlag", "flag": "CLEAN_HEIST" }
+          ]
+        }
+      ],
+      "tags": ["heist", "act2"]
+    },
+    {
+      "id": "ACT2_HEIST_ESCAPE_HEAVY",
+      "title": "Weighted Down",
+      "body": "The treasure slows you down. You barely make it out before the guards discover the breach. Shouts echo behind you as you flee into the night, gold coins spilling from your overstuffed bags.\n\nYou're richer than you've ever been—but you've also made powerful enemies.",
+      "choices": [
+        {
+          "id": "escape_with_loot",
+          "text": "Keep running—the treasure is worth it",
+          "targetId": "ACT2_EXPLORE_2",
+          "effects": [
+            { "type": "setFlag", "flag": "WANTED_FOR_HEIST" },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -10 }
+          ]
+        }
+      ],
+      "tags": ["heist", "act2"]
+    },
+    {
       "id": "ACT2_EXPLORE_2",
       "title": "Southern Exploration",
-      "body": "Your travels take you through the southern territories. In a ruined watchtower, you discover another fragment of the ancient map—this one detailing secret passages into the enemy's stronghold.\n\nCombined with what you found in Act 1, this could provide a decisive advantage.",
+      "body": "Your travels take you through the southern territories. The landscape here is wild and ancient, dotted with ruins from civilizations long forgotten.\n\nSeveral sites catch your attention: a ruined watchtower that might hold useful maps, an overgrown battlefield where treasures might be buried, and a mysterious cave mouth that locals avoid.",
+      "choices": [
+        {
+          "id": "explore_watchtower",
+          "text": "Investigate the ruined watchtower",
+          "targetId": "ACT2_SOUTHERN_WATCHTOWER"
+        },
+        {
+          "id": "explore_battlefield",
+          "text": "Search the ancient battlefield",
+          "targetId": "ACT2_ANCIENT_BATTLEFIELD"
+        },
+        {
+          "id": "explore_cave",
+          "text": "Venture into the mysterious cave",
+          "targetId": "ACT2_FORBIDDEN_CAVE"
+        },
+        {
+          "id": "continue_journey",
+          "text": "Press on without exploring",
+          "targetId": "ACT2_ACT_END"
+        }
+      ],
+      "tags": ["exploration", "act2"]
+    },
+    {
+      "id": "ACT2_SOUTHERN_WATCHTOWER",
+      "title": "The Fallen Sentinel",
+      "body": "The watchtower must have been impressive once—now it's little more than crumbling walls and a collapsed staircase. But as you pick through the rubble, you find something valuable.\n\nWedged between fallen stones, protected from the elements, is another fragment of the ancient map. This one shows secret passages into what appears to be a mountain fortress.",
       "choices": [
         {
           "id": "take_fragment",
-          "text": "Take the second map fragment",
-          "targetId": "ACT2_ACT_END",
+          "text": "Take the map fragment",
+          "targetId": "ACT2_EXPLORE_MORE",
           "effects": [
             { "type": "addItem", "itemId": "ITEM_MAP_FRAGMENT_2" },
             { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_MAP_FRAGMENT_2" } }
           ]
         },
         {
-          "id": "leave_fragment",
-          "text": "Leave it—you've found enough",
+          "id": "study_and_leave",
+          "text": "Memorize the details but leave the map",
+          "targetId": "ACT2_EXPLORE_MORE",
+          "effects": [
+            { "type": "setFlag", "flag": "MEMORIZED_MAP_2" }
+          ]
+        }
+      ],
+      "tags": ["exploration", "item", "act2"]
+    },
+    {
+      "id": "ACT2_ANCIENT_BATTLEFIELD",
+      "title": "Field of the Fallen",
+      "body": "The battlefield has been reclaimed by nature, but the signs of ancient warfare remain. Rusted weapons peek from the grass. Crumbling monuments mark where leaders fell.\n\nAs you explore, you disturb something—a skeletal hand reaching from the earth, clutching a tarnished ring. The ring bears a symbol you don't recognize... but it pulses with faint magical energy.",
+      "choices": [
+        {
+          "id": "take_ring",
+          "text": "Take the Ring of Shadows",
+          "targetId": "ACT2_RING_EFFECT",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_RING_OF_SHADOWS" }
+          ]
+        },
+        {
+          "id": "leave_ring",
+          "text": "Leave the dead to their rest",
+          "targetId": "ACT2_EXPLORE_MORE"
+        }
+      ],
+      "tags": ["exploration", "item", "act2"]
+    },
+    {
+      "id": "ACT2_RING_EFFECT",
+      "title": "The Ring's Power",
+      "body": "As you slide the ring onto your finger, shadows seem to gather around you. For a moment, the world dims—then clears, leaving you with a strange new awareness.\n\nYou can feel shadows now, sense them as living things. And if you focus... you can make yourself harder to see. A useful ability, though one that comes with an unsettling sensation.",
+      "choices": [
+        {
+          "id": "accept_power",
+          "text": "Embrace this dark gift",
+          "targetId": "ACT2_EXPLORE_MORE",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 5 }
+          ]
+        }
+      ],
+      "tags": ["magical", "act2"]
+    },
+    {
+      "id": "ACT2_FORBIDDEN_CAVE",
+      "title": "The Cave of Whispers",
+      "body": "The cave mouth yawns before you, exhaling cold air that carries faint whispers. The locals call it cursed, but you sense something more—not malevolence, but sorrow.\n\nAs you enter, the whispers grow clearer. They speak of the past, of a great betrayal, of secrets buried to protect the innocent.",
+      "choices": [
+        {
+          "id": "venture_deeper",
+          "text": "Follow the whispers deeper",
+          "targetId": "ACT2_CAVE_DEPTHS"
+        },
+        {
+          "id": "turn_back",
+          "text": "The whispers unsettle you—turn back",
+          "targetId": "ACT2_EXPLORE_MORE"
+        }
+      ],
+      "tags": ["exploration", "mystery", "act2"]
+    },
+    {
+      "id": "ACT2_CAVE_DEPTHS",
+      "title": "The Hidden Shrine",
+      "body": "The cave opens into a natural chamber, and there—impossible but undeniable—stands a small shrine. It predates all the factions, perhaps all recorded history.\n\nThe whispers coalesce into words: 'Seeker, you have found what was hidden. Take our blessing, and remember: when the darkness comes, the light of sacrifice can banish it forever.'",
+      "choices": [
+        {
+          "id": "accept_blessing",
+          "text": "Accept the shrine's blessing",
+          "targetId": "ACT2_EXPLORE_MORE",
+          "effects": [
+            { "type": "setFlag", "flag": "CAVE_SHRINE_BLESSED" },
+            { "type": "modifyStat", "stat": "health", "delta": 20, "clampMax": 100 }
+          ]
+        },
+        {
+          "id": "respectful_decline",
+          "text": "Bow respectfully and leave",
+          "targetId": "ACT2_EXPLORE_MORE",
+          "effects": [
+            { "type": "setFlag", "flag": "RESPECTFUL_TO_ANCIENTS" }
+          ]
+        }
+      ],
+      "tags": ["shrine", "blessing", "act2"]
+    },
+    {
+      "id": "ACT2_EXPLORE_MORE",
+      "title": "Further Discoveries",
+      "body": "The southern territories have more secrets to reveal. You've already found valuable treasures, but your instincts tell you there's more to discover.\n\nDo you continue exploring, or head toward the conclusion of Act 2?",
+      "choices": [
+        {
+          "id": "explore_watchtower_2",
+          "text": "Visit the ruined watchtower",
+          "targetId": "ACT2_SOUTHERN_WATCHTOWER",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_MAP_FRAGMENT_2", "operator": "notHas" }
+          ]
+        },
+        {
+          "id": "explore_battlefield_2",
+          "text": "Search the ancient battlefield",
+          "targetId": "ACT2_ANCIENT_BATTLEFIELD",
+          "conditions": [
+            { "type": "flag", "flag": "HAS_RING_OF_SHADOWS", "value": false }
+          ]
+        },
+        {
+          "id": "explore_cave_2",
+          "text": "Enter the mysterious cave",
+          "targetId": "ACT2_FORBIDDEN_CAVE",
+          "conditions": [
+            { "type": "flag", "flag": "CAVE_SHRINE_BLESSED", "value": false },
+            { "type": "flag", "flag": "RESPECTFUL_TO_ANCIENTS", "value": false }
+          ]
+        },
+        {
+          "id": "end_exploration",
+          "text": "You've explored enough—continue your journey",
+          "targetId": "ACT2_HIDDEN_PATH_CHECK"
+        }
+      ],
+      "tags": ["exploration", "act2"]
+    },
+    {
+      "id": "ACT2_HIDDEN_PATH_CHECK",
+      "title": "The Secret Route",
+      "body": "Before leaving the southern territories, you review what you've learned. The map fragments, if you have both, reveal something extraordinary—a hidden path that leads directly to the heart of the final conflict.\n\nThis route would let you bypass heavily defended areas in Act 3...",
+      "choices": [
+        {
+          "id": "memorize_path",
+          "text": "Commit the hidden route to memory",
+          "targetId": "ACT2_ACT_END",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_MAP_FRAGMENT_1", "operator": "has" },
+            { "type": "item", "itemId": "ITEM_MAP_FRAGMENT_2", "operator": "has" }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "KNOWS_SECRET_ENTRANCE" }
+          ]
+        },
+        {
+          "id": "continue_normally",
+          "text": "Continue on the main road",
           "targetId": "ACT2_ACT_END"
         }
       ],
-      "tags": ["optional", "item", "act2"]
+      "tags": ["transition", "act2"]
     },
     {
       "id": "ACT2_ACT_END",
