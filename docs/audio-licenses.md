@@ -61,7 +61,20 @@ All audio assets in this project are licensed under **CC0 (Creative Commons Zero
 
 ## Music
 
-*(No music assets added yet)*
+### Background Music Tracks
+
+| File | Source | Author | License | Original Name |
+|------|--------|--------|---------|---------------|
+| `title.ogg` | [4 Chiptunes (Adventure)](https://opengameart.org/content/4-chiptunes-adventure) | Juhani Junkala (SubspaceAudio) | CC0 | Stage Select |
+| `exploration.ogg` | [4 Chiptunes (Adventure)](https://opengameart.org/content/4-chiptunes-adventure) | Juhani Junkala (SubspaceAudio) | CC0 | Stage 1 |
+| `tension.ogg` | [4 Chiptunes (Adventure)](https://opengameart.org/content/4-chiptunes-adventure) | Juhani Junkala (SubspaceAudio) | CC0 | Boss Fight |
+| `victory.ogg` | [8-Bit Victory Loop](https://opengameart.org/content/8-bit-victory-loop) | Wolfgang_ | CC0 | 8bitvictory |
+| `defeat.ogg` | [Game Over Theme](https://opengameart.org/content/game-over-theme) | Cleyton Kauffman | CC0 | Retro_No hope |
+
+**Notes:**
+- Title, exploration, and tension tracks are from the same artist (Juhani Junkala) for audio consistency
+- All tracks are seamlessly looping as required by AUDIO.md
+- tension.ogg (2.88MB) slightly exceeds the 2MB guideline but is appropriate for the danger/combat mood
 
 ---
 
