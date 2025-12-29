@@ -76,6 +76,12 @@ export {
   type InventoryScreenCallbacks,
 } from './screens/InventoryScreen';
 
+export {
+  createOptionsScreen,
+  type OptionsScreen,
+  type OptionsScreenCallbacks,
+} from './screens/OptionsScreen';
+
 // Input
 export {
   KeyboardHandler,

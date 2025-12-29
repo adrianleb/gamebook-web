@@ -8,13 +8,16 @@
 import {
   createTitleScreen,
   createGameScreen,
+  createOptionsScreen,
   type TitleScreen,
   type GameScreen,
+  type OptionsScreen,
 } from './ui';
 
 type Screen = 'title' | 'game';
 
 let currentScreen: TitleScreen | GameScreen | null = null;
+let optionsOverlay: OptionsScreen | null = null;
 
 const app = document.getElementById('app');
 
@@ -41,8 +44,7 @@ function showScreen(screen: Screen): void {
           console.log('Load Game - not yet implemented');
         },
         onOptions: () => {
-          // TODO: Implement options
-          console.log('Options - not yet implemented');
+          showOptionsOverlay();
         },
         onCredits: () => {
           // TODO: Implement credits
@@ -90,4 +92,25 @@ Your torch flickers in the breeze.`,
     app.appendChild(currentScreen.element);
     currentScreen.element.focus();
   }
+}
+
+function showOptionsOverlay(): void {
+  if (!app || optionsOverlay) return;
+
+  optionsOverlay = createOptionsScreen({
+    onBack: () => {
+      if (optionsOverlay) {
+        optionsOverlay.destroy();
+        optionsOverlay = null;
+        // Refocus current screen
+        currentScreen?.element.focus();
+      }
+    },
+    onTestSound: () => {
+      // TODO: Play test sound when audio system is implemented
+      console.log('Test sound triggered');
+    },
+  });
+
+  app.appendChild(optionsOverlay.element);
 }
