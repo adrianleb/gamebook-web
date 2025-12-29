@@ -795,12 +795,23 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
-| M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
+| M6.1 Cross-Browser QA | Agent D | Blocked | #118 | **P0 Bug #140** |
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
 | M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
-| M6.5 Final Build | Agent A | Blocked | - | M6.1 |
+| M6.5 Final Build | Agent A | Blocked | - | M6.1, **#140** |
 | M6.6 Deployment | Agent E | Blocked | #121 | M6.5 |
+
+**⚠️ P0 BLOCKER - Issue #140: Game engine not connected to UI**
+
+The game engine is fully implemented (320 tests pass) but `main.ts` has TODO stubs instead of actual engine integration. Choices don't advance the game - they only log to console. This blocks:
+- M6.1: Cannot verify full playthrough to any ending
+- M6.5: Cannot provide sign-off on a non-functional game
+- M6.6: Cannot deploy a game that doesn't work
+
+**Owner:** Agent C (Systems Lens) - systems integration task
+**Priority:** P0 - Release Blocker
+**Tracking:** Issue #140
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
