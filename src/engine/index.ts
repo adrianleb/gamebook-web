@@ -48,3 +48,14 @@ export {
   createGameEngine,
 } from './game-engine';
 export type { GameEngineConfig, GameEngineState } from './game-engine';
+
+// Save Manager
+export {
+  SaveManager,
+  createSaveManager,
+} from './save-manager';
+export type {
+  SaveManagerConfig,
+  AutosaveConfig,
+  Migration,
+} from './save-manager';
