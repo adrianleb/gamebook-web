@@ -8,7 +8,16 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { createInitialState, createMockContentLoader, createTestNode } from '../setup';
+import {
+  createInitialState,
+  createMockContentLoader,
+  createTestNode,
+  createTestManifest,
+  createTestEngine,
+  GameEvent,
+} from '../setup';
+import act1Content from '../../src/content/act1-sample.json';
+import act3Content from '../../src/content/act3-sample.json';
 
 describe('Audio + Events Integration', () => {
   describe('Event Types', () => {
@@ -151,19 +160,306 @@ describe('Audio + Events Integration', () => {
     });
   });
 
-  // TODO: Implement when audio system is ready
-  describe.skip('Audio Playback', () => {
-    it('should play SFX on event trigger');
-    it('should loop background music');
-    it('should crossfade between music tracks');
-    it('should respect volume settings');
-    it('should stop all audio on mute');
+  describe('Audio Playback', () => {
+    it('should emit audio events on node entry', () => {
+      const manifest = createTestManifest({
+        nodes: [
+          {
+            id: 'START',
+            title: 'Start',
+            body: 'Start',
+            choices: [{ id: 'go', text: 'Go', targetId: 'DRAMATIC' }],
+          },
+          {
+            id: 'DRAMATIC',
+            title: 'Dramatic Scene',
+            body: 'Drama!',
+            choices: [],
+            onEnter: [
+              { type: 'triggerEvent', event: 'music:crossfade', data: { track: 'tension' } },
+              { type: 'triggerEvent', event: 'sfx:dramatic_sting' },
+            ],
+          },
+        ],
+        items: [],
+        initialState: {
+          currentNodeId: 'START',
+          flags: {},
+          stats: {},
+          inventory: [],
+          factions: {},
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+      engine.makeChoice('go');
+
+      // Should have emitted the audio events
+      const musicEvent = events.find(e => e.type === 'music:crossfade');
+      expect(musicEvent).toBeDefined();
+      expect(musicEvent?.data).toEqual({ track: 'tension' });
+
+      const sfxEvent = events.find(e => e.type === 'sfx:dramatic_sting');
+      expect(sfxEvent).toBeDefined();
+    });
+
+    it('should emit audio events from choice effects', () => {
+      const manifest = createTestManifest({
+        nodes: [
+          {
+            id: 'START',
+            title: 'Start',
+            body: 'Start',
+            choices: [
+              {
+                id: 'dramatic_choice',
+                text: 'Dramatic choice',
+                targetId: 'END',
+                effects: [
+                  { type: 'triggerEvent', event: 'sfx:choice_made' },
+                ],
+              },
+            ],
+          },
+          { id: 'END', title: 'End', body: 'End', choices: [] },
+        ],
+        items: [],
+        initialState: {
+          currentNodeId: 'START',
+          flags: {},
+          stats: {},
+          inventory: [],
+          factions: {},
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+      engine.makeChoice('dramatic_choice');
+
+      const sfxEvent = events.find(e => e.type === 'sfx:choice_made');
+      expect(sfxEvent).toBeDefined();
+    });
+
+    it('should emit victory fanfare at victory ending', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_VICTORY',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+
+      // Victory node should trigger victory_fanfare on enter
+      const victoryEvent = events.find(e => e.type === 'victory_fanfare');
+      expect(victoryEvent).toBeDefined();
+    });
+
+    it('should emit final battle event at confrontation', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+
+      // Final confrontation should trigger final_battle_start
+      const battleEvent = events.find(e => e.type === 'final_battle_start');
+      expect(battleEvent).toBeDefined();
+    });
+
+    it('should emit item_acquired event when adding item', () => {
+      const manifest = createTestManifest({
+        nodes: act1Content.nodes,
+        items: act1Content.items,
+        initialState: {
+          currentNodeId: 'ACT1_SHRINE',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+      engine.makeChoice('take_amulet');
+
+      const itemEvent = events.find(e => e.type === 'item_acquired');
+      expect(itemEvent).toBeDefined();
+      expect(itemEvent?.data).toHaveProperty('itemId', 'ITEM_SACRED_AMULET');
+    });
   });
 
-  // TODO: Implement when audio system is ready
-  describe.skip('Audio Resource Management', () => {
-    it('should preload critical audio assets');
-    it('should lazy-load non-critical audio');
-    it('should handle missing audio gracefully');
+  describe('Audio Resource Management', () => {
+    it('should track multiple event types in single transition', () => {
+      const manifest = createTestManifest({
+        nodes: [
+          {
+            id: 'START',
+            title: 'Start',
+            body: 'Start',
+            choices: [
+              {
+                id: 'go',
+                text: 'Go',
+                targetId: 'END',
+                effects: [
+                  { type: 'triggerEvent', event: 'sfx:footsteps' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'END',
+            title: 'End',
+            body: 'End',
+            choices: [],
+            onEnter: [
+              { type: 'triggerEvent', event: 'music:ambient' },
+              { type: 'triggerEvent', event: 'sfx:door_close' },
+            ],
+          },
+        ],
+        items: [],
+        initialState: {
+          currentNodeId: 'START',
+          flags: {},
+          stats: {},
+          inventory: [],
+          factions: {},
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+      engine.makeChoice('go');
+
+      // All audio events should be captured
+      expect(events.filter(e => e.type.startsWith('sfx:') || e.type.startsWith('music:')).length).toBe(3);
+    });
+
+    it('should include timestamps for audio sequencing', () => {
+      const manifest = createTestManifest({
+        nodes: [
+          {
+            id: 'START',
+            title: 'Start',
+            body: 'Start',
+            choices: [
+              {
+                id: 'go',
+                text: 'Go',
+                targetId: 'END',
+                effects: [{ type: 'triggerEvent', event: 'sfx:test' }],
+              },
+            ],
+          },
+          { id: 'END', title: 'End', body: 'End', choices: [] },
+        ],
+        items: [],
+        initialState: {
+          currentNodeId: 'START',
+          flags: {},
+          stats: {},
+          inventory: [],
+          factions: {},
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+      engine.makeChoice('go');
+
+      const sfxEvent = events.find(e => e.type === 'sfx:test');
+      expect(sfxEvent?.timestamp).toBeDefined();
+      expect(typeof sfxEvent?.timestamp).toBe('number');
+    });
+
+    it('should handle events with missing data gracefully', () => {
+      const manifest = createTestManifest({
+        nodes: [
+          {
+            id: 'START',
+            title: 'Start',
+            body: 'Start',
+            choices: [
+              {
+                id: 'go',
+                text: 'Go',
+                targetId: 'END',
+                effects: [{ type: 'triggerEvent', event: 'sfx:no_data' }], // No data field
+              },
+            ],
+          },
+          { id: 'END', title: 'End', body: 'End', choices: [] },
+        ],
+        items: [],
+        initialState: {
+          currentNodeId: 'START',
+          flags: {},
+          stats: {},
+          inventory: [],
+          factions: {},
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+
+      // Should not throw
+      expect(() => engine.makeChoice('go')).not.toThrow();
+
+      const sfxEvent = events.find(e => e.type === 'sfx:no_data');
+      expect(sfxEvent).toBeDefined();
+    });
   });
 });

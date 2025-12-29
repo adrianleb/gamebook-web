@@ -16,7 +16,11 @@ import {
   createDeathPathState,
   createInitialState,
   assertEndingReachable,
+  createTestManifest,
+  createTestEngine,
+  GameEvent,
 } from '../setup';
+import act3Content from '../../src/content/act3-sample.json';
 
 describe('Golden Path 5: Death Ending', () => {
   describe('State Prerequisites - DOOM_SEALED Path', () => {
@@ -131,10 +135,67 @@ describe('Golden Path 5: Death Ending', () => {
     });
   });
 
-  // TODO: Implement when engine is ready
-  describe.skip('Engine Integration', () => {
-    it('should force death ending when DOOM_SEALED is set');
-    it('should trigger death ending when health reaches 0');
-    it('should display death/game over screen correctly');
+  describe('Engine Integration', () => {
+    it('should detect DOOM_SEALED via engine checkDoomState', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_DEATH',
+          flags: {
+            DOOM_SEALED: true,
+          },
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      expect(engine.checkDoomState()).toBe(true);
+    });
+
+    it('should detect health death via engine checkHealthDeath', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {},
+          stats: { health: 0 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      expect(engine.checkHealthDeath()).toBe(true);
+    });
+
+    it('should display death/game over screen correctly', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_DEATH',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const node = engine.getCurrentNode();
+      expect(node?.title).toBe('Fallen');
+      expect(node?.body).toContain('GAME OVER');
+      expect(node?.tags).toContain('ending');
+    });
   });
 });

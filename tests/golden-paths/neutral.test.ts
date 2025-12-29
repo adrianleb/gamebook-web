@@ -16,7 +16,11 @@ import {
   createNeutralPathState,
   createInitialState,
   assertEndingReachable,
+  createTestManifest,
+  createTestEngine,
+  GameEvent,
 } from '../setup';
+import act3Content from '../../src/content/act3-sample.json';
 
 describe('Golden Path 4: Neutral Ending', () => {
   describe('State Prerequisites', () => {
@@ -114,10 +118,74 @@ describe('Golden Path 4: Neutral Ending', () => {
     });
   });
 
-  // TODO: Implement when engine is ready
-  describe.skip('Engine Integration', () => {
-    it('should show "walk away" option at final confrontation');
-    it('should transition to ACT3_END_NEUTRAL');
-    it('should display neutral ending text correctly');
+  describe('Engine Integration', () => {
+    it('should show "walk away" option at final confrontation', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {
+            NEUTRAL_PATH_AVAILABLE: true,
+          },
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 35, factionB: 40, factionC: 38 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const choices = engine.getAvailableChoices();
+      const walkAwayChoice = choices.find((c) => c.id === 'walk_away');
+      expect(walkAwayChoice).toBeDefined();
+      expect(walkAwayChoice?.text).toContain('leaving');
+    });
+
+    it('should transition to ACT3_END_NEUTRAL', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {
+            NEUTRAL_PATH_AVAILABLE: true,
+          },
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 35, factionB: 40, factionC: 38 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+      engine.makeChoice('walk_away');
+
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_NEUTRAL');
+      expect(engine.getPhase()).toBe('END_GAME');
+    });
+
+    it('should display neutral ending text correctly', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_NEUTRAL',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const node = engine.getCurrentNode();
+      expect(node?.title).toBe('Walking Away');
+      expect(node?.body).toContain('THE END - NEUTRAL');
+      expect(node?.tags).toContain('ending');
+    });
   });
 });
