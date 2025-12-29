@@ -28,6 +28,9 @@ npm-debug.log*
 # Test coverage
 coverage/
 
+# Playwright test results
+test-results/
+
 # Temporary files
 tmp/
 .tmp/
