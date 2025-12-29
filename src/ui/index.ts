@@ -91,6 +91,12 @@ export {
   type EndingStats,
 } from './screens/EndingScreen';
 
+export {
+  createCreditsScreen,
+  type CreditsScreen,
+  type CreditsScreenCallbacks,
+} from './screens/CreditsScreen';
+
 // Input
 export {
   KeyboardHandler,
