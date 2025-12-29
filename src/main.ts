@@ -203,12 +203,15 @@ async function initializeEngine(): Promise<void> {
     getPlaytime: () => totalPlaytime + (Date.now() - gameStartTime),
   });
 
-  // Initialize audio
-  audioManager = AudioManager.getInstance();
-  try {
-    await audioManager.init();
-  } catch (err) {
-    console.warn('[Audio] Failed to initialize audio:', err);
+  // AudioManager is already initialized in initApp()
+  // Just ensure we have the instance reference
+  if (!audioManager) {
+    audioManager = AudioManager.getInstance();
+    try {
+      await audioManager.init();
+    } catch (err) {
+      console.warn('[Audio] Failed to initialize audio:', err);
+    }
   }
 }
 
@@ -853,6 +856,22 @@ function buildLoadSlotData(): LoadSlotData[] {
 // App Initialization
 // =============================================================================
 
-if (app) {
+/**
+ * Initialize application - audio first, then show title screen.
+ */
+async function initApp(): Promise<void> {
+  if (!app) return;
+
+  // Initialize AudioManager early so title screen can play music
+  audioManager = AudioManager.getInstance();
+  try {
+    await audioManager.init();
+  } catch (err) {
+    console.warn('[Audio] Failed to initialize audio at startup:', err);
+  }
+
   showScreen('title');
 }
+
+// Start the app
+initApp();
