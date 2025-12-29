@@ -28,7 +28,7 @@
   ],
   "limits": {
     "sfxMaxSizeKB": 100,
-    "musicMaxSizeMB": 2
+    "musicMaxSizeMB": 3
   },
   "allowedFormats": [".ogg"],
   "fallbackFormats": [".mp3"]
