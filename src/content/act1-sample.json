@@ -17,7 +17,7 @@
     {
       "id": "ACT1_FIRST_CHOICE",
       "title": "First Steps",
-      "body": "The passage opens into a crossroads. To the north, you hear the distant sound of voices—perhaps allies, perhaps enemies. To the east, a faint glow suggests warmth and shelter. Your first steps in this new world will set the tone for all that follows.",
+      "body": "The passage opens into a crossroads. To the north, you hear the distant sound of voices—perhaps allies, perhaps enemies. To the east, a faint glow suggests warmth and shelter. To the west, ancient carvings hint at forgotten knowledge.\n\nYour first steps in this new world will set the tone for all that follows.",
       "choices": [
         {
           "id": "path_north",
@@ -34,9 +34,59 @@
           "effects": [
             { "type": "setFlag", "flag": "CHOSE_CAUTIOUS_PATH" }
           ]
+        },
+        {
+          "id": "path_west",
+          "text": "Investigate the ancient carvings",
+          "targetId": "ACT1_ANCIENT_KNOWLEDGE",
+          "effects": [
+            { "type": "setFlag", "flag": "CHOSE_CURIOUS_PATH" }
+          ]
         }
       ],
       "tags": ["decision", "act1"]
+    },
+    {
+      "id": "ACT1_ANCIENT_KNOWLEDGE",
+      "title": "The Scholar's Rest",
+      "body": "The western passage leads to a small alcove lined with crumbling bookshelves. Dust motes dance in the light filtering through cracks in the ceiling. Among the decaying tomes, you find one that still holds together—a chronicle of the three great factions.\n\nThe text describes their origins, their philosophies, their conflicts. Knowledge that may prove invaluable in the days ahead.",
+      "choices": [
+        {
+          "id": "study_factions",
+          "text": "Take time to study the chronicle",
+          "targetId": "ACT1_FACTION_LORE",
+          "effects": [
+            { "type": "setFlag", "flag": "STUDIED_FACTION_HISTORY" }
+          ]
+        },
+        {
+          "id": "continue_north",
+          "text": "Note the information and continue north",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["lore", "optional", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_LORE",
+      "title": "History of the Factions",
+      "body": "The chronicle reveals the truth behind the three factions:\n\nThe Northern Alliance believes in strength through unity—warriors bound by honor and mutual protection. They value direct action and martial prowess.\n\nThe Shadow Conclave pursues knowledge above all else. Their scholars have uncovered dangerous secrets, and their path leads through dark truths.\n\nThe Golden Circle understands that wealth is power. Their merchants and diplomats have built an empire on trade and influence.\n\nEach path offers different tools for the challenges ahead.",
+      "choices": [
+        {
+          "id": "take_chronicle",
+          "text": "Take the chronicle with you",
+          "targetId": "ACT1_FACTION_CHOICE",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_FACTION_CHRONICLE" }
+          ]
+        },
+        {
+          "id": "leave_chronicle",
+          "text": "Leave the book for others who may need it",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["lore", "act1"]
     },
     {
       "id": "ACT1_FACTION_CHOICE",
@@ -45,7 +95,86 @@
       "choices": [
         {
           "id": "join_faction_a",
-          "text": "Join the Northern Alliance—strength through unity",
+          "text": "Approach the Northern Alliance—strength through unity",
+          "targetId": "ACT1_FACTION_A_INTRO",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_A_INTERESTED" }
+          ]
+        },
+        {
+          "id": "join_faction_b",
+          "text": "Approach the Shadow Conclave—knowledge is power",
+          "targetId": "ACT1_FACTION_B_INTRO",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_B_INTERESTED" }
+          ]
+        },
+        {
+          "id": "join_faction_c",
+          "text": "Approach the Golden Circle—wealth opens all doors",
+          "targetId": "ACT1_FACTION_C_INTRO",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_C_INTERESTED" }
+          ]
+        }
+      ],
+      "tags": ["major_decision", "faction", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_A_INTRO",
+      "title": "The Northern Alliance",
+      "body": "A tall woman in blue armor steps forward, her eyes measuring your worth. 'I am Commander Sigrid,' she says, her voice carrying across the hall. 'The Alliance has stood for centuries against those who would prey on the weak.'\n\nShe gestures to the warriors behind her. 'We ask nothing of our members save this: stand with us, fight with us, and never abandon a brother or sister in arms. Can you make that oath?'",
+      "speaker": "Commander Sigrid",
+      "choices": [
+        {
+          "id": "swear_oath_a",
+          "text": "I swear to stand with the Alliance",
+          "targetId": "ACT1_FACTION_A_OATH",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_A_OATH_TAKEN" }
+          ]
+        },
+        {
+          "id": "ask_about_a",
+          "text": "Tell me more about the Alliance's mission",
+          "targetId": "ACT1_FACTION_A_DETAILS"
+        },
+        {
+          "id": "reconsider_a",
+          "text": "I need more time to consider",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["faction", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_A_DETAILS",
+      "title": "The Alliance's Purpose",
+      "body": "Sigrid nods, respecting your caution. 'The world above is torn by war. Villages burn while the powerful play their games. The Alliance protects those who cannot protect themselves.'\n\nShe draws her blade, the steel catching the torchlight. 'We train our members in the ways of combat. We share resources equally. And when the darkness comes—and it will come—we stand together.'\n\n'But make no mistake,' she adds, 'this is not a path for the faint of heart. We ask everything of our own.'",
+      "speaker": "Commander Sigrid",
+      "choices": [
+        {
+          "id": "swear_oath_a_after",
+          "text": "Your cause is just. I will join you.",
+          "targetId": "ACT1_FACTION_A_OATH"
+        },
+        {
+          "id": "decline_a",
+          "text": "This path is not for me",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["faction", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_A_OATH",
+      "title": "Oath of the Alliance",
+      "body": "Sigrid clasps your arm in the warrior's greeting. 'Then rise, sister-in-arms. From this day forward, you bear the blue and silver of the Alliance.'\n\nThe warriors around you raise their weapons in salute. You feel the weight of their expectation—and their trust. This is a bond that will be tested in the fires ahead.\n\n'Your first task,' Sigrid says, 'is to meet Marcus. He will assess your skills and begin your training.'",
+      "speaker": "Commander Sigrid",
+      "choices": [
+        {
+          "id": "meet_marcus_a",
+          "text": "Lead me to Marcus",
           "targetId": "ACT1_ALLY_MARCUS",
           "effects": [
             { "type": "setFlag", "flag": "FACTION_A_JOINED" },
@@ -53,31 +182,156 @@
             { "type": "modifyFaction", "faction": "factionB", "delta": -10 },
             { "type": "modifyFaction", "faction": "factionC", "delta": -10 }
           ]
+        }
+      ],
+      "tags": ["faction", "transition", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_B_INTRO",
+      "title": "The Shadow Conclave",
+      "body": "A robed figure glides forward, their face hidden in the depths of their cowl. 'I am Archivist Thane,' comes a whispered voice. 'The Conclave has preserved the old knowledge since before the factions existed.'\n\nThey gesture to ancient tomes carried by their followers. 'We seek truth in all its forms—even the truths that others fear. Our members gain access to secrets that reshape the very fabric of reality. But knowledge has its price.'",
+      "speaker": "Archivist Thane",
+      "choices": [
+        {
+          "id": "accept_knowledge",
+          "text": "I seek the truth, whatever the cost",
+          "targetId": "ACT1_FACTION_B_TRIAL",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_B_TRIAL_ACCEPTED" }
+          ]
         },
         {
-          "id": "join_faction_b",
-          "text": "Join the Shadow Conclave—knowledge is power",
-          "targetId": "ACT1_ALLY_MARCUS",
+          "id": "ask_about_b",
+          "text": "What price does knowledge demand?",
+          "targetId": "ACT1_FACTION_B_DETAILS"
+        },
+        {
+          "id": "reconsider_b",
+          "text": "I need more time to consider",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["faction", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_B_DETAILS",
+      "title": "The Price of Knowledge",
+      "body": "The Archivist's hood tilts. 'A fair question. Knowledge changes those who possess it. You cannot unlearn what you discover. Some truths are... uncomfortable.'\n\nThey produce a small crystal that pulses with inner light. 'The Conclave asks only that you pursue truth above comfort, that you share what you learn, and that you never destroy knowledge—even knowledge that frightens you.'\n\n'In return, you gain access to our libraries, our laboratories, and secrets that kings would kill to possess.'",
+      "speaker": "Archivist Thane",
+      "choices": [
+        {
+          "id": "accept_terms_b",
+          "text": "I accept these terms. Show me the path to truth.",
+          "targetId": "ACT1_FACTION_B_TRIAL"
+        },
+        {
+          "id": "decline_b",
+          "text": "Some knowledge is best left hidden",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["faction", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_B_TRIAL",
+      "title": "The Trial of Seeing",
+      "body": "The Archivist leads you to a small chamber where a mirror of obsidian stands alone. 'The Trial of Seeing reveals your true nature,' they explain. 'Gaze into the mirror and accept what you see.'\n\nYou step before the dark glass. At first, only your reflection stares back. Then the surface ripples, and you see... yourself, but different. Paths not taken. Choices not made. The weight of infinite possibility.\n\nWhen you pull away, the Archivist nods. 'You did not flinch. Welcome to the Conclave.'",
+      "choices": [
+        {
+          "id": "complete_trial_b",
+          "text": "Thank you for this gift of sight",
+          "targetId": "ACT1_FACTION_B_WELCOME",
           "effects": [
             { "type": "setFlag", "flag": "FACTION_B_JOINED" },
             { "type": "modifyFaction", "faction": "factionB", "delta": 25 },
             { "type": "modifyFaction", "faction": "factionA", "delta": -10 },
-            { "type": "modifyFaction", "faction": "factionC", "delta": -10 }
+            { "type": "modifyFaction", "faction": "factionC", "delta": -10 },
+            { "type": "setFlag", "flag": "SAW_MIRROR_VISION" }
+          ]
+        }
+      ],
+      "tags": ["faction", "trial", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_B_WELCOME",
+      "title": "Shadow's Embrace",
+      "body": "The Archivist drapes a purple sash across your shoulders. 'You are now of the Conclave. Our libraries are open to you, our secrets yours to pursue.'\n\nOther robed figures emerge from the shadows, acknowledging you with silent nods. You sense the vast network of knowledge that now connects you to them.\n\n'There is one among us you should meet,' the Archivist says. 'A warrior-scholar named Marcus. He bridges the gap between knowledge and action. He will help you apply what you learn.'",
+      "speaker": "Archivist Thane",
+      "choices": [
+        {
+          "id": "meet_marcus_b",
+          "text": "I would like to meet this Marcus",
+          "targetId": "ACT1_ALLY_MARCUS"
+        }
+      ],
+      "tags": ["faction", "transition", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_C_INTRO",
+      "title": "The Golden Circle",
+      "body": "A well-dressed merchant approaches, golden rings glinting on every finger. 'I am Castellan Voss,' he says with a practiced smile. 'The Golden Circle has built empires on trade and mutual prosperity.'\n\nHe spreads his arms to encompass the richly-dressed followers behind him. 'We believe that wealth, properly applied, can solve any problem. Join us, and you'll never want for resources. Our network spans every corner of the realm.'",
+      "speaker": "Castellan Voss",
+      "choices": [
+        {
+          "id": "accept_wealth",
+          "text": "Wealth is the foundation of power. I'm in.",
+          "targetId": "ACT1_FACTION_C_CONTRACT",
+          "effects": [
+            { "type": "setFlag", "flag": "FACTION_C_INTERESTED_STRONG" }
           ]
         },
         {
-          "id": "join_faction_c",
-          "text": "Join the Golden Circle—wealth opens all doors",
+          "id": "ask_about_c",
+          "text": "What does the Circle expect in return?",
+          "targetId": "ACT1_FACTION_C_DETAILS"
+        },
+        {
+          "id": "reconsider_c",
+          "text": "I need more time to consider",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["faction", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_C_DETAILS",
+      "title": "The Golden Contract",
+      "body": "Voss chuckles warmly. 'A shrewd question! We expect loyalty, of course—but loyalty to prosperity, not to abstract ideals. Every member of the Circle contributes to our wealth and shares in its benefits.'\n\nHe produces a small pouch that jingles with coins. 'Consider this a signing bonus. The Circle invests in its members. We provide capital, connections, and opportunities. In return, you help the Circle grow.'\n\n'Think of it as... enlightened self-interest.'",
+      "speaker": "Castellan Voss",
+      "choices": [
+        {
+          "id": "take_gold",
+          "text": "A practical arrangement. I accept.",
+          "targetId": "ACT1_FACTION_C_CONTRACT"
+        },
+        {
+          "id": "decline_c",
+          "text": "I'm not for sale",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["faction", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_FACTION_C_CONTRACT",
+      "title": "Partner of the Circle",
+      "body": "Voss produces an elegant contract written on fine vellum. 'Just a formality,' he assures you. 'Standard terms—mutual benefit, shared profits, and discretion in our business dealings.'\n\nYou sign your name, and Voss clasps your hand warmly. 'Welcome to the Circle! Your first hundred gold pieces have already been deposited in our vault.'\n\nThe merchants around you applaud politely. 'Now,' Voss says, 'there's someone you should meet. Marcus handles our... security concerns. He'll show you how we protect our investments.'",
+      "speaker": "Castellan Voss",
+      "choices": [
+        {
+          "id": "meet_marcus_c",
+          "text": "Lead on—I'm eager to learn",
           "targetId": "ACT1_ALLY_MARCUS",
           "effects": [
             { "type": "setFlag", "flag": "FACTION_C_JOINED" },
             { "type": "modifyFaction", "faction": "factionC", "delta": 25 },
             { "type": "modifyFaction", "faction": "factionA", "delta": -10 },
-            { "type": "modifyFaction", "faction": "factionB", "delta": -10 }
+            { "type": "modifyFaction", "faction": "factionB", "delta": -10 },
+            { "type": "setFlag", "flag": "HAS_CIRCLE_GOLD" }
           ]
         }
       ],
-      "tags": ["major_decision", "faction", "act1"]
+      "tags": ["faction", "transition", "act1"]
     },
     {
       "id": "ACT1_SHRINE",
@@ -87,7 +341,7 @@
         {
           "id": "take_amulet",
           "text": "Take the Sacred Amulet",
-          "targetId": "ACT1_EXPLORE_1",
+          "targetId": "ACT1_SHRINE_VISION",
           "effects": [
             { "type": "addItem", "itemId": "ITEM_SACRED_AMULET" },
             { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_SACRED_AMULET" } }
@@ -102,6 +356,22 @@
       "tags": ["optional", "item", "act1"]
     },
     {
+      "id": "ACT1_SHRINE_VISION",
+      "title": "The Amulet's Whisper",
+      "body": "As your fingers close around the amulet, a vision floods your mind. You see yourself standing at a crossroads of destiny—one path leads to glory, another to sacrifice, a third to darkness.\n\nA voice, ancient and sad, speaks in your thoughts: 'The amulet chooses its bearer. It has chosen you. When the time comes, you will know what it asks.'\n\nThe vision fades, leaving you shaken but somehow... prepared.",
+      "choices": [
+        {
+          "id": "accept_vision",
+          "text": "I accept this burden",
+          "targetId": "ACT1_EXPLORE_1",
+          "effects": [
+            { "type": "setFlag", "flag": "AMULET_VISION_SEEN" }
+          ]
+        }
+      ],
+      "tags": ["vision", "story", "act1"]
+    },
+    {
       "id": "ACT1_SUPPLIES",
       "title": "Gathering Supplies",
       "body": "You find a small storeroom, dusty but not abandoned. Among the scattered crates and barrels, you discover a well-stocked survival kit—dried rations, a waterskin, flint and steel, and basic medical supplies.\n\nThis could mean the difference between life and death in the trials ahead.",
@@ -109,7 +379,7 @@
         {
           "id": "take_supplies",
           "text": "Take the Survival Kit",
-          "targetId": "ACT1_FACTION_CHOICE",
+          "targetId": "ACT1_SUPPLY_ROOM_DEEPER",
           "effects": [
             { "type": "addItem", "itemId": "ITEM_SURVIVAL_KIT" },
             { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_SURVIVAL_KIT" } }
@@ -124,6 +394,103 @@
       "tags": ["optional", "item", "act1"]
     },
     {
+      "id": "ACT1_SUPPLY_ROOM_DEEPER",
+      "title": "Hidden Passage",
+      "body": "As you gather the supplies, you notice something odd—one of the barrels sits slightly askew, as if moved frequently. Behind it, a narrow passage leads deeper into the mountain.\n\nThe air from the passage carries the scent of old parchment and something else... incense, perhaps? Someone has been here recently.",
+      "choices": [
+        {
+          "id": "investigate_passage",
+          "text": "Investigate the hidden passage",
+          "targetId": "ACT1_HERMIT"
+        },
+        {
+          "id": "continue_north",
+          "text": "Continue toward the main hall",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["exploration", "optional", "act1"]
+    },
+    {
+      "id": "ACT1_HERMIT",
+      "title": "The Hermit's Chamber",
+      "body": "The passage opens into a small cave where an elderly figure sits before a dying fire. Their eyes, milky with age, turn toward you without seeing.\n\n'Ah,' the hermit rasps, 'another lost soul stumbles upon my sanctuary. I am Eldra, once a seer, now merely a keeper of memories.'\n\nThey gesture to a cushion across from them. 'Sit, if you would hear the wisdom of one who has watched the factions rise and fall for three generations.'",
+      "speaker": "Eldra the Hermit",
+      "choices": [
+        {
+          "id": "sit_listen",
+          "text": "Sit and listen to Eldra's wisdom",
+          "targetId": "ACT1_HERMIT_WISDOM"
+        },
+        {
+          "id": "ask_prophecy",
+          "text": "Ask about the future",
+          "targetId": "ACT1_HERMIT_PROPHECY"
+        },
+        {
+          "id": "leave_hermit",
+          "text": "Thank them but continue on",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["lore", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_HERMIT_WISDOM",
+      "title": "Wisdom of Ages",
+      "body": "Eldra's voice takes on a rhythmic quality, as if reciting from ancient memory:\n\n'The Alliance fights for honor, but honor is a chain that binds. The Conclave seeks truth, but truth is a blade that cuts both ways. The Circle pursues wealth, but wealth is a master that demands ever more.'\n\nThey pause, their blind eyes somehow finding yours. 'Choose not the faction that promises the most, but the one whose chains you can bear.'",
+      "speaker": "Eldra the Hermit",
+      "choices": [
+        {
+          "id": "thank_wisdom",
+          "text": "Thank you for this counsel",
+          "targetId": "ACT1_FACTION_CHOICE",
+          "effects": [
+            { "type": "setFlag", "flag": "RECEIVED_HERMIT_WISDOM" }
+          ]
+        }
+      ],
+      "tags": ["lore", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_HERMIT_PROPHECY",
+      "title": "The Seer's Warning",
+      "body": "Eldra's face grows troubled. 'The future... I see fragments only now. But this I know: Five paths lie before you—glory, sacrifice, betrayal, indifference, and death.'\n\nTheir hands tremble as they reach toward you. 'There is an artifact, an amulet in an ancient shrine not far from here. If you would walk the path of sacrifice, you must claim it. But be warned—some fates are worse than death.'",
+      "speaker": "Eldra the Hermit",
+      "choices": [
+        {
+          "id": "ask_shrine",
+          "text": "Where is this shrine?",
+          "targetId": "ACT1_HERMIT_DIRECTIONS",
+          "effects": [
+            { "type": "setFlag", "flag": "KNOWS_SHRINE_LOCATION" }
+          ]
+        },
+        {
+          "id": "ignore_prophecy",
+          "text": "I'll make my own fate",
+          "targetId": "ACT1_FACTION_CHOICE"
+        }
+      ],
+      "tags": ["prophecy", "dialogue", "act1"]
+    },
+    {
+      "id": "ACT1_HERMIT_DIRECTIONS",
+      "title": "The Hidden Path",
+      "body": "Eldra describes the route to the ancient shrine with surprising precision for one who cannot see. 'Beyond the main hall, past the warriors' training ground, there is a crumbling wall. The shrine lies hidden behind it.'\n\nThey press a small token into your palm—a stone worn smooth by centuries of handling. 'Show this to the guardian spirits. They will let you pass.'",
+      "choices": [
+        {
+          "id": "take_token",
+          "text": "Accept the token with gratitude",
+          "targetId": "ACT1_FACTION_CHOICE",
+          "effects": [
+            { "type": "setFlag", "flag": "HAS_HERMIT_TOKEN" }
+          ]
+        }
+      ],
+      "tags": ["item", "dialogue", "act1"]
+    },
+    {
       "id": "ACT1_ALLY_MARCUS",
       "title": "Meeting Marcus",
       "body": "A grizzled warrior approaches you, his weathered face bearing the scars of countless battles. 'I am Marcus,' he says, extending a calloused hand. 'I've watched many travelers pass through these halls. Most don't survive.\n\n'I could travel with you—my blade has kept me alive this long, and two are stronger than one. But I don't suffer fools. If you want my help, you'll have to prove you're worth the effort.'",
@@ -132,23 +499,244 @@
         {
           "id": "accept_marcus",
           "text": "Welcome, Marcus. Together we'll be stronger.",
-          "targetId": "ACT1_SHRINE",
-          "effects": [
-            { "type": "setFlag", "flag": "MARCUS_RECRUITED" }
-          ],
-          "tooltip": "Marcus will join your party"
+          "targetId": "ACT1_MARCUS_TRAINING"
+        },
+        {
+          "id": "prove_worth",
+          "text": "What would you have me do to prove myself?",
+          "targetId": "ACT1_MARCUS_CHALLENGE"
         },
         {
           "id": "reject_marcus",
           "text": "I walk alone. This path is mine to travel.",
-          "targetId": "ACT1_SHRINE",
-          "effects": [
-            { "type": "clearFlag", "flag": "ALLY_MARCUS_ALIVE" }
-          ],
-          "tooltip": "Marcus will leave permanently"
+          "targetId": "ACT1_MARCUS_FAREWELL"
         }
       ],
       "tags": ["ally", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_TRAINING",
+      "title": "A Warrior's Welcome",
+      "body": "Marcus clasps your arm in the warrior's grip. 'Good instincts. Those who hesitate rarely survive out there.'\n\nHe leads you to a small training area where practice weapons line the walls. 'First lesson—always be ready. Grab a weapon and show me what you know.'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "train_sword",
+          "text": "Select a training sword",
+          "targetId": "ACT1_MARCUS_SWORD_TRAINING"
+        },
+        {
+          "id": "train_staff",
+          "text": "Select a training staff",
+          "targetId": "ACT1_MARCUS_STAFF_TRAINING"
+        }
+      ],
+      "tags": ["ally", "training", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_SWORD_TRAINING",
+      "title": "Blade Training",
+      "body": "You take up the practice sword, and Marcus nods approvingly. 'A direct choice. The sword teaches commitment—once you strike, you're committed.'\n\nFor the next hour, Marcus drills you in the fundamentals: stance, grip, footwork. By the end, your muscles ache, but you feel... capable.\n\n'Not bad,' Marcus admits. 'You'll do. Now, let's get moving.'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "finish_training_sword",
+          "text": "I'm ready. What's next?",
+          "targetId": "ACT1_MARCUS_RECRUITED",
+          "effects": [
+            { "type": "setFlag", "flag": "TRAINED_WITH_SWORD" }
+          ]
+        }
+      ],
+      "tags": ["training", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_STAFF_TRAINING",
+      "title": "Staff Training",
+      "body": "You take up the training staff, and Marcus raises an eyebrow. 'Interesting choice. The staff is a defender's weapon—it keeps threats at distance without requiring lethal force.'\n\nFor the next hour, Marcus teaches you blocks and sweeps, how to use reach to your advantage. By the end, you move with newfound confidence.\n\n'Clever,' Marcus says. 'Not every fight needs to end in death. You might just survive this after all.'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "finish_training_staff",
+          "text": "I'm ready. What's next?",
+          "targetId": "ACT1_MARCUS_RECRUITED",
+          "effects": [
+            { "type": "setFlag", "flag": "TRAINED_WITH_STAFF" }
+          ]
+        }
+      ],
+      "tags": ["training", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_CHALLENGE",
+      "title": "Marcus's Challenge",
+      "body": "Marcus's eyes narrow. 'Fair enough. You want to know if I'm worth having at your back, and I want to know the same about you.'\n\nHe picks up two practice swords and tosses one to you. 'Defend yourself. I won't hold back—much.'\n\nWithout waiting for an answer, he advances, his blade already sweeping toward you.",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "fight_aggressive",
+          "text": "Meet his attack head-on",
+          "targetId": "ACT1_MARCUS_FIGHT_RESULT"
+        },
+        {
+          "id": "fight_defensive",
+          "text": "Fall back and look for an opening",
+          "targetId": "ACT1_MARCUS_FIGHT_RESULT"
+        }
+      ],
+      "tags": ["combat", "test", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_FIGHT_RESULT",
+      "title": "Proving Ground",
+      "body": "The exchange is brief but intense. Marcus is clearly the better fighter, but he's testing your reactions, not trying to win. After a dozen exchanges, he steps back and lowers his blade.\n\n'You've got potential,' he admits. 'Raw, but potential nonetheless. I've seen worse allies, and you didn't panic when the blade came at you.'\n\nHe extends his hand. 'I'll travel with you. But when I give advice in battle, you follow it. Understood?'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "agree_terms",
+          "text": "Agreed. I'm glad to have you.",
+          "targetId": "ACT1_MARCUS_RECRUITED",
+          "effects": [
+            { "type": "setFlag", "flag": "PASSED_MARCUS_TEST" }
+          ]
+        }
+      ],
+      "tags": ["ally", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_RECRUITED",
+      "title": "Allies United",
+      "body": "Marcus gathers his gear with practiced efficiency—a well-worn blade, a travel pack, and a weathered map of the region.\n\n'Before we head out,' he says, 'there are places worth visiting. An old shrine that might hold useful relics. A lookout point with a view of the paths ahead. And an old exploration tunnel that might reveal hidden routes.'\n\nHe looks to you expectantly. 'Your call. Where do we go first?'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "go_shrine",
+          "text": "Let's check the ancient shrine",
+          "targetId": "ACT1_SHRINE",
+          "effects": [
+            { "type": "setFlag", "flag": "MARCUS_RECRUITED" }
+          ]
+        },
+        {
+          "id": "go_lookout",
+          "text": "I want to see what lies ahead",
+          "targetId": "ACT1_WATCHTOWER",
+          "effects": [
+            { "type": "setFlag", "flag": "MARCUS_RECRUITED" }
+          ]
+        },
+        {
+          "id": "go_tunnel",
+          "text": "Hidden routes could be valuable",
+          "targetId": "ACT1_EXPLORE_1",
+          "effects": [
+            { "type": "setFlag", "flag": "MARCUS_RECRUITED" }
+          ]
+        }
+      ],
+      "tags": ["ally", "decision", "act1"]
+    },
+    {
+      "id": "ACT1_MARCUS_FAREWELL",
+      "title": "Lone Path",
+      "body": "Marcus shrugs, his expression unreadable. 'Your choice. But know this—the road ahead is harder than you think. The factions make promises, but they also make demands.'\n\nHe turns to leave, then pauses. 'If you change your mind, ask around for me. Marcus of the Borderlands. But don't wait too long—I've got my own path to walk.'\n\nWith that, he disappears into the shadows of the hall.",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "continue_alone",
+          "text": "Continue alone",
+          "targetId": "ACT1_SHRINE",
+          "effects": [
+            { "type": "clearFlag", "flag": "ALLY_MARCUS_ALIVE" },
+            { "type": "setFlag", "flag": "REJECTED_MARCUS" }
+          ]
+        }
+      ],
+      "tags": ["ally", "act1"]
+    },
+    {
+      "id": "ACT1_WATCHTOWER",
+      "title": "The Old Watchtower",
+      "body": "You climb the worn steps of an ancient watchtower that overlooks the underground realm. From here, you can see the passages stretching in all directions—the main hall behind you, and three distinct paths leading toward the surface.\n\nMarcus points them out: 'The northern route is fastest but most dangerous. The eastern path winds through old mines—longer, but safer. The western route... no one goes that way anymore. Something waits there.'",
+      "speaker": "Marcus",
+      "conditions": [
+        { "type": "flag", "flag": "MARCUS_RECRUITED", "value": true }
+      ],
+      "choices": [
+        {
+          "id": "ask_western",
+          "text": "What waits in the west?",
+          "targetId": "ACT1_WATCHTOWER_WEST_LORE"
+        },
+        {
+          "id": "study_routes",
+          "text": "Study all the routes carefully",
+          "targetId": "ACT1_WATCHTOWER_SURVEY"
+        },
+        {
+          "id": "descend",
+          "text": "We should keep moving",
+          "targetId": "ACT1_EXPLORE_1"
+        }
+      ],
+      "tags": ["exploration", "lore", "act1"]
+    },
+    {
+      "id": "ACT1_WATCHTOWER_WEST_LORE",
+      "title": "The Western Shadow",
+      "body": "Marcus's face grows grim. 'Years ago, a group of scholars tried to explore what lies at the end of the western route. Only one came back, and he never spoke again—just stared at nothing until he died.'\n\nHe shakes his head. 'Some say it's a guardian left by the old gods. Others claim it's a tear in reality itself. All I know is that the few who've ventured there don't come back the same. Or at all.'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "note_warning",
+          "text": "Duly noted—we avoid the west",
+          "targetId": "ACT1_EXPLORE_1",
+          "effects": [
+            { "type": "setFlag", "flag": "KNOWS_WESTERN_DANGER" }
+          ]
+        },
+        {
+          "id": "curious_west",
+          "text": "Perhaps we should investigate... carefully",
+          "targetId": "ACT1_WESTERN_APPROACH",
+          "effects": [
+            { "type": "setFlag", "flag": "CURIOUS_ABOUT_WEST" }
+          ]
+        }
+      ],
+      "tags": ["lore", "foreshadowing", "act1"]
+    },
+    {
+      "id": "ACT1_WATCHTOWER_SURVEY",
+      "title": "Surveying the Land",
+      "body": "You spend time carefully studying each route, committing the landmarks to memory. The underground realm is larger than you expected—a network of passages, chambers, and hidden spaces carved by both nature and ancient hands.\n\nIn the distance, you can see the faint glow of the surface. The exit is closer than you thought.",
+      "choices": [
+        {
+          "id": "finish_survey",
+          "text": "I've seen enough—let's continue",
+          "targetId": "ACT1_EXPLORE_1",
+          "effects": [
+            { "type": "setFlag", "flag": "SURVEYED_ROUTES" }
+          ]
+        }
+      ],
+      "tags": ["exploration", "act1"]
+    },
+    {
+      "id": "ACT1_WESTERN_APPROACH",
+      "title": "Toward the Unknown",
+      "body": "Marcus grabs your arm. 'I said carefully—not foolishly. If you want to see what's there, we observe from a distance. Nothing more.'\n\nYou creep toward the western passage. The air grows cold, and the shadows seem to deepen. At the edge of the torchlight, you see... something. A shape that doesn't quite hold still, as if reality itself is uncertain.\n\nA whisper reaches your ears—words in a language older than memory.",
+      "choices": [
+        {
+          "id": "retreat_west",
+          "text": "We've seen enough—fall back",
+          "targetId": "ACT1_EXPLORE_1",
+          "effects": [
+            { "type": "setFlag", "flag": "GLIMPSED_WESTERN_THING" }
+          ]
+        }
+      ],
+      "tags": ["horror", "foreshadowing", "act1"]
     },
     {
       "id": "ACT1_EXPLORE_1",
@@ -158,7 +746,7 @@
         {
           "id": "take_map",
           "text": "Carefully remove the map fragment",
-          "targetId": "ACT1_ACT_END",
+          "targetId": "ACT1_EXPLORE_DEEPER",
           "effects": [
             { "type": "addItem", "itemId": "ITEM_MAP_FRAGMENT_1" },
             { "type": "triggerEvent", "event": "item_acquired", "data": { "itemId": "ITEM_MAP_FRAGMENT_1" } }
@@ -167,13 +755,72 @@
         {
           "id": "study_map",
           "text": "Study the map but leave it in place",
-          "targetId": "ACT1_ACT_END",
+          "targetId": "ACT1_EXPLORE_DEEPER",
           "effects": [
             { "type": "setFlag", "flag": "MAP_KNOWLEDGE_GAINED" }
           ]
         }
       ],
       "tags": ["optional", "item", "act1"]
+    },
+    {
+      "id": "ACT1_EXPLORE_DEEPER",
+      "title": "Deeper Passages",
+      "body": "Beyond the map room, the passage branches in two directions. To the left, you hear the distant sound of running water—an underground stream, perhaps. To the right, the passage climbs upward, and you can see a faint light ahead.",
+      "choices": [
+        {
+          "id": "follow_water",
+          "text": "Follow the sound of water",
+          "targetId": "ACT1_UNDERGROUND_SPRING"
+        },
+        {
+          "id": "climb_up",
+          "text": "Head toward the light",
+          "targetId": "ACT1_ACT_END"
+        }
+      ],
+      "tags": ["exploration", "act1"]
+    },
+    {
+      "id": "ACT1_UNDERGROUND_SPRING",
+      "title": "The Hidden Spring",
+      "body": "You emerge into a small cavern lit by luminescent moss. A crystal-clear spring bubbles up from the stone floor, filling a natural basin before flowing away into the darkness.\n\nThe water is cold and pure—the best you've tasted in years. As you drink, you feel refreshed, your aches and pains fading.",
+      "choices": [
+        {
+          "id": "fill_waterskin",
+          "text": "Fill your waterskin from the spring",
+          "targetId": "ACT1_SPRING_SECRET",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": 10, "clampMin": 0, "clampMax": 100 },
+            { "type": "setFlag", "flag": "FOUND_HEALING_SPRING" }
+          ]
+        },
+        {
+          "id": "continue_on",
+          "text": "Drink your fill and continue",
+          "targetId": "ACT1_ACT_END",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": 5, "clampMin": 0, "clampMax": 100 }
+          ]
+        }
+      ],
+      "tags": ["exploration", "healing", "act1"]
+    },
+    {
+      "id": "ACT1_SPRING_SECRET",
+      "title": "Whispers in the Water",
+      "body": "As you kneel by the spring, you notice something odd—the flowing water seems to form patterns, almost like writing. You focus on the shifting shapes...\n\nFor a moment, you see a vision: a great battle, flames reaching toward the sky, and at the center, a choice that will determine the fate of nations. Then the vision fades, leaving only the peaceful sound of flowing water.",
+      "choices": [
+        {
+          "id": "ponder_vision",
+          "text": "Remember this vision and continue",
+          "targetId": "ACT1_ACT_END",
+          "effects": [
+            { "type": "setFlag", "flag": "SAW_SPRING_VISION" }
+          ]
+        }
+      ],
+      "tags": ["vision", "foreshadowing", "act1"]
     },
     {
       "id": "ACT1_ACT_END",
