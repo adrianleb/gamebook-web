@@ -16,7 +16,11 @@ import {
   createBetrayalPathState,
   createInitialState,
   assertEndingReachable,
+  createTestManifest,
+  createTestEngine,
+  GameEvent,
 } from '../setup';
+import act3Content from '../../src/content/act3-sample.json';
 
 describe('Golden Path 3: Betrayal Ending', () => {
   describe('State Prerequisites', () => {
@@ -99,10 +103,81 @@ describe('Golden Path 3: Betrayal Ending', () => {
     });
   });
 
-  // TODO: Implement when engine is ready
-  describe.skip('Engine Integration', () => {
-    it('should show antagonist offer at ACT3_FINAL_OFFER');
-    it('should transition to ACT3_END_BETRAYAL when offer accepted');
-    it('should display betrayal ending text correctly');
+  describe('Engine Integration', () => {
+    it('should show antagonist offer at ACT3_FINAL_OFFER', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_OFFER',
+          flags: {
+            BETRAYER_PATH: true,
+            SECRET_DEAL_MADE: true,
+          },
+          stats: { health: 100 },
+          inventory: [{ itemId: 'ITEM_DARK_PACT_SCROLL', quantity: 1 }],
+          factions: { factionA: 20, factionB: 20, factionC: 20 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const choices = engine.getAvailableChoices();
+      const acceptChoice = choices.find((c) => c.id === 'accept_offer');
+      expect(acceptChoice).toBeDefined();
+      expect(acceptChoice?.tooltip).toContain('betrayal');
+    });
+
+    it('should transition to ACT3_END_BETRAYAL when offer accepted', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_OFFER',
+          flags: {
+            BETRAYER_PATH: true,
+            SECRET_DEAL_MADE: true,
+          },
+          stats: { health: 100 },
+          inventory: [{ itemId: 'ITEM_DARK_PACT_SCROLL', quantity: 1 }],
+          factions: { factionA: 20, factionB: 20, factionC: 20 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      // Accept the offer
+      engine.makeChoice('accept_offer');
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_ACCEPT_DARKNESS');
+
+      // Complete the betrayal
+      engine.makeChoice('complete_betrayal');
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_BETRAYAL');
+      expect(engine.getPhase()).toBe('END_GAME');
+    });
+
+    it('should display betrayal ending text correctly', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_BETRAYAL',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const node = engine.getCurrentNode();
+      expect(node?.title).toContain('Betrayal');
+      expect(node?.body).toContain('END');
+      expect(node?.tags).toContain('ending');
+    });
   });
 });

@@ -11,12 +11,16 @@
  * @see /docs/QA.md - Golden Path 1: Victory (Faction-Aligned)
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   createVictoryPathState,
   createInitialState,
   assertEndingReachable,
+  createTestManifest,
+  createTestEngine,
+  GameEvent,
 } from '../setup';
+import act3Content from '../../src/content/act3-sample.json';
 
 describe('Golden Path 1: Victory Ending', () => {
   describe('State Prerequisites', () => {
@@ -115,10 +119,104 @@ describe('Golden Path 1: Victory Ending', () => {
     });
   });
 
-  // TODO: Implement when engine is ready
-  describe.skip('Engine Integration', () => {
-    it('should transition to ACT3_END_VICTORY from final confrontation');
-    it('should display victory text correctly');
-    it('should trigger credits after ending');
+  describe('Engine Integration', () => {
+    it('should transition to ACT3_END_VICTORY from final confrontation', () => {
+      // Create manifest with act3 content nodes
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {
+            FACTION_A_JOINED: true,
+            FACTION_LEADER_MET: true,
+            FINAL_QUEST_ACCEPTED: true,
+            ALLY_MARCUS_ALIVE: true,
+            ALLY_ELENA_ALIVE: true,
+          },
+          stats: { health: 100 },
+          inventory: [{ itemId: 'ITEM_FACTION_A_ARTIFACT', quantity: 1 }],
+          factions: { factionA: 80, factionB: 40, factionC: 40 },
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      // Start the game at the final confrontation
+      engine.startNewGame();
+
+      expect(engine.getPhase()).toBe('DISPLAY_NODE');
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_FINAL_CONFRONTATION');
+
+      // Victory choice should be available
+      const choices = engine.getAvailableChoices();
+      const victoryChoice = choices.find((c) => c.id === 'fight_for_victory');
+      expect(victoryChoice).toBeDefined();
+
+      // Make the victory choice
+      engine.makeChoice('fight_for_victory');
+
+      // Should transition to victory ending
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_VICTORY');
+      expect(engine.getPhase()).toBe('END_GAME');
+    });
+
+    it('should display victory text correctly', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_VICTORY',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const node = engine.getCurrentNode();
+      expect(node?.title).toBe('Victory');
+      expect(node?.body).toContain('THE END - VICTORY');
+      expect(node?.tags).toContain('ending');
+    });
+
+    it('should trigger game_ended event after reaching ending', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {
+            FACTION_A_JOINED: true,
+            FACTION_LEADER_MET: true,
+            FINAL_QUEST_ACCEPTED: true,
+            ALLY_MARCUS_ALIVE: true,
+            ALLY_ELENA_ALIVE: true,
+          },
+          stats: { health: 100 },
+          inventory: [{ itemId: 'ITEM_FACTION_A_ARTIFACT', quantity: 1 }],
+          factions: { factionA: 80, factionB: 40, factionC: 40 },
+        },
+      });
+
+      const events: GameEvent[] = [];
+      const { engine } = createTestEngine(manifest, {
+        onEvent: (event) => events.push(event),
+      });
+
+      engine.startNewGame();
+      engine.makeChoice('fight_for_victory');
+
+      // Should have triggered game_ended event
+      const gameEndedEvent = events.find((e) => e.type === 'game_ended');
+      expect(gameEndedEvent).toBeDefined();
+      expect(gameEndedEvent?.data).toHaveProperty('nodeId', 'ACT3_END_VICTORY');
+    });
   });
 });

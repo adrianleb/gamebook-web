@@ -10,6 +10,32 @@
 
 import { vi } from 'vitest';
 
+// Engine imports for integration tests
+import {
+  GameEngine,
+  createGameEngine,
+  JsonContentLoader,
+  evaluateCondition,
+  evaluateConditions,
+  getAvailableChoices,
+  applyEffect,
+  applyEffects,
+  createDefaultContext,
+} from '../src/engine';
+
+import type {
+  ContentManifest,
+  GameState as EngineGameState,
+  Node as EngineNode,
+  Choice as EngineChoice,
+  Item as EngineItem,
+  Condition,
+  Effect,
+  GameEvent,
+  EnginePhase,
+} from '../src/engine';
+import type { EngineError } from '../src/engine';
+
 // ============================================================================
 // Type Definitions (aligned with ENGINE.md)
 // ============================================================================
@@ -455,6 +481,109 @@ export function createMockLocalStorage() {
     // Test helper
     _store: store,
   };
+}
+
+// ============================================================================
+// Engine Test Helpers
+// ============================================================================
+
+// Re-export engine types for test convenience
+export type { Condition, Effect, GameEvent, ContentManifest, EnginePhase };
+
+// Re-export engine functions
+export {
+  GameEngine,
+  createGameEngine,
+  JsonContentLoader,
+  evaluateCondition,
+  evaluateConditions,
+  getAvailableChoices,
+  applyEffect,
+  applyEffects,
+  createDefaultContext,
+};
+
+/**
+ * Creates a test content manifest with sensible defaults
+ */
+export function createTestManifest(
+  overrides?: Partial<ContentManifest>
+): ContentManifest {
+  return {
+    schemaVersion: '1.0.0',
+    nodes: [],
+    items: [],
+    initialState: {
+      currentNodeId: 'ACT1_START',
+      flags: {},
+      stats: { health: 100, maxHealth: 100 },
+      inventory: [],
+      factions: { factionA: 50, factionB: 50, factionC: 50 },
+    },
+    ...overrides,
+  };
+}
+
+/**
+ * Creates a GameEngine instance with test content for integration tests
+ */
+export function createTestEngine(
+  manifest: ContentManifest,
+  callbacks?: {
+    onStateChange?: (state: EngineGameState) => void;
+    onEvent?: (event: GameEvent) => void;
+    onPhaseChange?: (phase: EnginePhase) => void;
+    onError?: (error: EngineError) => void;
+  }
+): { engine: GameEngine; loader: JsonContentLoader } {
+  const loader = new JsonContentLoader();
+  loader.loadManifest(manifest);
+
+  const engine = createGameEngine({
+    contentLoader: loader,
+    onStateChange: callbacks?.onStateChange,
+    onEvent: callbacks?.onEvent,
+    onPhaseChange: callbacks?.onPhaseChange,
+    onError: callbacks?.onError,
+  });
+
+  return { engine, loader };
+}
+
+/**
+ * Creates a simple test manifest with a start node and ending node
+ */
+export function createSimpleGameManifest(): ContentManifest {
+  return createTestManifest({
+    nodes: [
+      {
+        id: 'ACT1_START',
+        title: 'Start',
+        body: 'The beginning.',
+        choices: [
+          {
+            id: 'proceed',
+            text: 'Continue',
+            targetId: 'END_VICTORY',
+          },
+        ],
+      },
+      {
+        id: 'END_VICTORY',
+        title: 'Victory',
+        body: 'You win!',
+        choices: [],
+        tags: ['ending', 'victory'],
+      },
+    ],
+    initialState: {
+      currentNodeId: 'ACT1_START',
+      flags: {},
+      stats: { health: 100 },
+      inventory: [],
+      factions: { factionA: 50, factionB: 50, factionC: 50 },
+    },
+  });
 }
 
 // ============================================================================

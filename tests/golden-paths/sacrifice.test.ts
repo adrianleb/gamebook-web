@@ -16,7 +16,11 @@ import {
   createSacrificePathState,
   createInitialState,
   assertEndingReachable,
+  createTestManifest,
+  createTestEngine,
+  GameEvent,
 } from '../setup';
+import act3Content from '../../src/content/act3-sample.json';
 
 describe('Golden Path 2: Sacrifice Ending', () => {
   describe('State Prerequisites', () => {
@@ -100,10 +104,78 @@ describe('Golden Path 2: Sacrifice Ending', () => {
     });
   });
 
-  // TODO: Implement when engine is ready
-  describe.skip('Engine Integration', () => {
-    it('should show sacrifice option at final confrontation');
-    it('should transition to ACT3_END_SACRIFICE');
-    it('should display sacrifice ending text correctly');
+  describe('Engine Integration', () => {
+    it('should show sacrifice option at final confrontation', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {
+            SACRIFICE_PATH_UNLOCKED: true,
+            LOVED_ONE_IN_DANGER: true,
+            ALLY_MARCUS_ALIVE: true,
+          },
+          stats: { health: 100 },
+          inventory: [{ itemId: 'ITEM_SACRED_AMULET', quantity: 1 }],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const choices = engine.getAvailableChoices();
+      const sacrificeChoice = choices.find((c) => c.id === 'sacrifice_self');
+      expect(sacrificeChoice).toBeDefined();
+      expect(sacrificeChoice?.text).toContain('Sacred Amulet');
+    });
+
+    it('should transition to ACT3_END_SACRIFICE', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_FINAL_CONFRONTATION',
+          flags: {
+            SACRIFICE_PATH_UNLOCKED: true,
+            LOVED_ONE_IN_DANGER: true,
+            ALLY_MARCUS_ALIVE: true,
+          },
+          stats: { health: 100 },
+          inventory: [{ itemId: 'ITEM_SACRED_AMULET', quantity: 1 }],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+      engine.makeChoice('sacrifice_self');
+
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_SACRIFICE');
+      expect(engine.getPhase()).toBe('END_GAME');
+    });
+
+    it('should display sacrifice ending text correctly', () => {
+      const manifest = createTestManifest({
+        nodes: act3Content.nodes,
+        items: act3Content.items,
+        initialState: {
+          currentNodeId: 'ACT3_END_SACRIFICE',
+          flags: {},
+          stats: { health: 100 },
+          inventory: [],
+          factions: { factionA: 50, factionB: 50, factionC: 50 },
+        },
+      });
+
+      const { engine } = createTestEngine(manifest);
+      engine.startNewGame();
+
+      const node = engine.getCurrentNode();
+      expect(node?.title).toContain('Sacrifice');
+      expect(node?.body).toContain('END');
+      expect(node?.tags).toContain('ending');
+    });
   });
 });
