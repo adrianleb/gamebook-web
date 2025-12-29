@@ -735,7 +735,7 @@ M5.5 (Perf)          │                    │
   - [ ] Agent F (QA): Test coverage verified
 - [ ] Human approval obtained for release
 
-**Depends on:** M6.1 ✅, M6.2 ✅, M6.3 ✅, M6.4 ✅
+**Depends on:** M6.1 (In Progress), M6.2 ✅, M6.3 ✅, M6.4 ✅
 **Blocks:** M6.6 Deployment
 
 ---
