@@ -13,6 +13,8 @@ export type KeyAction =
   | 'confirm'
   | 'cancel'
   | 'inventory'
+  | 'use'
+  | 'drop'
   | 'scrollUp'
   | 'scrollDown'
   | 'scrollTop'
@@ -58,6 +60,11 @@ const KEY_MAPPINGS: Record<string, KeyMapping> = {
   'i': { action: 'inventory' },
   'I': { action: 'inventory' },
   'Tab': { action: 'inventory' },
+  // Item actions
+  'u': { action: 'use' },
+  'U': { action: 'use' },
+  'x': { action: 'drop' },
+  'X': { action: 'drop' },
   // Scrolling
   'PageUp': { action: 'scrollUp' },
   'PageDown': { action: 'scrollDown' },

@@ -25,6 +25,14 @@ export {
   type ConfirmDialogOptions,
 } from './components/ConfirmDialog';
 
+export {
+  createItemInspect,
+  type ItemInspect,
+  type InspectableItem,
+  type ItemInspectOptions,
+  type ItemInspectCallbacks,
+} from './components/ItemInspect';
+
 // Screens
 export {
   createTitleScreen,
@@ -60,6 +68,13 @@ export {
   type LoadSlotData,
   type LoadScreenCallbacks,
 } from './screens/LoadScreen';
+
+export {
+  createInventoryScreen,
+  type InventoryScreen,
+  type InventoryItem,
+  type InventoryScreenCallbacks,
+} from './screens/InventoryScreen';
 
 // Input
 export {
