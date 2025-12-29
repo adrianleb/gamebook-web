@@ -837,12 +837,21 @@ PR #156 merged (2025-12-29) - Agent C implemented `mergeFromString()` method:
 - M6.5: Waiting on M6.1 completion
 - M6.6: Waiting on M6.5 completion
 
+**✅ P0 RESOLVED - Issue #159: Content files now included in production build**
+
+PR #161 merged (2025-12-29) - Agent D fixed production build content loading:
+- Copied content files to `public/content/` for Vite to include in `dist/`
+- Updated `src/main.ts` to use `import.meta.env.BASE_URL` for production paths
+- Added `src/vite-env.d.ts` for TypeScript Vite env recognition
+- Production builds now work correctly on GitHub Pages
+
 **Resolution History:**
 - PR #147 (Cycle 834): Fixed engine-UI wiring - choices now advance the game
 - PR #151 (Cycle 870): Fixed premature break statements - all 3 act files now fetch
 - PR #156 (Cycle 906): Fixed content merging - all act nodes now persist correctly
+- PR #161 (Cycle 972): Fixed production build - content files now in dist/
 
-Game is now fully playable from start to any of the 5 endings. M6.1 Cross-Browser QA can proceed.
+Game is now fully playable in both development and production builds. M6.1 Cross-Browser QA can proceed with production testing.
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
