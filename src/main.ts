@@ -109,15 +109,12 @@ async function loadGameContent(): Promise<ContentLoader> {
     }
   }
 
-  // If not loaded, try relative paths for production
+  // If not loaded, try production paths (content files in public/content/ are copied to dist/content/)
   if (!loaded) {
     const prodUrls = [
-      '/content/act1-sample.json',
-      '/content/act2-sample.json',
-      '/content/act3-sample.json',
-      'content/act1-sample.json',
-      'content/act2-sample.json',
-      'content/act3-sample.json',
+      './content/act1-sample.json',
+      './content/act2-sample.json',
+      './content/act3-sample.json',
     ];
     for (const url of prodUrls) {
       try {

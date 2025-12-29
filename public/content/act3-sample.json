@@ -1,0 +1,1348 @@
+{
+  "schemaVersion": "1.0.0",
+  "metadata": {
+    "act": 3,
+    "title": "Climax & Resolution",
+    "description": "Act 3 sample content implementing climax nodes, final confrontation, and all 5 endings per STORY.md"
+  },
+  "nodes": [
+    {
+      "id": "ACT3_START",
+      "title": "The Final Push",
+      "body": "The time has come. All paths lead here, to the moment that will decide everything. The enemy fortress looms ahead, dark clouds swirling above its towers. Your allies gather around you, their faces grim but determined. Whatever happens next, there is no turning back.",
+      "choices": [
+        {
+          "id": "approach_direct",
+          "text": "Lead a direct assault on the main gate.",
+          "targetId": "ACT3_APPROACH_DIRECT",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_MARCUS_ALIVE", "value": true }
+          ],
+          "effects": [
+            { "type": "triggerEvent", "event": "battle_drums" }
+          ]
+        },
+        {
+          "id": "approach_secret",
+          "text": "Use the secret entrance from the map fragments.",
+          "targetId": "ACT3_APPROACH_SECRET",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_MAP_FRAGMENT_1", "operator": "has" },
+            { "type": "item", "itemId": "ITEM_MAP_FRAGMENT_2", "operator": "has" }
+          ],
+          "effects": [
+            { "type": "triggerEvent", "event": "stealth_approach" }
+          ],
+          "tooltip": "Requires both map fragments"
+        },
+        {
+          "id": "approach_faction",
+          "text": "Rally your faction's forces for a coordinated strike.",
+          "targetId": "ACT3_FACTION_RALLY",
+          "conditions": [
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "faction", "faction": "factionA", "operator": ">=", "value": 60 },
+                { "type": "faction", "faction": "factionB", "operator": ">=", "value": 60 },
+                { "type": "faction", "faction": "factionC", "operator": ">=", "value": 60 }
+              ]
+            }
+          ],
+          "tooltip": "Requires faction alignment >= 60"
+        },
+        {
+          "id": "approach_alone",
+          "text": "Go alone to minimize casualties.",
+          "targetId": "ACT3_APPROACH_ALONE"
+        }
+      ],
+      "tags": ["act3", "start"]
+    },
+    {
+      "id": "ACT3_FACTION_RALLY",
+      "title": "The Banners Unite",
+      "body": "You raise your faction's banner high. The response is immediate - horns sound across the valley as your allies march to join you. This is what you've been building toward.",
+      "choices": [
+        {
+          "id": "alliance_approach",
+          "text": "Lead the Northern Alliance in a disciplined siege.",
+          "targetId": "ACT3_ALLIANCE_APPROACH",
+          "conditions": [
+            { "type": "faction", "faction": "factionA", "operator": ">=", "value": 60 }
+          ],
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 }
+          ]
+        },
+        {
+          "id": "conclave_approach",
+          "text": "Unleash the Shadow Conclave's dark arts.",
+          "targetId": "ACT3_CONCLAVE_APPROACH",
+          "conditions": [
+            { "type": "faction", "faction": "factionB", "operator": ">=", "value": 60 }
+          ],
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 5 }
+          ]
+        },
+        {
+          "id": "circle_approach",
+          "text": "Channel the Mage Circle's elemental power.",
+          "targetId": "ACT3_CIRCLE_APPROACH",
+          "conditions": [
+            { "type": "faction", "faction": "factionC", "operator": ">=", "value": 60 }
+          ],
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionC", "delta": 5 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction"]
+    },
+    {
+      "id": "ACT3_ALLIANCE_APPROACH",
+      "title": "The Northern March",
+      "body": "The Northern Alliance moves with military precision. Shield walls form, archers take position, and the siege engines roll forward. Marcus takes command of the eastern flank, his voice carrying orders across the battlefield.",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "siege_gates",
+          "text": "Focus fire on the main gates.",
+          "targetId": "ACT3_ALLIANCE_SIEGE",
+          "effects": [
+            { "type": "setFlag", "flag": "ALLIANCE_SIEGE_TACTIC" }
+          ]
+        },
+        {
+          "id": "scale_walls",
+          "text": "Send climbers to scale the walls while gates hold their attention.",
+          "targetId": "ACT3_ALLIANCE_INFILTRATE",
+          "effects": [
+            { "type": "setFlag", "flag": "ALLIANCE_INFILTRATE_TACTIC" }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "battle_horns" }
+      ],
+      "tags": ["act3", "faction", "alliance"]
+    },
+    {
+      "id": "ACT3_ALLIANCE_SIEGE",
+      "title": "Breaking the Gates",
+      "body": "The battering ram crashes against the fortress gates. Each impact shakes the earth. Enemy arrows rain down, but Alliance shields hold firm. Finally, with a thunderous crack, the gates splinter.",
+      "choices": [
+        {
+          "id": "charge_breach",
+          "text": "Charge through the breach!",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -10 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction", "alliance", "combat"]
+    },
+    {
+      "id": "ACT3_ALLIANCE_INFILTRATE",
+      "title": "Over the Walls",
+      "body": "While the gates hold the enemy's attention, you lead a team of climbers up the western wall. The wind howls as you scale the ancient stones, but Alliance training serves you well.",
+      "choices": [
+        {
+          "id": "open_gates",
+          "text": "Fight to the gate mechanism and open it from inside.",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction", "alliance", "stealth"]
+    },
+    {
+      "id": "ACT3_CONCLAVE_APPROACH",
+      "title": "Shadows Unleashed",
+      "body": "The Shadow Conclave doesn't march - it seeps. Darkness spreads across the battlefield like living ink, tendrils of shadow reaching toward the fortress. The enemy's torches flicker and die.",
+      "choices": [
+        {
+          "id": "shadow_strike",
+          "text": "Strike from the shadows while they're blind.",
+          "targetId": "ACT3_CONCLAVE_STRIKE",
+          "effects": [
+            { "type": "setFlag", "flag": "CONCLAVE_SHADOW_TACTIC" }
+          ]
+        },
+        {
+          "id": "terror_assault",
+          "text": "Let the shadow terrors break their morale first.",
+          "targetId": "ACT3_CONCLAVE_TERROR",
+          "effects": [
+            { "type": "setFlag", "flag": "CONCLAVE_TERROR_TACTIC" }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "shadow_surge" }
+      ],
+      "tags": ["act3", "faction", "conclave"]
+    },
+    {
+      "id": "ACT3_CONCLAVE_STRIKE",
+      "title": "Blades in the Dark",
+      "body": "Conclave assassins materialize from shadow, their blades finding gaps in armor before guards can react. The fortress's outer defenses fall in eerie silence.",
+      "choices": [
+        {
+          "id": "advance_shadows",
+          "text": "Press forward while confusion reigns.",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 5 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction", "conclave", "stealth"]
+    },
+    {
+      "id": "ACT3_CONCLAVE_TERROR",
+      "title": "The Fear That Binds",
+      "body": "Shadow terrors - manifestations of pure nightmare - pour through the fortress walls. Guards scream and flee, their weapons useless against creatures of pure darkness. Some simply collapse, their minds broken.",
+      "choices": [
+        {
+          "id": "enter_chaos",
+          "text": "Walk through the chaos you've created.",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionB", "delta": 3 },
+            { "type": "modifyFaction", "faction": "factionA", "delta": -5 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -5 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction", "conclave", "dark"]
+    },
+    {
+      "id": "ACT3_CIRCLE_APPROACH",
+      "title": "The Elements Answer",
+      "body": "The Mage Circle forms a ritual array behind the army lines. Air, Earth, Fire, and Water mages join hands, their combined power building into something magnificent and terrible.",
+      "choices": [
+        {
+          "id": "storm_barrage",
+          "text": "Unleash an elemental storm against the walls.",
+          "targetId": "ACT3_CIRCLE_STORM",
+          "effects": [
+            { "type": "setFlag", "flag": "CIRCLE_STORM_TACTIC" }
+          ]
+        },
+        {
+          "id": "earth_breach",
+          "text": "Command the earth to open a path beneath the walls.",
+          "targetId": "ACT3_CIRCLE_TUNNEL",
+          "effects": [
+            { "type": "setFlag", "flag": "CIRCLE_TUNNEL_TACTIC" }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "magic_surge" }
+      ],
+      "tags": ["act3", "faction", "circle"]
+    },
+    {
+      "id": "ACT3_CIRCLE_STORM",
+      "title": "Wrath of the Elements",
+      "body": "Lightning splits the sky. Fire rains from above. Wind tears at the fortress towers. The mages' combined power is devastating, cracking ancient stone and scattering defenders like leaves.",
+      "choices": [
+        {
+          "id": "advance_storm",
+          "text": "Advance under the cover of the elemental assault.",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionC", "delta": 5 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction", "circle", "magic"]
+    },
+    {
+      "id": "ACT3_CIRCLE_TUNNEL",
+      "title": "The Earth Opens",
+      "body": "Earth mages focus their power, and the ground groans. A tunnel opens beneath the fortress walls, bypassing all outer defenses. The path is rough but passable.",
+      "choices": [
+        {
+          "id": "enter_tunnel",
+          "text": "Lead the way through the earth passage.",
+          "targetId": "ACT3_FORTRESS_DEPTHS",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionC", "delta": 5 }
+          ]
+        }
+      ],
+      "tags": ["act3", "faction", "circle", "magic"]
+    },
+    {
+      "id": "ACT3_FORTRESS_DEPTHS",
+      "title": "Beneath the Dark",
+      "body": "The tunnel emerges in the fortress dungeons. Cells line the walls, most empty but some... occupied. Moans echo in the darkness. Whatever the Dark Lord has been doing down here, it's left its mark.",
+      "choices": [
+        {
+          "id": "free_prisoners",
+          "text": "Free the prisoners - they might help.",
+          "targetId": "ACT3_PRISONER_RESCUE",
+          "effects": [
+            { "type": "setFlag", "flag": "PRISONERS_FREED" }
+          ]
+        },
+        {
+          "id": "press_on",
+          "text": "There's no time. Press on to the upper levels.",
+          "targetId": "ACT3_FORTRESS_INTERIOR"
+        }
+      ],
+      "tags": ["act3", "exploration"]
+    },
+    {
+      "id": "ACT3_PRISONER_RESCUE",
+      "title": "Breaking Chains",
+      "body": "You break the locks one by one. The prisoners are weak but grateful - soldiers, merchants, even a minor noble. They arm themselves with whatever they can find.\n\n'The Dark Lord's personal guard is in the east wing,' one soldier rasps. 'Fifty strong. But there's a back way to the throne room...'",
+      "choices": [
+        {
+          "id": "take_back_way",
+          "text": "Show me this back way.",
+          "targetId": "ACT3_SECRET_PASSAGE",
+          "effects": [
+            { "type": "setFlag", "flag": "SECRET_WAY_KNOWN" }
+          ]
+        },
+        {
+          "id": "go_through_guards",
+          "text": "We'll go through the guards. These prisoners deserve to see their captors fall.",
+          "targetId": "ACT3_GUARD_BATTLE",
+          "effects": [
+            { "type": "setFlag", "flag": "PRISONER_ARMY" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "exploration"]
+    },
+    {
+      "id": "ACT3_SECRET_PASSAGE",
+      "title": "The Servant's Way",
+      "body": "The freed soldier guides you through narrow passages meant for servants. Dust and cobwebs suggest they haven't been used in years. The walls are thin - you can hear combat raging somewhere above.",
+      "choices": [
+        {
+          "id": "reach_throne",
+          "text": "Continue to the throne room.",
+          "targetId": "ACT3_FINAL_OFFER"
+        }
+      ],
+      "tags": ["act3", "stealth", "exploration"]
+    },
+    {
+      "id": "ACT3_GUARD_BATTLE",
+      "title": "Retribution",
+      "body": "The freed prisoners fight with the fury of the wronged. They overwhelm the surprised guards, their rage compensating for their weakness. By the time it's over, the east wing is secure - and the prisoners have had their vengeance.",
+      "choices": [
+        {
+          "id": "proceed_throne",
+          "text": "Lead on to the throne room.",
+          "targetId": "ACT3_FORTRESS_INTERIOR",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -10 }
+          ]
+        }
+      ],
+      "tags": ["act3", "combat", "allies"]
+    },
+    {
+      "id": "ACT3_FORTRESS_COURTYARD",
+      "title": "The Inner Ward",
+      "body": "The fortress courtyard is chaos. Bodies lie scattered, friend and foe alike. The main keep rises before you, its doors barred. Somewhere inside, the Dark Lord waits.",
+      "choices": [
+        {
+          "id": "force_doors",
+          "text": "Breach the keep doors.",
+          "targetId": "ACT3_FORTRESS_INTERIOR",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -5 }
+          ]
+        },
+        {
+          "id": "find_way",
+          "text": "Look for another way in.",
+          "targetId": "ACT3_KEEP_SEARCH"
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "battle_ambient" }
+      ],
+      "tags": ["act3", "combat"]
+    },
+    {
+      "id": "ACT3_KEEP_SEARCH",
+      "title": "Searching for Entry",
+      "body": "You circle the keep, avoiding stray skirmishes. Around the back, you find a partially collapsed wall - damage from the initial assault. A fit person could squeeze through.",
+      "choices": [
+        {
+          "id": "squeeze_through",
+          "text": "Squeeze through the gap.",
+          "targetId": "ACT3_FORTRESS_INTERIOR"
+        },
+        {
+          "id": "return_front",
+          "text": "The gap looks unstable. Return to the front doors.",
+          "targetId": "ACT3_FORTRESS_COURTYARD"
+        }
+      ],
+      "tags": ["act3", "exploration"]
+    },
+    {
+      "id": "ACT3_FORTRESS_INTERIOR",
+      "title": "Within the Keep",
+      "body": "The interior of the fortress is a monument to dark power. Obsidian pillars stretch toward a vaulted ceiling lost in shadow. Tapestries depicting scenes of conquest line the walls. The throne room lies ahead.",
+      "choices": [
+        {
+          "id": "direct_throne",
+          "text": "March directly to the throne room.",
+          "targetId": "ACT3_KIDNAPPING",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true }
+          ]
+        },
+        {
+          "id": "direct_throne_no_elena",
+          "text": "March directly to the throne room.",
+          "targetId": "ACT3_FINAL_OFFER",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": false }
+          ]
+        },
+        {
+          "id": "explore_armory",
+          "text": "Check the armory for anything useful.",
+          "targetId": "ACT3_ARMORY"
+        },
+        {
+          "id": "find_elena",
+          "text": "Search for any sign of Elena.",
+          "targetId": "ACT3_SEARCH_ELENA",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true }
+          ]
+        }
+      ],
+      "tags": ["act3", "exploration"]
+    },
+    {
+      "id": "ACT3_ARMORY",
+      "title": "The Dark Armory",
+      "body": "The armory is filled with weapons forged in shadow. Most radiate an unsettling aura, but among them you find a simple healing potion and a sturdy shield.",
+      "choices": [
+        {
+          "id": "take_supplies",
+          "text": "Take the potion and continue.",
+          "targetId": "ACT3_FORTRESS_INTERIOR",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": 15 },
+            { "type": "setFlag", "flag": "ARMORY_LOOTED" }
+          ]
+        }
+      ],
+      "tags": ["act3", "exploration", "loot"]
+    },
+    {
+      "id": "ACT3_SEARCH_ELENA",
+      "title": "Following the Trail",
+      "body": "You search for any sign of Elena. Guards' whispers mention a 'special prisoner' being taken to the tower. Your heart races - if the Dark Lord has her...",
+      "choices": [
+        {
+          "id": "rush_tower",
+          "text": "Rush to the tower immediately!",
+          "targetId": "ACT3_TOWER_RESCUE"
+        },
+        {
+          "id": "proceed_careful",
+          "text": "Proceed carefully - this could be a trap.",
+          "targetId": "ACT3_KIDNAPPING"
+        }
+      ],
+      "tags": ["act3", "allies", "elena"]
+    },
+    {
+      "id": "ACT3_TOWER_RESCUE",
+      "title": "Racing Against Time",
+      "body": "You sprint up the tower stairs, cutting down guards in your path. At the top, you find Elena bound but unharmed. Relief floods through you - but it's short-lived. The Dark Lord's laughter echoes from below.",
+      "choices": [
+        {
+          "id": "free_elena",
+          "text": "Free Elena and prepare for what's coming.",
+          "targetId": "ACT3_ELENA_FREED",
+          "effects": [
+            { "type": "setFlag", "flag": "ELENA_RESCUED_EARLY" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "elena"]
+    },
+    {
+      "id": "ACT3_ELENA_FREED",
+      "title": "Together Again",
+      "body": "Elena's bonds fall away. She embraces you briefly, then her expression hardens.\n\n'He wanted to use me against you,' she says. 'The Dark Lord knows how you feel. He planned to make you watch as he...' She shakes her head. 'Let's finish this. Together.'",
+      "speaker": "Elena",
+      "choices": [
+        {
+          "id": "descend_together",
+          "text": "Descend to the throne room together.",
+          "targetId": "ACT3_FINAL_OFFER",
+          "effects": [
+            { "type": "setFlag", "flag": "ELENA_AT_SIDE" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "elena"]
+    },
+    {
+      "id": "ACT3_APPROACH_DIRECT",
+      "title": "The Gates of Shadow",
+      "body": "Marcus leads the charge as your forces crash against the enemy defenses. Steel rings against steel, and the cries of battle fill the air. The gates buckle under the assault, but at great cost.",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "press_forward",
+          "text": "Press forward! We're almost through!",
+          "targetId": "ACT3_MARCUS_VALOR",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -15 }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "battle_sfx" }
+      ],
+      "tags": ["act3", "combat"]
+    },
+    {
+      "id": "ACT3_MARCUS_VALOR",
+      "title": "A Warrior's Stand",
+      "body": "Marcus fights like a man possessed, his blade a blur of death. A spear catches him in the shoulder, but he tears it free and keeps fighting.\n\n'Go!' he roars. 'I'll hold them here! Find the Dark Lord and end this!'",
+      "speaker": "Marcus",
+      "choices": [
+        {
+          "id": "stay_fight",
+          "text": "I won't leave you, old friend.",
+          "targetId": "ACT3_FIGHT_WITH_MARCUS",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -10 },
+            { "type": "setFlag", "flag": "MARCUS_BOND_STRONG" }
+          ]
+        },
+        {
+          "id": "honor_wish",
+          "text": "I'll make sure your sacrifice means something.",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "setFlag", "flag": "MARCUS_HOLDING_GATE" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "marcus", "combat"]
+    },
+    {
+      "id": "ACT3_FIGHT_WITH_MARCUS",
+      "title": "Brothers in Arms",
+      "body": "Together, you and Marcus cut a path through the enemy. Back to back, just like old times. The years fall away, and for a moment you're young soldiers again, fighting not for glory but for each other.",
+      "choices": [
+        {
+          "id": "breach_together",
+          "text": "Break through to the fortress together.",
+          "targetId": "ACT3_FORTRESS_COURTYARD",
+          "effects": [
+            { "type": "modifyFaction", "faction": "factionA", "delta": 5 },
+            { "type": "setFlag", "flag": "MARCUS_ALIVE_STRONG" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "marcus", "combat"]
+    },
+    {
+      "id": "ACT3_APPROACH_SECRET",
+      "title": "The Hidden Way",
+      "body": "The map fragments guide you through a forgotten passage beneath the fortress. The air is damp and ancient symbols line the walls. You emerge behind enemy lines, undetected.",
+      "choices": [
+        {
+          "id": "continue_stealth",
+          "text": "Continue stealthily toward the throne room.",
+          "targetId": "ACT3_SECRET_PATH_DEEP"
+        }
+      ],
+      "tags": ["act3", "stealth"]
+    },
+    {
+      "id": "ACT3_SECRET_PATH_DEEP",
+      "title": "Ancient Corridors",
+      "body": "The secret passages wind deeper into the fortress. You pass chambers that haven't been opened in centuries, filled with dust and forgotten relics. One catches your eye - a shrine to some old god.",
+      "choices": [
+        {
+          "id": "investigate_shrine",
+          "text": "Investigate the shrine.",
+          "targetId": "ACT3_HIDDEN_SHRINE"
+        },
+        {
+          "id": "press_forward_stealth",
+          "text": "Press forward - time is short.",
+          "targetId": "ACT3_FINAL_OFFER"
+        }
+      ],
+      "tags": ["act3", "stealth", "exploration"]
+    },
+    {
+      "id": "ACT3_HIDDEN_SHRINE",
+      "title": "The Forgotten Altar",
+      "body": "The shrine belongs to a deity of light, abandoned when darkness claimed the fortress. Dust-covered offerings still rest on the altar. As you approach, you feel a warmth - a blessing, perhaps, for the final battle ahead.",
+      "choices": [
+        {
+          "id": "accept_blessing",
+          "text": "Accept the blessing.",
+          "targetId": "ACT3_FINAL_OFFER",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": 20 },
+            { "type": "setFlag", "flag": "LIGHT_BLESSED" }
+          ]
+        }
+      ],
+      "tags": ["act3", "exploration", "loot"]
+    },
+    {
+      "id": "ACT3_APPROACH_ALONE",
+      "title": "A Lonely Path",
+      "body": "You slip away in the night, leaving your allies behind. The fortress walls are vast and imposing as you scale them alone. Every shadow could hide an enemy.",
+      "choices": [
+        {
+          "id": "reach_top",
+          "text": "Reach the top and find a way inside.",
+          "targetId": "ACT3_SOLO_ENTRY",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -10 }
+          ]
+        }
+      ],
+      "tags": ["act3"]
+    },
+    {
+      "id": "ACT3_SOLO_ENTRY",
+      "title": "The Lonely Infiltrator",
+      "body": "You drop into an empty corridor. Without allies, every step is fraught with danger. But there's also freedom - no one to protect, no one to slow you down. Just you and your mission.",
+      "choices": [
+        {
+          "id": "sneak_throne",
+          "text": "Make for the throne room with all speed.",
+          "targetId": "ACT3_SOLO_APPROACH"
+        },
+        {
+          "id": "find_thorne",
+          "text": "Search for Thorne - his intelligence could help.",
+          "targetId": "ACT3_FIND_THORNE",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_THORNE_ALIVE", "value": true }
+          ]
+        }
+      ],
+      "tags": ["act3", "stealth"]
+    },
+    {
+      "id": "ACT3_FIND_THORNE",
+      "title": "The Informant's Cache",
+      "body": "You locate Thorne's hidden cache - a safe room he established during his spying days. Inside, you find detailed maps of the fortress and a note: 'The Dark Lord keeps a fail-safe. A lever behind the throne. Pull it, and the whole place comes down. Use only as last resort.'",
+      "speaker": "Thorne (note)",
+      "choices": [
+        {
+          "id": "note_failsafe",
+          "text": "Memorize the information and continue.",
+          "targetId": "ACT3_SOLO_APPROACH",
+          "effects": [
+            { "type": "setFlag", "flag": "KNOWS_FAILSAFE" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "thorne", "exploration"]
+    },
+    {
+      "id": "ACT3_SOLO_APPROACH",
+      "title": "Heart of Darkness",
+      "body": "Moving like a shadow, you navigate the fortress interior. Guards patrol in pairs, but they don't expect a lone infiltrator. You slip past them all until the throne room doors loom before you.",
+      "choices": [
+        {
+          "id": "enter_throne",
+          "text": "Enter the throne room.",
+          "targetId": "ACT3_FINAL_OFFER"
+        }
+      ],
+      "tags": ["act3", "stealth"]
+    },
+    {
+      "id": "ACT3_KIDNAPPING",
+      "title": "Taken",
+      "body": "A scream pierces the chaos. You turn to see Elena being dragged away by dark-armored soldiers toward the inner sanctum. The enemy commander laughs from the battlements: 'Come and save her if you dare!'",
+      "choices": [
+        {
+          "id": "rescue_attempt",
+          "text": "I'm coming, Elena! Hold on!",
+          "targetId": "ACT3_RESCUE_PURSUIT",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "LOVED_ONE_IN_DANGER" }
+          ]
+        },
+        {
+          "id": "ignore_trap",
+          "text": "It's a trap. I must focus on the mission.",
+          "targetId": "ACT3_IGNORE_ELENA",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "ABANDONED_ELENA" }
+          ]
+        },
+        {
+          "id": "no_elena",
+          "text": "Press onward to the throne room.",
+          "targetId": "ACT3_FINAL_OFFER",
+          "conditions": [
+            { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": false }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "dramatic_reveal" }
+      ],
+      "tags": ["act3", "crisis"]
+    },
+    {
+      "id": "ACT3_IGNORE_ELENA",
+      "title": "The Hard Choice",
+      "body": "You turn away from Elena's cries. The mission must come first. Every step away from her tears at your heart, but you steel yourself. When you reach the throne room, you'll make the Dark Lord pay for everything.",
+      "choices": [
+        {
+          "id": "continue_cold",
+          "text": "Continue with cold determination.",
+          "targetId": "ACT3_FINAL_OFFER",
+          "effects": [
+            { "type": "clearFlag", "flag": "ALLY_ELENA_ALIVE" },
+            { "type": "modifyFaction", "faction": "factionA", "delta": -10 },
+            { "type": "modifyFaction", "faction": "factionB", "delta": -10 },
+            { "type": "modifyFaction", "faction": "factionC", "delta": -10 }
+          ]
+        }
+      ],
+      "tags": ["act3", "dark_choice"]
+    },
+    {
+      "id": "ACT3_RESCUE_PURSUIT",
+      "title": "The Chase",
+      "body": "You race through the fortress corridors, fighting past guards and leaping over obstacles. The trail of Elena's captors leads deeper into the darkness. Finally, you corner them at the entrance to the throne room.",
+      "choices": [
+        {
+          "id": "fight_captors",
+          "text": "Cut them down and free Elena!",
+          "targetId": "ACT3_ELENA_SAVED",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -20 }
+          ]
+        }
+      ],
+      "tags": ["act3", "combat"]
+    },
+    {
+      "id": "ACT3_ELENA_SAVED",
+      "title": "Not Today",
+      "body": "The captors fall before your fury. Elena, bruised but alive, falls into your arms. 'I knew you'd come,' she whispers. 'I never doubted.' For a moment, the war fades away. Then you both turn toward the throne room doors.",
+      "speaker": "Elena",
+      "choices": [
+        {
+          "id": "face_lord",
+          "text": "Face the Dark Lord together.",
+          "targetId": "ACT3_FINAL_OFFER",
+          "effects": [
+            { "type": "setFlag", "flag": "ELENA_AT_SIDE" }
+          ]
+        }
+      ],
+      "tags": ["act3", "allies", "elena"]
+    },
+    {
+      "id": "ACT3_FINAL_OFFER",
+      "title": "The Antagonist's Deal",
+      "body": "The throne room doors swing open to reveal the Dark Lord seated on his obsidian throne. He does not draw his weapon. Instead, he smiles and spreads his arms wide.\n\n'Ah, the hero arrives. But consider - why fight? I offer you power, wealth, and a place at my side. Together we could reshape this world. Your former allies... they would betray you in time. I never would.'",
+      "speaker": "Dark Lord",
+      "choices": [
+        {
+          "id": "accept_offer",
+          "text": "Perhaps... you make a compelling argument.",
+          "targetId": "ACT3_ACCEPT_DARKNESS",
+          "conditions": [
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "flag", "flag": "BETRAYER_PATH", "value": true },
+                { "type": "flag", "flag": "SECRET_DEAL_MADE", "value": true },
+                {
+                  "type": "and",
+                  "conditions": [
+                    { "type": "faction", "faction": "factionA", "operator": "<", "value": 25 },
+                    { "type": "faction", "faction": "factionB", "operator": "<", "value": 25 },
+                    { "type": "faction", "faction": "factionC", "operator": "<", "value": 25 }
+                  ]
+                }
+              ]
+            }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "ANTAGONIST_OFFER_ACCEPTED" }
+          ],
+          "tooltip": "The path of betrayal..."
+        },
+        {
+          "id": "refuse_offer",
+          "text": "Never. Your reign ends today!",
+          "targetId": "ACT3_BATTLE_PREPARATION",
+          "effects": [
+            { "type": "triggerEvent", "event": "battle_music" }
+          ]
+        },
+        {
+          "id": "delay_answer",
+          "text": "Tell me more about this... partnership.",
+          "targetId": "ACT3_DARK_LORD_MONOLOGUE"
+        }
+      ],
+      "tags": ["act3", "major_decision"]
+    },
+    {
+      "id": "ACT3_DARK_LORD_MONOLOGUE",
+      "title": "The Dark Truth",
+      "body": "The Dark Lord rises from his throne, gesturing at the tapestries. 'Your precious factions - did you know they created me? Their petty wars, their endless squabbling... I am the result. A monster born from their greed.'\n\nHe turns back to you. 'Destroy me, and another will rise. Join me, and we can end the cycle forever.'",
+      "speaker": "Dark Lord",
+      "choices": [
+        {
+          "id": "reconsider_offer",
+          "text": "You make a disturbing amount of sense...",
+          "targetId": "ACT3_ACCEPT_DARKNESS",
+          "conditions": [
+            { "type": "flag", "flag": "SECRET_DEAL_MADE", "value": true }
+          ],
+          "effects": [
+            { "type": "setFlag", "flag": "ANTAGONIST_OFFER_ACCEPTED" }
+          ]
+        },
+        {
+          "id": "still_refuse",
+          "text": "Your origins don't excuse your crimes. Prepare to die!",
+          "targetId": "ACT3_BATTLE_PREPARATION"
+        }
+      ],
+      "tags": ["act3", "story"]
+    },
+    {
+      "id": "ACT3_BATTLE_PREPARATION",
+      "title": "The Calm Before",
+      "body": "The Dark Lord sighs and rises from his throne. 'Very well. I offered you everything, and you chose death.' Shadow coalesces around him, forming armor of pure darkness. 'So be it.'",
+      "speaker": "Dark Lord",
+      "choices": [
+        {
+          "id": "rally_allies",
+          "text": "Stand with me, friends! This is our moment!",
+          "targetId": "ACT3_FINAL_CONFRONTATION",
+          "conditions": [
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "flag", "flag": "ALLY_MARCUS_ALIVE", "value": true },
+                { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true },
+                { "type": "flag", "flag": "ALLY_THORNE_ALIVE", "value": true }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fight_alone",
+          "text": "This ends between us - alone.",
+          "targetId": "ACT3_SOLO_CONFRONTATION"
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "final_battle_prep" }
+      ],
+      "tags": ["act3", "climax"]
+    },
+    {
+      "id": "ACT3_SOLO_CONFRONTATION",
+      "title": "One Against Darkness",
+      "body": "Without allies to support you, the battle is brutal. The Dark Lord's power seems endless, each blow he lands sending waves of pain through your body. But you refuse to fall. Not now. Not when you've come so far.",
+      "choices": [
+        {
+          "id": "use_failsafe",
+          "text": "Reach for the lever behind the throne!",
+          "targetId": "ACT3_FAILSAFE_ENDING",
+          "conditions": [
+            { "type": "flag", "flag": "KNOWS_FAILSAFE", "value": true }
+          ],
+          "tooltip": "Thorne's information - bring the fortress down"
+        },
+        {
+          "id": "fight_desperately_solo",
+          "text": "Keep fighting with everything you have.",
+          "targetId": "ACT3_DESPERATE_BATTLE_SOLO",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -30 }
+          ]
+        }
+      ],
+      "tags": ["act3", "combat", "climax"]
+    },
+    {
+      "id": "ACT3_FAILSAFE_ENDING",
+      "title": "Mutual Destruction",
+      "body": "You throw yourself toward the throne, dodging the Dark Lord's strikes. Your hand finds the lever - and pulls. The fortress groans. Stone begins to crack and fall.\n\n'No!' the Dark Lord screams. 'You fool - you'll kill us both!'\n\n'That's the idea,' you reply.\n\nThe last thing you see is his expression of disbelief as the ceiling comes down.",
+      "choices": [
+        {
+          "id": "accept_fate",
+          "text": "Accept your fate.",
+          "targetId": "ACT3_END_SACRIFICE",
+          "effects": [
+            { "type": "setFlag", "flag": "SACRIFICE_BY_FAILSAFE" }
+          ]
+        }
+      ],
+      "tags": ["act3", "ending_path", "sacrifice"]
+    },
+    {
+      "id": "ACT3_DESPERATE_BATTLE_SOLO",
+      "title": "The Last Stand",
+      "body": "Alone against the darkness, you fight beyond exhaustion. The Dark Lord's blade cuts deep, but you keep swinging. The throne room echoes with the clash of steel and the ragged sound of your breathing.",
+      "choices": [
+        {
+          "id": "final_strike",
+          "text": "Put everything into one final strike.",
+          "targetId": "ACT3_PYRRHIC",
+          "conditions": [
+            { "type": "stat", "stat": "health", "operator": ">", "value": 10 }
+          ],
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -30 }
+          ]
+        },
+        {
+          "id": "collapse",
+          "text": "Fall to your knees, strength failing.",
+          "targetId": "ACT3_END_DEATH",
+          "conditions": [
+            { "type": "stat", "stat": "health", "operator": "<=", "value": 10 }
+          ]
+        }
+      ],
+      "tags": ["act3", "combat", "climax"]
+    },
+    {
+      "id": "ACT3_ACCEPT_DARKNESS",
+      "title": "Embracing Shadow",
+      "body": "The Dark Lord's smile widens as you kneel before him. Dark energy flows into you, corrupting and empowering in equal measure. Your former self dies in that moment, and something new is born.",
+      "choices": [
+        {
+          "id": "complete_betrayal",
+          "text": "Rise as the new Dark Lord's champion.",
+          "targetId": "ACT3_END_BETRAYAL",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_DARK_PACT_SCROLL", "operator": "has" }
+          ]
+        },
+        {
+          "id": "incomplete_betrayal",
+          "text": "Accept the power, but at what cost?",
+          "targetId": "ACT3_CRITICAL_FAILURE",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_DARK_PACT_SCROLL", "operator": "lacks" }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "dark_transformation" }
+      ],
+      "tags": ["act3", "betrayal_path"]
+    },
+    {
+      "id": "ACT3_CRITICAL_FAILURE",
+      "title": "Point of No Return",
+      "body": "Without the Dark Pact Scroll to stabilize the dark energy, it consumes you from within. Your body begins to crumble to ash as the Dark Lord laughs.\n\n'A pity. You could have been useful.'",
+      "speaker": "Dark Lord",
+      "choices": [],
+      "onEnter": [
+        { "type": "setFlag", "flag": "DOOM_SEALED" },
+        { "type": "setStat", "stat": "health", "value": 0 },
+        { "type": "triggerEvent", "event": "game_over" }
+      ],
+      "tags": ["act3", "failure", "ending"]
+    },
+    {
+      "id": "ACT3_FINAL_CONFRONTATION",
+      "title": "The Last Battle",
+      "body": "The Dark Lord rises from his throne, drawing a blade of pure shadow. The final battle begins. Your allies rally to your side as the fate of the world hangs in the balance.\n\nThis is the moment everything has led to. Every choice, every sacrifice, every alliance forged or broken - it all comes down to now.",
+      "choices": [
+        {
+          "id": "fight_for_victory",
+          "text": "Fight with everything I have - for my faction, for victory!",
+          "targetId": "ACT3_VICTORY_BATTLE",
+          "conditions": [
+            {
+              "type": "and",
+              "conditions": [
+                {
+                  "type": "or",
+                  "conditions": [
+                    { "type": "faction", "faction": "factionA", "operator": ">=", "value": 75 },
+                    { "type": "faction", "faction": "factionB", "operator": ">=", "value": 75 },
+                    { "type": "faction", "faction": "factionC", "operator": ">=", "value": 75 }
+                  ]
+                },
+                { "type": "flag", "flag": "FACTION_LEADER_MET", "value": true },
+                { "type": "flag", "flag": "FINAL_QUEST_ACCEPTED", "value": true },
+                {
+                  "type": "or",
+                  "conditions": [
+                    { "type": "item", "itemId": "ITEM_FACTION_A_ARTIFACT", "operator": "has" },
+                    { "type": "item", "itemId": "ITEM_FACTION_B_ARTIFACT", "operator": "has" },
+                    { "type": "item", "itemId": "ITEM_FACTION_C_ARTIFACT", "operator": "has" }
+                  ]
+                },
+                {
+                  "type": "or",
+                  "conditions": [
+                    {
+                      "type": "and",
+                      "conditions": [
+                        { "type": "flag", "flag": "ALLY_MARCUS_ALIVE", "value": true },
+                        { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true }
+                      ]
+                    },
+                    {
+                      "type": "and",
+                      "conditions": [
+                        { "type": "flag", "flag": "ALLY_MARCUS_ALIVE", "value": true },
+                        { "type": "flag", "flag": "ALLY_THORNE_ALIVE", "value": true }
+                      ]
+                    },
+                    {
+                      "type": "and",
+                      "conditions": [
+                        { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true },
+                        { "type": "flag", "flag": "ALLY_THORNE_ALIVE", "value": true }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "tooltip": "Requires faction >= 75, leader met, quest accepted, artifact, and 2+ allies"
+        },
+        {
+          "id": "sacrifice_self",
+          "text": "Use the Sacred Amulet's power - even if it costs my life.",
+          "targetId": "ACT3_SACRIFICE_RITUAL",
+          "conditions": [
+            { "type": "flag", "flag": "SACRIFICE_PATH_UNLOCKED", "value": true },
+            { "type": "flag", "flag": "LOVED_ONE_IN_DANGER", "value": true },
+            { "type": "item", "itemId": "ITEM_SACRED_AMULET", "operator": "has" },
+            {
+              "type": "or",
+              "conditions": [
+                { "type": "flag", "flag": "ALLY_MARCUS_ALIVE", "value": true },
+                { "type": "flag", "flag": "ALLY_ELENA_ALIVE", "value": true },
+                { "type": "flag", "flag": "ALLY_THORNE_ALIVE", "value": true }
+              ]
+            }
+          ],
+          "tooltip": "Sacrifice yourself to save those you love"
+        },
+        {
+          "id": "walk_away",
+          "text": "This isn't my fight anymore. I'm leaving.",
+          "targetId": "ACT3_WALK_AWAY_SCENE",
+          "conditions": [
+            { "type": "flag", "flag": "NEUTRAL_PATH_AVAILABLE", "value": true },
+            { "type": "faction", "faction": "factionA", "operator": ">=", "value": 25 },
+            { "type": "faction", "faction": "factionA", "operator": "<=", "value": 50 },
+            { "type": "faction", "faction": "factionB", "operator": ">=", "value": 25 },
+            { "type": "faction", "faction": "factionB", "operator": "<=", "value": 50 },
+            { "type": "faction", "faction": "factionC", "operator": ">=", "value": 25 },
+            { "type": "faction", "faction": "factionC", "operator": "<=", "value": 50 }
+          ],
+          "tooltip": "Walk away from both sides"
+        },
+        {
+          "id": "fight_desperately",
+          "text": "Fight on, even without hope.",
+          "targetId": "ACT3_DESPERATE_BATTLE",
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": -30 }
+          ]
+        }
+      ],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "final_battle_start" }
+      ],
+      "tags": ["act3", "climax"]
+    },
+    {
+      "id": "ACT3_VICTORY_BATTLE",
+      "title": "The Tide Turns",
+      "body": "Your faction's artifact blazes with power. Marcus covers your flank while Elena channels healing magic. Thorne appears from nowhere, his blade finding gaps in the Dark Lord's shadow armor. Together, you are unstoppable.",
+      "choices": [
+        {
+          "id": "deliver_blow",
+          "text": "Deliver the final blow!",
+          "targetId": "ACT3_END_VICTORY",
+          "effects": [
+            { "type": "triggerEvent", "event": "victory_strike" }
+          ]
+        }
+      ],
+      "tags": ["act3", "combat", "climax"]
+    },
+    {
+      "id": "ACT3_SACRIFICE_RITUAL",
+      "title": "The Light Within",
+      "body": "The Sacred Amulet grows warm in your hands. You know what you must do. As the Dark Lord advances, you raise the amulet high. Pure light begins to flow from you, burning away the darkness.\n\n'No,' Elena whispers, understanding. 'Don't do this.'\n\n'Take care of them,' you say, looking at your allies. 'All of them. For me.'",
+      "choices": [
+        {
+          "id": "complete_sacrifice",
+          "text": "Release the light.",
+          "targetId": "ACT3_END_SACRIFICE",
+          "effects": [
+            { "type": "triggerEvent", "event": "sacrifice_light" }
+          ]
+        }
+      ],
+      "tags": ["act3", "sacrifice_path", "climax"]
+    },
+    {
+      "id": "ACT3_WALK_AWAY_SCENE",
+      "title": "Turning Your Back",
+      "body": "The Dark Lord laughs as you turn away. Your former allies call out in confusion and betrayal. But you've seen enough. This war, these factions - let them destroy each other. You're done.",
+      "choices": [
+        {
+          "id": "leave_finally",
+          "text": "Walk away without looking back.",
+          "targetId": "ACT3_END_NEUTRAL",
+          "effects": [
+            { "type": "triggerEvent", "event": "quiet_departure" }
+          ]
+        }
+      ],
+      "tags": ["act3", "neutral_path"]
+    },
+    {
+      "id": "ACT3_DESPERATE_BATTLE",
+      "title": "Against All Odds",
+      "body": "Without the resources and allies you needed, the battle is brutal. Each blow you land costs you dearly. The Dark Lord's power seems endless.",
+      "choices": [
+        {
+          "id": "survival_check",
+          "text": "Use every trick I know to survive.",
+          "targetId": "ACT3_SURVIVAL_CHECK",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_SURVIVAL_KIT", "operator": "lacks" }
+          ]
+        },
+        {
+          "id": "barely_survive",
+          "text": "My survival kit gives me one last chance...",
+          "targetId": "ACT3_PYRRHIC",
+          "conditions": [
+            { "type": "item", "itemId": "ITEM_SURVIVAL_KIT", "operator": "has" }
+          ],
+          "effects": [
+            { "type": "removeItem", "itemId": "ITEM_SURVIVAL_KIT" },
+            { "type": "modifyStat", "stat": "health", "delta": 20 }
+          ]
+        }
+      ],
+      "tags": ["act3", "combat"]
+    },
+    {
+      "id": "ACT3_SURVIVAL_CHECK",
+      "title": "The Final Moments",
+      "body": "Your strength fades. The Dark Lord raises his blade for the killing blow. In your final moments, you think of everyone you've known - friends and enemies, lovers and rivals. Was it worth it?",
+      "choices": [
+        {
+          "id": "accept_death",
+          "text": "Accept your fate.",
+          "targetId": "ACT3_END_DEATH"
+        },
+        {
+          "id": "light_blessing",
+          "text": "Call upon the light's blessing for one final stand.",
+          "targetId": "ACT3_PYRRHIC",
+          "conditions": [
+            { "type": "flag", "flag": "LIGHT_BLESSED", "value": true }
+          ],
+          "effects": [
+            { "type": "modifyStat", "stat": "health", "delta": 15 }
+          ]
+        }
+      ],
+      "tags": ["act3", "doom"]
+    },
+    {
+      "id": "ACT3_PYRRHIC",
+      "title": "A Hollow Victory",
+      "body": "You defeat the Dark Lord, but at tremendous cost. The fortress crumbles around you. When you emerge, you find the world has changed - and not necessarily for the better. You survived, but barely, and alone.",
+      "choices": [
+        {
+          "id": "face_future",
+          "text": "Face whatever comes next.",
+          "targetId": "ACT3_END_NEUTRAL"
+        }
+      ],
+      "tags": ["act3"]
+    },
+    {
+      "id": "ACT3_END_VICTORY",
+      "title": "Victory",
+      "body": "With your faction's artifact raised high and your allies at your side, you strike the final blow. The Dark Lord falls, his power shattering like glass.\n\nThe war is over. Your faction emerges triumphant, and your name is sung in ballads across the land. You have earned your place in history as a true hero.\n\nAs the sun rises over the liberated kingdom, you stand with your allies - Marcus, Elena, Thorne - knowing that together, you changed the world.\n\n**THE END - VICTORY**",
+      "choices": [],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "victory_fanfare" },
+        { "type": "triggerEvent", "event": "ending_victory" }
+      ],
+      "tags": ["ending", "act3"]
+    },
+    {
+      "id": "ACT3_END_SACRIFICE",
+      "title": "Sacrifice",
+      "body": "You raise the Sacred Amulet, feeling its ancient power surge through you. The Dark Lord screams as holy light engulfs the throne room.\n\nYour body dissolves into pure light as you give everything to save those you love. Elena cries out your name. Marcus catches her as she falls to her knees.\n\nWhen the light fades, the Dark Lord is gone. But so are you.\n\nYears later, they speak of the hero who gave everything. Your name becomes a prayer, a blessing, a promise that some things are worth any price.\n\n**THE END - SACRIFICE**",
+      "choices": [],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "sacrifice_light" },
+        { "type": "triggerEvent", "event": "ending_sacrifice" }
+      ],
+      "tags": ["ending", "act3"]
+    },
+    {
+      "id": "ACT3_END_BETRAYAL",
+      "title": "Betrayal",
+      "body": "The Dark Pact Scroll burns in your hands as its power becomes yours. The Dark Lord kneels before you, recognizing a greater darkness.\n\n'I was wrong about you,' he whispers. 'You were never a hero at all.'\n\nYou take the obsidian throne as your own. Your former allies flee in terror. The world trembles before the new Dark Lord - you.\n\nPower. Absolute power. That was all you ever wanted. And now, it is yours.\n\n**THE END - BETRAYAL**",
+      "choices": [],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "dark_coronation" },
+        { "type": "triggerEvent", "event": "ending_betrayal" }
+      ],
+      "tags": ["ending", "act3"]
+    },
+    {
+      "id": "ACT3_END_NEUTRAL",
+      "title": "Walking Away",
+      "body": "You turn your back on both the Dark Lord and your former allies. Let them destroy each other. You want no part of it.\n\nYou slip away into the chaos, taking nothing but the clothes on your back. The war rages on behind you, but it is no longer your concern.\n\nMonths later, you hear that someone eventually won. You don't particularly care who. You've found a quiet village far from everything, where no one knows your name.\n\nPeace. Anonymity. Sometimes, that's victory enough.\n\n**THE END - NEUTRAL**",
+      "choices": [],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "quiet_departure" },
+        { "type": "triggerEvent", "event": "ending_neutral" }
+      ],
+      "tags": ["ending", "act3"]
+    },
+    {
+      "id": "ACT3_END_DEATH",
+      "title": "Fallen",
+      "body": "The Dark Lord's blade finds its mark. You fall to your knees, your vision fading. Around you, your allies cry out in despair.\n\nYou tried. You fought. But in the end, it wasn't enough.\n\nThe last thing you see is the Dark Lord's triumphant smile as darkness claims you forever.\n\n**GAME OVER**",
+      "choices": [],
+      "onEnter": [
+        { "type": "triggerEvent", "event": "death_scene" },
+        { "type": "triggerEvent", "event": "ending_death" },
+        { "type": "triggerEvent", "event": "game_over" }
+      ],
+      "tags": ["ending", "act3", "death"]
+    }
+  ],
+  "items": [
+    {
+      "id": "ITEM_FACTION_A_ARTIFACT",
+      "name": "Crown of the North",
+      "description": "An ancient crown of ice and silver, symbol of Faction A's rightful rule. Grants its bearer the authority to command the northern legions.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "faction_a", "key_item"]
+    },
+    {
+      "id": "ITEM_FACTION_B_ARTIFACT",
+      "name": "Blade of Shadows",
+      "description": "A legendary blade forged in darkness, the symbol of Faction B's dominion. Its edge cuts through lies as easily as flesh.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "faction_b", "key_item"]
+    },
+    {
+      "id": "ITEM_FACTION_C_ARTIFACT",
+      "name": "Staff of Ages",
+      "description": "An ancient staff of carved oak, imbued with the wisdom of Faction C's founders. Reveals truth and dispels illusion.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["artifact", "faction_c", "key_item"]
+    },
+    {
+      "id": "ITEM_SACRED_AMULET",
+      "name": "Sacred Amulet",
+      "description": "A holy artifact that resonates with pure light. Its power can banish darkness, but the cost may be the bearer's own life.",
+      "stackable": false,
+      "usable": true,
+      "onUse": [
+        { "type": "triggerEvent", "event": "amulet_glow" }
+      ],
+      "consumable": false,
+      "tags": ["artifact", "key_item", "sacrifice"]
+    },
+    {
+      "id": "ITEM_DARK_PACT_SCROLL",
+      "name": "Dark Pact Scroll",
+      "description": "A scroll of forbidden power, written in blood. Signing it grants immense dark power, but binds the soul to shadow forever.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["key_item", "betrayal", "dark"]
+    },
+    {
+      "id": "ITEM_SURVIVAL_KIT",
+      "name": "Survival Kit",
+      "description": "A well-stocked kit containing bandages, rations, and emergency supplies. Could mean the difference between life and death.",
+      "stackable": false,
+      "usable": true,
+      "onUse": [
+        { "type": "modifyStat", "stat": "health", "delta": 25 }
+      ],
+      "consumable": true,
+      "tags": ["consumable", "healing"]
+    },
+    {
+      "id": "ITEM_MAP_FRAGMENT_1",
+      "name": "Map Fragment (North)",
+      "description": "A torn piece of an ancient map showing passages beneath the fortress. Combined with other fragments, it could reveal a secret entrance.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["key_item", "exploration"]
+    },
+    {
+      "id": "ITEM_MAP_FRAGMENT_2",
+      "name": "Map Fragment (South)",
+      "description": "Another piece of the ancient map. The southern tunnels are marked here. Find all pieces to unlock the secret way.",
+      "stackable": false,
+      "usable": false,
+      "consumable": false,
+      "tags": ["key_item", "exploration"]
+    }
+  ]
+}
