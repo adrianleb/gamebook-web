@@ -10,8 +10,8 @@
  * Per UI.md specification with keyboard navigation.
  */
 
-import { createScreen, createDivider, createStatusBar, BoxChars } from '../components/Screen';
-import { getKeyboardHandler, createMenuNavigation, type KeyHandler, type KeyEvent } from '../input/KeyboardHandler';
+import { createScreen, createDivider, createStatusBar } from '../components/Screen';
+import { getKeyboardHandler, createMenuNavigation, type KeyHandler } from '../input/KeyboardHandler';
 
 export interface Choice {
   id: string;
@@ -47,7 +47,6 @@ export function createGameScreen(
 ): GameScreen {
   let state = { ...initialState };
   let selectedIndex = 0;
-  let scrollPosition = 0;
   const unsubscribers: (() => void)[] = [];
 
   // Create screen container
@@ -201,6 +200,7 @@ export function createGameScreen(
 
     for (let i = 0; i < state.choices.length; i++) {
       const choice = state.choices[i];
+      if (!choice) continue;
       const choiceEl = document.createElement('div');
       choiceEl.id = `choice-${choice.id}`;
       choiceEl.className = 'choice-item';
@@ -217,14 +217,15 @@ export function createGameScreen(
       choiceElements.push(choiceEl);
       choicesArea.appendChild(choiceEl);
 
-      // Mouse support
+      // Mouse support - capture choice reference in closure
+      const isDisabled = choice.disabled;
       choiceEl.addEventListener('mouseenter', () => {
-        if (!choice.disabled) {
+        if (!isDisabled) {
           updateSelection(i);
         }
       });
       choiceEl.addEventListener('click', () => {
-        if (!choice.disabled) {
+        if (!isDisabled) {
           handleConfirm(i);
         }
       });
@@ -252,12 +253,16 @@ export function createGameScreen(
   function updateSelection(newIndex: number): void {
     // Skip disabled choices
     const choice = state.choices[newIndex];
-    if (choice?.disabled) return;
+    if (!choice || choice.disabled) return;
 
     for (let i = 0; i < choiceElements.length; i++) {
-      updateChoiceItem(choiceElements[i], state.choices[i], i, i === newIndex);
-      choiceElements[i].setAttribute('aria-selected', i === newIndex ? 'true' : 'false');
-      choiceElements[i].setAttribute('tabindex', i === newIndex ? '0' : '-1');
+      const choiceData = state.choices[i];
+      const choiceEl = choiceElements[i];
+      if (choiceData && choiceEl) {
+        updateChoiceItem(choiceEl, choiceData, i, i === newIndex);
+        choiceEl.setAttribute('aria-selected', i === newIndex ? 'true' : 'false');
+        choiceEl.setAttribute('tabindex', i === newIndex ? '0' : '-1');
+      }
     }
     selectedIndex = newIndex;
   }
@@ -319,7 +324,6 @@ export function createGameScreen(
 
   // Update function
   function update(newState: Partial<GameScreenState>): void {
-    const oldChoices = state.choices;
     state = { ...state, ...newState };
 
     if (newState.chapterTitle !== undefined) {

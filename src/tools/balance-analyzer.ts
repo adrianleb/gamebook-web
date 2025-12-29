@@ -14,7 +14,6 @@
 import type {
   ContentManifest,
   Node,
-  Choice,
   Condition,
   Effect,
   InitialState,
@@ -115,7 +114,7 @@ function extractThresholdsFromCondition(
         operator: condition.operator,
         value: condition.value,
         nodeId,
-        choiceId,
+        ...(choiceId !== undefined && { choiceId }),
       });
       break;
 
@@ -126,7 +125,7 @@ function extractThresholdsFromCondition(
         operator: condition.operator,
         value: condition.value,
         nodeId,
-        choiceId,
+        ...(choiceId !== undefined && { choiceId }),
       });
       break;
 
@@ -195,7 +194,7 @@ function extractEffectDeltas(
           name: effect.stat,
           delta: effect.delta,
           nodeId,
-          choiceId,
+          ...(choiceId !== undefined && { choiceId }),
         });
         break;
 
@@ -206,7 +205,7 @@ function extractEffectDeltas(
           delta: 0,
           absolute: effect.value,
           nodeId,
-          choiceId,
+          ...(choiceId !== undefined && { choiceId }),
         });
         break;
 
@@ -216,7 +215,7 @@ function extractEffectDeltas(
           name: effect.faction,
           delta: effect.delta,
           nodeId,
-          choiceId,
+          ...(choiceId !== undefined && { choiceId }),
         });
         break;
 
@@ -227,7 +226,7 @@ function extractEffectDeltas(
           delta: 0,
           absolute: effect.value,
           nodeId,
-          choiceId,
+          ...(choiceId !== undefined && { choiceId }),
         });
         break;
     }
@@ -515,7 +514,7 @@ function extractItemConditions(
         refs.push({
           itemId: condition.itemId,
           nodeId,
-          choiceId,
+          ...(choiceId !== undefined && { choiceId }),
           type: 'required',
         });
       }

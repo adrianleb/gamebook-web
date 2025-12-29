@@ -14,17 +14,16 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import type { ContentManifest, GameState, Effect } from '../engine/types';
+import type { ContentManifest, GameState, ChoiceRecord } from '../engine/types';
 import {
   PerformanceAnalyzer,
   analyzeContentComplexity,
   formatReport,
   formatStaticAnalysis,
   measureSync,
-  PERFORMANCE_THRESHOLDS,
 } from './performance-analyzer';
 import { applyEffects, type EffectContext } from '../engine/effects';
-import { evaluateConditions, getAvailableChoices } from '../engine/conditions';
+import { getAvailableChoices } from '../engine/conditions';
 
 // =============================================================================
 // Content Loading
@@ -83,7 +82,6 @@ function loadContent(): ContentManifest {
   }
 
   return {
-    version: '1.0.0',
     schemaVersion,
     nodes: allNodes,
     items: allItems,
@@ -177,9 +175,9 @@ function simulateTransitions(
           ...state.choicesMade,
           {
             nodeId: state.currentNodeId,
-            choiceId,
+            choiceId: choiceId ?? '',
             timestamp: Date.now(),
-          },
+          } as ChoiceRecord,
         ],
         isTransitioning: false,
       };
@@ -233,7 +231,7 @@ function simulateSaveLoad(
       visitedNodes: [...state.visitedNodes, choice.targetId],
       choicesMade: [
         ...state.choicesMade,
-        { nodeId: state.currentNodeId, choiceId, timestamp: Date.now() },
+        { nodeId: state.currentNodeId, choiceId: choiceId ?? '', timestamp: Date.now() } as ChoiceRecord,
       ],
     };
   }

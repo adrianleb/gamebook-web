@@ -14,8 +14,6 @@
 
 import type {
   ContentManifest,
-  GameState,
-  Node,
 } from '../engine/types';
 
 // =============================================================================
