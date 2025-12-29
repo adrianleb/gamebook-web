@@ -156,10 +156,16 @@ describe('Golden Path 1: Victory Ending', () => {
       const victoryChoice = choices.find((c) => c.id === 'fight_for_victory');
       expect(victoryChoice).toBeDefined();
 
-      // Make the victory choice
+      // Make the victory choice - goes to intermediate battle node first
       engine.makeChoice('fight_for_victory');
 
-      // Should transition to victory ending
+      // Should transition to victory battle scene
+      expect(engine.getGameState()?.currentNodeId).toBe('ACT3_VICTORY_BATTLE');
+
+      // Complete the victory battle by delivering the final blow
+      engine.makeChoice('deliver_blow');
+
+      // Now should be at victory ending
       expect(engine.getGameState()?.currentNodeId).toBe('ACT3_END_VICTORY');
       expect(engine.getPhase()).toBe('END_GAME');
     });
@@ -212,6 +218,7 @@ describe('Golden Path 1: Victory Ending', () => {
 
       engine.startNewGame();
       engine.makeChoice('fight_for_victory');
+      engine.makeChoice('deliver_blow');
 
       // Should have triggered game_ended event
       const gameEndedEvent = events.find((e) => e.type === 'game_ended');
