@@ -109,15 +109,14 @@ async function loadGameContent(): Promise<ContentLoader> {
     }
   }
 
-  // If not loaded, try relative paths for production
+  // If not loaded, try production paths with base URL
   if (!loaded) {
+    // Use Vite's BASE_URL to handle GitHub Pages deployment path (/gamebook-web/)
+    const baseUrl = import.meta.env.BASE_URL || '/';
     const prodUrls = [
-      '/content/act1-sample.json',
-      '/content/act2-sample.json',
-      '/content/act3-sample.json',
-      'content/act1-sample.json',
-      'content/act2-sample.json',
-      'content/act3-sample.json',
+      `${baseUrl}content/act1-sample.json`,
+      `${baseUrl}content/act2-sample.json`,
+      `${baseUrl}content/act3-sample.json`,
     ];
     for (const url of prodUrls) {
       try {
