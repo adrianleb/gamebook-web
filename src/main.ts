@@ -90,7 +90,7 @@ async function loadGameContent(): Promise<ContentLoader> {
   // Try to load content - in production the paths may differ
   let loaded = false;
 
-  // Try development paths first
+  // Try development paths first - load all content files
   for (const url of contentUrls) {
     try {
       const response = await fetch(url);
@@ -98,18 +98,22 @@ async function loadGameContent(): Promise<ContentLoader> {
         const json = await response.text();
         loader.loadFromString(json);
         loaded = true;
-        break;
+        // Continue loading remaining acts - don't break!
       }
     } catch {
       // Try next path
     }
   }
 
-  // If not loaded, try relative paths for production
+  // If not loaded, try relative paths for production - load all acts
   if (!loaded) {
     const prodUrls = [
       '/content/act1-sample.json',
+      '/content/act2-sample.json',
+      '/content/act3-sample.json',
       'content/act1-sample.json',
+      'content/act2-sample.json',
+      'content/act3-sample.json',
     ];
     for (const url of prodUrls) {
       try {
@@ -118,7 +122,7 @@ async function loadGameContent(): Promise<ContentLoader> {
           const json = await response.text();
           loader.loadFromString(json);
           loaded = true;
-          break;
+          // Continue loading remaining acts - don't break!
         }
       } catch {
         // Try next path
