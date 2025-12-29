@@ -9,15 +9,18 @@ import {
   createTitleScreen,
   createGameScreen,
   createOptionsScreen,
+  createCreditsScreen,
   type TitleScreen,
   type GameScreen,
   type OptionsScreen,
+  type CreditsScreen,
 } from './ui';
 
 type Screen = 'title' | 'game';
 
 let currentScreen: TitleScreen | GameScreen | null = null;
 let optionsOverlay: OptionsScreen | null = null;
+let creditsOverlay: CreditsScreen | null = null;
 
 const app = document.getElementById('app');
 
@@ -47,8 +50,7 @@ function showScreen(screen: Screen): void {
           showOptionsOverlay();
         },
         onCredits: () => {
-          // TODO: Implement credits
-          console.log('Credits - not yet implemented');
+          showCreditsOverlay();
         },
       });
       break;
@@ -113,4 +115,21 @@ function showOptionsOverlay(): void {
   });
 
   app.appendChild(optionsOverlay.element);
+}
+
+function showCreditsOverlay(): void {
+  if (!app || creditsOverlay) return;
+
+  creditsOverlay = createCreditsScreen({
+    onClose: () => {
+      if (creditsOverlay) {
+        creditsOverlay.destroy();
+        creditsOverlay = null;
+        // Refocus current screen
+        currentScreen?.element.focus();
+      }
+    },
+  });
+
+  app.appendChild(creditsOverlay.element);
 }
