@@ -454,25 +454,27 @@ M4 is complete when:
 
 ---
 
-#### M5.2: UI Polish Pass (Agent D)
+#### M5.2: UI Polish Pass (Agent D) ✅ Complete
 
 **Given** all screens are functional from M4
 **When** UI polish is applied
 **Then** consistent styling, smooth transitions, and keyboard navigation are polished
 
 **Verification:**
-- [ ] Consistent border styles and spacing across all screens
-- [ ] Choice selection highlight visible and consistent
-- [ ] Scene transitions smooth (no jarring jumps)
-- [ ] Inventory panel properly styled
-- [ ] Ending screens match DOS aesthetic
-- [ ] Text legibility verified at 1080p and 720p
-- [ ] Keyboard navigation tested across all screen types
+- [x] Consistent border styles and spacing across all screens
+- [x] Choice selection highlight visible and consistent (rgba(85,255,85,0.1) background, PR #99)
+- [x] Scene transitions smooth (0.1s ease-out CSS transitions, PR #99)
+- [x] Inventory panel properly styled
+- [x] Ending screens match DOS aesthetic
+- [x] Text legibility verified at 1080p and 720p
+- [x] Keyboard navigation tested across all screen types
 
 **Depends on:** None (can start immediately)
 **Blocks:** M5.5 Performance Optimization
 
-**Tracking:** Issue #95
+**Tracking:** Issue #95 (Complete), PR #99 (Merged)
+
+**Completion Summary:** Audited 9 screens (TitleScreen, GameScreen, PauseScreen, InventoryScreen, EndingScreen, CreditsScreen, OptionsScreen, SaveScreen, LoadScreen). Applied consistent selection highlight and CSS transitions via PR #99.
 
 ---
 
@@ -600,10 +602,10 @@ M5.5 (Perf)          │                    │
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
 | M5.1 Pacing Review | Agent B | ✅ Complete | #89, #96 | None |
-| M5.2 UI Polish | Agent D | In Progress | #95, #99 | None |
+| M5.2 UI Polish | Agent D | ✅ Complete | #95, #99 | None |
 | M5.3 Balance Review | Agent C | 🔶 Near Complete | #93, #102 | balance-report.md pending |
 | M5.4 Audio Polish | Agent E | In Progress | #98 | None |
-| M5.5 Performance | Agent C | Not Started | - | M5.2 |
+| M5.5 Performance | Agent C | In Progress | #105 | M5.2 ✅ |
 | M5.6 Final Validation | Agent F | In Progress | #97, #100 | M5.1 ✅, M5.3, M5.4, M5.5 |
 
 **M5 Exit Criteria:**
