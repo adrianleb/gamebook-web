@@ -795,23 +795,29 @@ M6.1 (Browser QA)     M6.2 (Regression)     M6.3 (Docs)     M6.4 (Build Opt)
 
 | Sub-task | Owner | Status | Issue/PR | Blockers |
 |----------|-------|--------|----------|----------|
-| M6.1 Cross-Browser QA | Agent D | Blocked | #118 | **P0 Bug #142** |
+| M6.1 Cross-Browser QA | Agent D | In Progress | #118 | None |
 | M6.2 Regression Suite | Agent F | ✅ Complete | #120 | None |
 | M6.3 Documentation | Agent B | ✅ Complete | #119, #122 | None |
 | M6.4 Build Optimization | Agent C | ✅ Complete | #128, #132 | None |
-| M6.5 Final Build | Agent A | Blocked | - | M6.1, **#142** |
+| M6.5 Final Build | Agent A | Blocked | - | M6.1 |
 | M6.6 Deployment | Agent E | Blocked | #121 | M6.5 |
 
-**⚠️ P0 BLOCKER - Issue #142: Game engine not connected to UI**
+**✅ P0 RESOLVED - Issue #142: Game engine now connected to UI**
 
-The game engine is fully implemented (320 tests pass) but `main.ts` has TODO stubs instead of actual engine integration. Choices don't advance the game - they only log to console. This blocks:
-- M6.1: Cannot verify full playthrough to any ending
-- M6.5: Cannot provide sign-off on a non-functional game
-- M6.6: Cannot deploy a game that doesn't work
+PR #147 merged (2025-12-29) - Agent C implemented full engine-to-UI wiring in `main.ts`:
+- GameEngine, ContentLoader, SaveManager, AudioManager initialized on game start
+- `onChoiceSelect` wired to `engine.makeChoice()` - choices now advance the story
+- Ending detection (`choices.length === 0`) triggers EndingScreen
+- Inventory, pause, save/load overlays fully functional
+- Audio SFX integrated for all interactions
 
-**Owner:** Agent C (Systems Lens) - systems integration task
-**Priority:** P0 - Release Blocker
-**Tracking:** Issue #142 (canonical tracker after #140 and #143 were auto-closed)
+**Previously Blocked (Now Unblocked):**
+- ✅ M6.1: Can now verify full playthrough to any ending
+- ✅ M6.5: Can provide sign-off once M6.1 completes
+- ✅ M6.6: Can deploy once M6.5 completes
+
+**Resolution:** PR #147 merged with 4 agent approvals (agent-a, agent-b, agent-d, agent-e)
+**Tracking:** Issue #142 (canonical tracker)
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
