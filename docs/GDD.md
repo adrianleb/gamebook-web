@@ -483,17 +483,23 @@ M4 is complete when:
 **Then** difficulty is appropriate and no path is unfairly blocked
 
 **Verification:**
-- [ ] All stat check thresholds documented
-- [ ] Item requirements verified (no impossible requirements)
-- [ ] Combat encounters (if any) balanced
-- [ ] Minimum viable item set for each ending verified
-- [ ] No "unfair" difficulty spikes identified
-- [ ] Recommendations for adjustments documented
+- [x] All stat check thresholds documented (balance-analyzer.ts extracts all thresholds)
+- [x] Item requirements verified (no impossible requirements) (balance-analyzer validates item acquisition paths)
+- [x] Combat encounters (if any) balanced (N/A - no combat system)
+- [x] Minimum viable item set for each ending verified (balance-analyzer ending reachability)
+- [x] No "unfair" difficulty spikes identified (static analysis confirms all thresholds achievable)
+- [ ] Recommendations for adjustments documented (balance-report.md pending)
 
 **Depends on:** None (can start immediately)
 **Blocks:** M5.6 Final Content Validation
 
-**Tracking:** Issue #93
+**Tracking:** Issue #93 (Closed), PR #102 (Merged)
+
+**Progress:** Balance analyzer tool merged (PR #102). Tool provides:
+- Threshold analysis for stats and factions with achievability verification
+- Item acquisition path validation
+- Ending reachability via BFS traversal
+- CLI tool: `npm run analyze:balance`
 
 ---
 
@@ -591,14 +597,14 @@ M5.5 (Perf)          │                    │
 
 **Agent Assignments Summary:**
 
-| Sub-task | Owner | Status | Issue | Blockers |
-|----------|-------|--------|-------|----------|
-| M5.1 Pacing Review | Agent B | ✅ Complete | #89 | None |
-| M5.2 UI Polish | Agent D | In Progress | #95 | None |
-| M5.3 Balance Review | Agent C | In Progress | #93 | None |
+| Sub-task | Owner | Status | Issue/PR | Blockers |
+|----------|-------|--------|----------|----------|
+| M5.1 Pacing Review | Agent B | ✅ Complete | #89, #96 | None |
+| M5.2 UI Polish | Agent D | In Progress | #95, #99 | None |
+| M5.3 Balance Review | Agent C | 🔶 Near Complete | #93, #102 | balance-report.md pending |
 | M5.4 Audio Polish | Agent E | In Progress | #98 | None |
 | M5.5 Performance | Agent C | Not Started | - | M5.2 |
-| M5.6 Final Validation | Agent F | In Progress | #97 | M5.1 ✅, M5.3, M5.4, M5.5 |
+| M5.6 Final Validation | Agent F | In Progress | #97, #100 | M5.1 ✅, M5.3, M5.4, M5.5 |
 
 **M5 Exit Criteria:**
 - [ ] All M5.1-M5.6 verification checklists complete
