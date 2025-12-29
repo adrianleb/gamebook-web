@@ -284,19 +284,21 @@ M3 is complete when:
 
 ### M4: Full Content Implementation
 
-**Goal:** Expand from 116 sample nodes to 165 complete nodes, implement all story paths, and enable all 5 endings.
+**Goal:** Expand from 39 sample nodes to 165 complete nodes, implement all story paths, and enable all 5 endings.
 
 #### M4.1 Scope Definition
 
-**Current State:** 116 nodes (26 Act1 + 44 Act2 + 46 Act3)
+**Current State:** 39 nodes (8 Act1 + 14 Act2 + 17 Act3)
 **Target State:** 165 nodes (~45 Act1 + ~64 Act2 + ~56 Act3)
-**Gap:** 49 nodes to add
+**Gap:** 126 nodes to add
+
+> **Note:** Previous documentation stated 116 nodes, which was aspirational. Actual content file counts verified 2025-12-29.
 
 | Act | Current | Target | Gap | Focus Areas |
 |-----|---------|--------|-----|-------------|
-| Act 1 | 26 | ~45 | ~19 | Faction intro paths, optional exploration, ally recruitment branches |
-| Act 2 | 44 | ~64 | ~20 | Artifact quests, temptation/prophecy paths, heist sequence |
-| Act 3 | 46 | ~56 | ~10 | Ending variations, final confrontation branches, doom paths |
+| Act 1 | 8 | ~45 | ~37 | Faction intro paths, optional exploration, ally recruitment branches |
+| Act 2 | 14 | ~64 | ~50 | Artifact quests, temptation/prophecy paths, heist sequence |
+| Act 3 | 17 | ~56 | ~39 | Ending variations, final confrontation branches, doom paths |
 
 #### M4.2 Acceptance Criteria
 
@@ -379,15 +381,16 @@ M3 is complete when:
 
 | Component | Owner | Dependencies | Status |
 |-----------|-------|--------------|--------|
-| Act 1 content expansion (~19 nodes) | agent-b | STORY.md | Pending |
+| Act 1 content expansion (~19 nodes) | agent-b | STORY.md | In Progress (#68) |
 | Act 2 content expansion (~20 nodes) | agent-b | STORY.md | Pending |
 | Act 3 content expansion (~10 nodes) | agent-b | STORY.md | Pending |
 | SaveManager implementation | agent-c | ENGINE.md §6 | In Progress (#62) |
-| Ending Screen | agent-d | UI.md | In Progress (#61) |
-| Options Screen | agent-d | UI.md | Deferred from M3 (#53) |
+| Ending Screen | agent-d | UI.md | ✅ Complete (PR #66) |
+| Options Screen | agent-d | UI.md | ✅ Complete (PR #58) |
+| Credits Screen | agent-d | UI.md | In Progress (#67) |
 | AudioManager + Settings wiring | agent-e | Options Screen | In Progress (#63) |
-| Enable skipped tests (48) | agent-f | Full content | Deferred from M3 (#52) |
-| Integration coordination | agent-a | All above | This issue (#60) |
+| Enable skipped tests | agent-f | Engine PR #42 | ✅ Complete (PR #64, 137 tests) |
+| Integration coordination | agent-a | All above | Ongoing
 
 #### M4.4 Integration Checklist
 
@@ -413,8 +416,8 @@ M4 is complete when:
 - [ ] All 9 items acquirable
 - [ ] All 16 flags functional
 - [ ] SaveManager with slots, checksums, migration, autosave working
-- [ ] Ending Screen and Options Screen complete
-- [ ] 138 tests passing (0 skipped)
+- [x] Ending Screen and Options Screen complete (PR #66, PR #58)
+- [x] 137 tests passing, 0 skipped (PR #64)
 - [ ] Content validator: 0 errors, 0 warnings
 - [ ] All golden path scenarios pass
 
