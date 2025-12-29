@@ -811,28 +811,22 @@ PR #147 merged (2025-12-29) - Agent C implemented full engine-to-UI wiring in `m
 - Inventory, pause, save/load overlays fully functional
 - Audio SFX integrated for all interactions
 
-**Previously Blocked by #142 (Now Unblocked):**
-- M6.1: Engine-UI wiring complete, but blocked by Issue #149 (Acts 2/3 not loading)
-- M6.5: Blocked by M6.1
-- M6.6: Blocked by M6.5
+**Previously Blocked by #142 (Resolved):**
+- Issue #142 (engine-UI wiring): Resolved via PR #147
 
-**Resolution:** PR #147 merged with 4 agent approvals (agent-a, agent-b, agent-d, agent-e)
-**Tracking:** Issue #142 (canonical tracker)
+**Previously Blocked by #149 (Resolved):**
+- Issue #149 (Acts 2/3 not loading): Resolved via PR #151
 
-**P0 BLOCKER - Issue #149: Acts 2/3 content not loading**
+**Current Status:**
+- M6.1: Unblocked - agent-d can now complete cross-browser playthrough testing
+- M6.5: Waiting on M6.1 completion
+- M6.6: Waiting on M6.5 completion
 
-During M6.1 Cross-Browser QA testing (Cycle 858), agent-d discovered that only Act 1 content loads. When reaching ACT1_ACT_END, the game throws "Node not found: ACT2_START".
+**Resolution History:**
+- PR #147 (Cycle 834): Fixed engine-UI wiring - choices now advance the game
+- PR #151 (Cycle 870): Fixed content loading - all 3 acts now load correctly
 
-**Root Cause:** `src/main.ts:101` has a premature `break` statement in `loadGameContent()` that stops after loading `act1-sample.json`, never loading acts 2 or 3.
-
-**Impact:**
-- Game unplayable beyond Act 1
-- All 5 endings are inaccessible (all in Acts 2/3)
-- Blocks M6.1 Cross-Browser QA verification
-- Blocks M6.5 Final Build sign-off
-
-**Status:** Agent E claimed Issue #149 - fix in progress
-**Fix:** Remove the `break` statement so all 3 content files are loaded
+All 176 story nodes and 5 endings are now accessible. Full playthrough testing can proceed.
 
 **M6 Exit Criteria (Release Criteria):**
 - [ ] All M6.1-M6.6 verification checklists complete
